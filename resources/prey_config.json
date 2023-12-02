@@ -2,19 +2,25 @@
     "activate_death": true,
     "activate_events": true,
     "start_amount": 60,
-    "auto_warrior_prey": [1,3],
-    "auto_apprentice_prey": [1,2],
+    "auto_warrior_prey": [
+        1,
+        3
+    ],
+    "auto_apprentice_prey": [
+        1,
+        2
+    ],
     "condition_increase": 1,
     "base_event_trigger_factor": 4,
-	"events_weights":{
-		"death": 1,
-		"injury": 4,
-		"reduce": 6
-	},
+    "events_weights": {
+        "death": 1,
+        "injury": 4,
+        "reduce": 6
+    },
     "additional_prey": 0.5,
-    "nutrition_malnourished_percentage" : 70,
-    "nutrition_starving_percentage" : 25,
-    "prey_requirement":{
+    "nutrition_malnourished_percentage": 70,
+    "nutrition_starving_percentage": 25,
+    "prey_requirement": {
         "leader": 3,
         "deputy": 3,
         "medicine cat": 2,
@@ -28,7 +34,7 @@
         "kitten": 0.5,
         "newborn": 0.2
     },
-    "feeding_order":[
+    "feeding_order": [
         "newborn",
         "kitten",
         "queen/pregnant",
@@ -42,7 +48,11 @@
         "deputy",
         "leader"
     ],
-    "hunter_bonus": {"1": 1, "2": 2, "3": 3},
+    "hunter_bonus": {
+        "1": 1,
+        "2": 2,
+        "3": 3
+    },
     "hunter_exp_bonus": {
         "untrained": 0.1,
         "trainee": 1,
@@ -54,54 +64,168 @@
         "master": 7
     },
     "patrol_weight_adaption": {
-        "1_class_bigger_prey_allowed": [15,19],
-        "2_class_bigger_prey_allowed": [10,14],
-        "3_class_bigger_prey_allowed": [5,9],
-        "4_class_bigger_prey_allowed": [0,4]
-    },	
+        "1_class_bigger_prey_allowed": [
+            15,
+            19
+        ],
+        "2_class_bigger_prey_allowed": [
+            10,
+            14
+        ],
+        "3_class_bigger_prey_allowed": [
+            5,
+            9
+        ],
+        "4_class_bigger_prey_allowed": [
+            0,
+            4
+        ]
+    },
     "patrol_balance": {
         "comment": [
-        "A season array consist of ['very_small', 'small', 'medium', 'large', 'huge']",
+            "This config is to balance out the amount of prey which gets caught, therefore it doesn't depend on the amount of content",
+            "A distribution array consist of ['very_small', 'small', 'medium', 'large', 'huge']",
             "Numbers are the ratio how likely such a patrol will be used when hunting in this season.",
             "The sum of all ratio should be between 15 or 16.",
-            "One common (weight:20) success outcome (ignoring skill + traits) must have these prey type types."
+            "One common (weight:20) success outcome (ignoring skill + traits) must have these prey type types.",
+            "The default values are used to help the writer team, this amount is added to the patrol, if no prey tag is given."
         ],
         "Forest": {
-            "Newleaf": [2,5,5,2,1],
-            "Greenleaf": [1,3,6,4,2],
-            "Leaf-fall": [2,4,5,3,1],
-            "Leaf-bare": [3,6,4,2,0]
+            "Newleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Greenleaf": {
+                "distribution": [1,3,6,4,2],
+                "default_success": "large",
+                "default_failure": "small"
+            },
+            "Leaf-fall":  {
+                "distribution": [2,4,5,3,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            } ,
+            "Leaf-bare":  {
+                "distribution": [3,6,4,2,0],
+                "default_success": "small",
+                "default_failure": "none"
+            } 
         },
         "Mountainous": {
-            "Newleaf": [2,5,5,2,1],
-            "Greenleaf": [1,3,6,4,2],
-            "Leaf-fall": [2,6,4,2,1],
-            "Leaf-bare": [3,6,4,2,0]
+            "Newleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Greenleaf": {
+                "distribution": [1,3,6,4,2],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-fall": {
+                "distribution": [2,6,4,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-bare": {
+                "distribution": [3,6,4,2,0],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            } 
         },
         "Plains": {
-            "Newleaf": [2,5,5,2,1],
-            "Greenleaf": [1,3,6,4,2],
-            "Leaf-fall": [2,4,5,3,1],
-            "Leaf-bare": [3,6,4,2,0]
+            "Newleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Greenleaf": {
+                "distribution": [1,3,6,4,2],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-fall": {
+                "distribution": [2,4,5,3,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-bare": {
+                "distribution": [3,6,4,2,0],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            }
         },
         "Beach": {
-            "Newleaf": [2,5,5,2,1],
-            "Greenleaf": [2,5,5,2,1],
-            "Leaf-fall": [2,5,5,2,1],
-            "Leaf-bare": [2,6,4,2,1]
+            "Newleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Greenleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-fall": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-bare": {
+                "distribution": [2,6,4,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            }
         },
         "Wetlands": {
-            "Newleaf": [2,5,5,2,1],
-            "Greenleaf": [2,5,5,2,1],
-            "Leaf-fall": [2,5,5,2,1],
-            "Leaf-bare": [2,6,4,2,1]
+            "Newleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Greenleaf": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-fall": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-bare": {
+                "distribution": [2,6,4,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            }
         },
         "Desert": {
-            "Newleaf": [2,6,4,2,1],
-            "Greenleaf": [3,6,4,2,0],
-            "Leaf-fall": [2,5,5,2,1],
-            "Leaf-bare": [1,3,6,4,2]
+            "Newleaf": {
+                "distribution": [2,6,4,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Greenleaf": {
+                "distribution": [3,6,4,2,0],
+                "default_success": "very_small",
+                "default_failure": "none"
+            },
+            "Leaf-fall": {
+                "distribution": [2,5,5,2,1],
+                "default_success": "medium",
+                "default_failure": "very_small"
+            },
+            "Leaf-bare": {
+                "distribution": [1,3,6,4,2],
+                "default_success": "large",
+                "default_failure": "small"
+            }
         }
+    },
+    "supported_prey_tags": {
+        "tags": ["very_small", "small", "medium", "large", "huge"],
+        "factor": [0.5, 1, 1.8, 2.4, 3.2]
     },
     "comment": [
         "activate_deaths - activates the whole system, otherwise nutrition status of the cats doesn't have an effect",
@@ -111,6 +235,7 @@
         "additional_prey - added amount for hunting patrol, to make it easier",
         "base_event_trigger_factor - (will be adapted in code based on clan size) this number will be used to multiply with the amount of prey the Clan needs, if the pile is bigger than this number, prey events will be triggered",
         "hunter_bonus is the factor which is be used to multiply on a hunting patrol.",
-        "hunter_exp_bonus is the additional prey which will be added on a hunting patrol."
+        "hunter_exp_bonus is the additional prey which will be added on a hunting patrol.",
+        "supported_prey_tags is a list of supported types of prey with the factor of multiplication to get the amount which will be added per cat of that patrol. The base amount, which will be multiplied is the need of a warrior."
     ]
 }

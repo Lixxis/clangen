@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: ascii -*-
+from copy import deepcopy
 import random
 from random import choice, randint, choices
 from typing import List, Tuple
@@ -532,7 +533,7 @@ class Patrol():
         romantic_patrols = []
         special_date = get_special_date()
         # This make sure general only gets hunting, border, or training patrols
-		# chose fix type will make it not depending on the content amount
+        # chose fix type will make it not depending on the content amount
         if patrol_type == "general":
             patrol_type = random.choice(["hunting", "border", "training"])
 
@@ -784,7 +785,7 @@ class Patrol():
             Parameters
             ----------
             possible_patrols : list
-                list of patrols which should be filtered
+                list of patrols events which should be filtered
 
             Returns
             ----------
@@ -798,8 +799,9 @@ class Patrol():
         season = game.clan.current_season
         possible_prey_size = []
         idx = 0
-        prey_size = ["very_small", "small", "medium", "large", "huge"]
-        for amount in PATROL_BALANCE[biome][season]:
+
+        prey_size = deepcopy(SUPPORTED_PREY_TAGS["tags"])
+        for amount in PATROL_BALANCE[biome][season]["distribution"]:
             possible_prey_size.extend(repeat(prey_size[idx],amount))
             idx += 1
         chosen_prey_size = choice(possible_prey_size)
@@ -807,6 +809,8 @@ class Patrol():
 
         # filter all possible patrol depending on the needed prey size
         for patrol in possible_patrols:
+            # patrols which are rarer, should get a buff according to their "weight"/rarity to allow them,
+            # even when the prey size is bigger than the chosen one
             for adaption, needed_weight in PATROL_WEIGHT_ADAPTION.items():
                 if needed_weight[0] <= patrol.weight < needed_weight[1]:
                     # get the amount of class sizes which can be increased
@@ -816,9 +820,18 @@ class Patrol():
                     new_idx = new_idx if new_idx <= len(chosen_prey_size) else len(chosen_prey_size)
                     chosen_prey_size = prey_size[new_idx]
 
+            # add default prey for fail outcomes - if prey tag is missing
+            for outcome in patrol.fail_outcomes:
+                if not any(tag in SUPPORTED_PREY_TAGS["tags"] for tag in outcome.prey):
+                    outcome.prey.append(PATROL_BALANCE[biome][season]["default_failure"])
+
             # now count the outcomes + prey size
             prey_types = {}
             for outcome in patrol.success_outcomes:
+                # add default prey if prey tag is missing
+                if not any(tag in SUPPORTED_PREY_TAGS["tags"] for tag in outcome.prey):
+                    outcome.prey.append(PATROL_BALANCE[biome][season]["default_success"])
+
                 # ignore skill or trait outcomes
                 if outcome.stat_trait or outcome.stat_skill:
                     continue
@@ -1055,6 +1068,7 @@ class Patrol():
 
 PATROL_WEIGHT_ADAPTION = game.prey_config["patrol_weight_adaption"]
 PATROL_BALANCE = game.prey_config["patrol_balance"]
+SUPPORTED_PREY_TAGS = game.prey_config["supported_prey_tags"]
 
 # ---------------------------------------------------------------------------- #
 #                              GENERAL INFORMATION                             #

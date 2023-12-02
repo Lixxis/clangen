@@ -173,7 +173,7 @@ class Freshkill_Events():
 
         # check if amount of the freshkill pile is too big and a event will be triggered
         needed_amount = freshkill_pile.amount_food_needed()
-        trigger_value = trigger_factor * needed_amount
+        trigger_value = round(trigger_factor * needed_amount, 2)
         print(f" -- FRESHKILL: amount {trigger_value} to trigger freshkill event. current amount {freshkill_pile.total_amount}")
         if freshkill_pile.total_amount < trigger_value:
             return

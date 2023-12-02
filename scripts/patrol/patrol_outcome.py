@@ -83,8 +83,8 @@ class PatrolOutcome():
         self.outcome_art_clean = outcome_art_clean
         
         # This will hold the stat cat, for filtering purposes
-        self.stat_cat = stat_cat 
-    
+        self.stat_cat = stat_cat
+
     @staticmethod
     def prepare_allowed_outcomes(outcomes: List['PatrolOutcome'], patrol: 'Patrol') -> List['PatrolOutcome']:
         """Takes a list of patrol outcomes, and returns those which are possible. If "special" events, gated
@@ -137,7 +137,7 @@ class PatrolOutcome():
             return outcome_list
         
         for _d in info:
-            outcome_list.append( 
+            outcome_list.append(
                 PatrolOutcome(
                     success=success,
                     antagonize=antagonize,
@@ -773,31 +773,40 @@ class PatrolOutcome():
         
     def _handle_prey(self, patrol:'Patrol') -> str:
         """ Handle giving prey """
-        
+
         if not FRESHKILL_ACTIVE:
             return ""
         
         if not self.prey or game.clan.game_mode == "classic":
             return ""
 
+        # if "none" or something those lines in prey tag, no prey should be given
+        if "none" in self.prey or "None" in self.prey or "null" in self.prey:
+            return ""
+
         basic_amount = PREY_REQUIREMENT["warrior"]
         if game.clan.game_mode == 'expanded':
             basic_amount += ADDITIONAL_PREY
-        prey_types = {
-            "very_small": basic_amount / 2,
-            "small": basic_amount,
-            "medium": basic_amount * 1.8,
-            "large": basic_amount * 2.4,
-            "huge": basic_amount * 3.2
-        }
-        
-        for tag in self.prey:
-            basic_amount = prey_types.get(tag)
-            if basic_amount is not None:
+
+        prey_types = {}
+        supported_prey = game.prey_config["supported_prey_tags"]
+        for index in range(0,len(supported_prey["tags"])):
+            amount = round(basic_amount * supported_prey["factor"][index], 2)
+            prey_types[supported_prey["tags"][index]] = amount
+        print(prey_types)
+
+        used_tag = None
+        for prey_tag in self.prey:
+            # only the first found tag will be used
+            if prey_tag in prey_types:
+                basic_amount = prey_types.get(prey_tag)
+                used_tag = prey_tag
                 break
-        else:
-            print(f"{self.prey} - no prey amount tags in prey property")
-            return ""
+        
+        # if no supported tag is found, give a warning, but continue with default values
+        if not used_tag:
+            supported_tags = prey_types.keys()
+            print(f"-- ERROR: no supported prey tag found - found: {self.prey}; supported: {supported_tags}")
         
         total_amount = 0
         highest_hunter_tier = 0
@@ -1236,4 +1245,8 @@ class PatrolOutcome():
         
         History.add_death(cat, death_text=final_death_history)
         
-        
+# ---------------------------------------------------------------------------- #
+#                         PATROL OUTCOME CLASS END                             #
+# ---------------------------------------------------------------------------- #
+
+PATROL_BALANCE = game.prey_config["patrol_balance"]

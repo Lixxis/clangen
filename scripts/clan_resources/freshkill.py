@@ -85,6 +85,7 @@ class Freshkill_Pile():
             amount : int|float
                 the amount which should be added to the pile
         """
+        amount = round(amount, 2) # round the amount to reduce / remove weird long numbers
         self.pile["expires_in_4"] += amount
         self.total_amount += amount
 
@@ -497,6 +498,7 @@ class Freshkill_Pile():
             return given_amount
 
         remaining_amount = given_amount
+        given_amount = round(given_amount, 2) # round the amount to reduce / remove weird long numbers
         if self.pile[pile_group] >= given_amount:
             self.pile[pile_group] -= given_amount
             self.total_amount -= given_amount
