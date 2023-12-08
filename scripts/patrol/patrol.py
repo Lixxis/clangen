@@ -613,7 +613,33 @@ class Patrol():
 
     def generate_patrol_events(self, patrol_dict):
         all_patrol_events = []
+        default_dict = game.config["patrol_generation"]["default_success_rates"]
         for patrol in patrol_dict:
+            season = game.clan.current_season
+            biome = game.clan.biome
+            patrol_type = patrol.get("types")
+            if len(patrol_type) == 1:
+                patrol_type = patrol_type[0]
+            else:
+                patrol_type = choice(patrol_type)
+                if patrol_type != default_dict[biome].keys():
+                    patrol_type = default_dict["default_patrol_type"]
+                    patrol_id = patrol.get("patrol_id")
+                    print(f" -- ERROR the patrol: {patrol_id}, contains a type which is not supported by the config/patrol_generation/default_success_rates")
+
+            tags = patrol.get("tags")
+            default_success = default_dict["default_of_all"]
+            if "new_cat" in tags:
+                # todo: no check for "welcome" or "hostile" possible
+                default_success = default_dict["new_cat_other_clan"]["new_cat"]
+            elif "other_clan" in tags:
+                # todo: no check for "welcome" or "hostile" possible
+                default_success = default_dict["new_cat_other_clan"]["other_clan"]
+            else:
+                default_success = default_dict[biome][patrol_type][season]
+            # todo: the default values in config have to be checked again, still work in progress
+            # resource doc: https://docs.google.com/document/d/1XHL0Uo5CfkIuOh33XLDgzh-RNkfamtoLY6_HSUd4JTY/edit#heading=h.qzy09u50vqy7
+
             patrol_event = PatrolEvent(
                 patrol_id=patrol.get("patrol_id"),
                 biome=patrol.get("biome"),
@@ -626,7 +652,7 @@ class Patrol():
                 success_outcomes=PatrolOutcome.generate_from_info(patrol.get("success_outcomes")),
                 fail_outcomes=PatrolOutcome.generate_from_info(patrol.get("fail_outcomes"), success=False),
                 decline_text=patrol.get("decline_text"),
-                chance_of_success=patrol.get("chance_of_success"),
+                chance_of_success=patrol.get("chance_of_success") if patrol.get("chance_of_success") else default_success,
                 min_cats=patrol.get("min_cats", 1),
                 max_cats=patrol.get("max_cats", 6),
                 min_max_status=patrol.get("min_max_status"),
