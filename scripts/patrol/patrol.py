@@ -594,6 +594,20 @@ class Patrol():
         # make sure the hunting patrols are balanced
         if patrol_type == 'hunting':
             filtered_patrols = self.balance_hunting(filtered_patrols)
+        
+        # create default herb values
+        if "herb_gathering" in patrol.types:
+            default_dict = game.config["patrol_herbs"]
+
+            # add default herbs for fail outcomes - if herbs tag is missing
+            for outcome in patrol.fail_outcomes:
+                if not outcome.herbs:
+                    outcome.herbs.append(default_dict[biome]["default_failure"][current_season])
+
+            # now count the outcomes + prey size
+            for outcome in patrol.success_outcomes:
+                if not outcome.herbs:
+                    outcome.herbs.append(default_dict[biome]["default_success"][current_season])
 
         return filtered_patrols, romantic_patrols
 

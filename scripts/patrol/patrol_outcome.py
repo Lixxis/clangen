@@ -721,6 +721,10 @@ class PatrolOutcome():
         if not self.herbs or game.clan.game_mode == "classic":
             return ""
         
+		# if "none" or something those lines in herb tag, no herb should be given
+        if "none" in self.herbs or "None" in self.herbs or "null" in self.herbs:
+            return ""
+        
         large_bonus = False
         if "many_herbs" in self.herbs:
             large_bonus = True
@@ -793,7 +797,6 @@ class PatrolOutcome():
         for index in range(0,len(supported_prey["tags"])):
             amount = round(basic_amount * supported_prey["factor"][index], 2)
             prey_types[supported_prey["tags"][index]] = amount
-        print(prey_types)
 
         used_tag = None
         for prey_tag in self.prey:

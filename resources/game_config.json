@@ -427,6 +427,92 @@
             }
         }
     },
+    "patrol_herbs":{
+        "Forest": {
+            "default_failure": {
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            },
+            "default_success":{
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            }
+        },
+        "Mountainous": {
+            "default_failure": {
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            },
+            "default_success":{
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            }
+        },
+        "Plains": {
+            "default_failure": {
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            },
+            "default_success":{
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            }
+        },
+        "Beach": {
+            "default_failure": {
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            },
+            "default_success":{
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            }
+        },
+        "Wetlands": {
+            "default_failure": {
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            },
+            "default_success":{
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            }
+        },
+        "Desert": {
+            "default_failure": {
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            },
+            "default_success":{
+                "Newleaf": "random_herbs",
+                "Greenleaf": "many_herbs",
+                "Leaf-fall": "many_herbs",
+                "Leaf-bare": "random_herbs"
+            }
+        }
+    },
     "death_related": {
         "leader_death_chance": 125,
         "classic_death_chance": 500,
