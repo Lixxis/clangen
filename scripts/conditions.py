@@ -78,51 +78,51 @@ def get_amount_cat_for_one_medic(clan):
 
 class Illness:
     """
-    TODO: DOCS
+    If a cat gets sick one instance of this class is created and added to the cat.
     """
 
     def __init__(self,
-                 name,
-                 severity,
-                 mortality,
-                 infectiousness,
-                 duration,
-                 medicine_duration,
-                 medicine_mortality,
-                 risks,
-                 herbs=None,
-                 event_triggered=False):
+                 name: str,
+                 moon_start: int,
+                 severity: str,
+                 mortality: int,
+                 infectiousness: int,
+                 duration: int,
+                 medicine_duration: int,
+                 medicine_mortality: int,
+                 risks: list = None,
+                 event_triggered: bool =False):
         self.name = name
         self.severity = severity
-        self.mortality = int(mortality)
-        self.infectiousness = int(infectiousness)
-        self.duration = int(duration)
-        self.medicine_duration = int(medicine_duration)
-        self.medicine_mortality = int(medicine_mortality)
-        self.risks = risks
-        self.herbs = herbs if herbs else []
-        self.new = event_triggered
+        self.mortality = mortality
+        self.infectiousness = infectiousness
+        self.duration = duration
+        self.medicine_duration = medicine_duration
+        self.medicine_mortality = medicine_mortality
+        self.risks = risks if risks else []
+        self.moon_start = moon_start
+        self.event_triggered = event_triggered
 
         self.current_duration = duration
         self.current_mortality = mortality
 
-        amount_per_med = get_amount_cat_for_one_medic(game.clan)
-        if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
-                                            amount_per_med):
-            self.current_duration = medicine_duration
-            self.current_mortality = medicine_mortality
+        #amount_per_med = get_amount_cat_for_one_medic(game.clan)
+        #if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
+        #                                    amount_per_med):
+        #    self.current_duration = medicine_duration
+        #    self.current_mortality = medicine_mortality
 
     @property
     def current_duration(self):
         """
-        TODO: DOCS
+        The current duration of this illness with respect if the clan has enough medicine cats.
         """
         return self._current_duration
 
     @current_duration.setter
     def current_duration(self, value):
         """
-        TODO: DOCS
+        If a the current duration is set, check if the clan has enough medicine cats and the bonus can be applied.
         """
         amount_per_med = get_amount_cat_for_one_medic(game.clan)
         if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
@@ -135,14 +135,14 @@ class Illness:
     @property
     def current_mortality(self):
         """
-        TODO: DOCS
+        The current mortality of this illness with respect if the clan has enough medicine cats.
         """
         return self._current_mortality
 
     @current_mortality.setter
     def current_mortality(self, value):
         """
-        TODO: DOCS
+        If a the current mortality is set, check if the clan has enough medicine cats and the bonus can be applied.
         """
         amount_per_med = get_amount_cat_for_one_medic(game.clan)
         if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
@@ -152,6 +152,9 @@ class Illness:
 
         self._current_mortality = value
 
+    def __getitem__(self, key):
+        """Allows you to treat this like a dictionary if you want."""
+        return getattr(self, key)
 
 # ---------------------------------------------------------------------------- #
 #                                   Injuries                                   #
@@ -160,50 +163,55 @@ class Illness:
 
 class Injury:
     """
-    TODO: DOCS
+    If a cat gets hurts one instance of this class is created and added to the cat.
     """
 
     def __init__(self,
-                 name,
-                 severity,
-                 duration,
-                 medicine_duration,
-                 mortality,
-                 risks=None,
-                 illness_infectiousness=None,
-                 also_got=None,
-                 cause_permanent=None,
-                 herbs=None,
-                 event_triggered=False):
+                 name: str,
+                 moon_start: int,
+                 severity: str,
+                 mortality: int,
+                 duration: int,
+                 medicine_duration: int,
+                 complication: (str|None) = None,
+                 risks: list = None,
+                 illness_infectiousness: list = None,
+                 also_got: list = None,
+                 cause_permanent: list = None,
+                 event_triggered: bool =False):
         self.name = name
+        self.moon_start = moon_start
         self.severity = severity
         self.duration = duration
         self.medicine_duration = medicine_duration
         self.mortality = mortality
-        self.risks = risks
-        self.illness_infectiousness = illness_infectiousness
-        self.also_got = also_got
-        self.cause_permanent = cause_permanent
-        self.herbs = herbs if herbs else []
-        self.new = event_triggered
+        self.complication = complication
+        self.risks = risks if risks else []
+        self.illness_infectiousness = illness_infectiousness if illness_infectiousness else []
+        self.also_got = also_got if also_got else []
+        self.cause_permanent = cause_permanent if cause_permanent else []
+        self.event_triggered = event_triggered
 
         self.current_duration = duration
         self.current_mortality = mortality
 
-        amount_per_med = get_amount_cat_for_one_medic(game.clan)
-        if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
-                                            amount_per_med):
-            self.current_duration = medicine_duration
+        #amount_per_med = get_amount_cat_for_one_medic(game.clan)
+        #if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
+        #                                    amount_per_med):
+        #    self.current_duration = medicine_duration
 
     @property
     def current_duration(self):
         """
-        TODO: DOCS
+        The current mortality of this illness with respect to the used herbs and medicine cat knowledge.
         """
         return self._current_duration
 
     @current_duration.setter
     def current_duration(self, value):
+        """
+        If a the current duration is set, check if the clan has enough medicine cats and the bonus can be applied.
+        """
         amount_per_med = get_amount_cat_for_one_medic(game.clan)
         if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
                                             amount_per_med):
@@ -215,14 +223,20 @@ class Injury:
     @property
     def current_mortality(self):
         """
-        TODO: DOCS
+        If a the current mortality is set, check if the clan has enough medicine cats and the bonus can be applied.
         """
         return self._current_mortality
 
     @current_mortality.setter
     def current_mortality(self, value):
+        """
+        If a the current mortality is set, check if the clan has enough medicine cats and the bonus can be applied.
+        """
         self._current_mortality = value
 
+    def __getitem__(self, key):
+        """Allows you to treat this like a dictionary if you want."""
+        return getattr(self, key)
 
 # ---------------------------------------------------------------------------- #
 #                             Permanent Conditions                             #
@@ -231,27 +245,29 @@ class Injury:
 
 class PermanentCondition:
     """
-    TODO: DOCS
+    If a cat gets a permanent condition one instance of this class is created and added to the cat.
     """
 
     def __init__(self,
-                 name,
-                 severity,
-                 moons_until,
-                 congenital='never',
-                 mortality=0,
-                 risks=None,
-                 illness_infectiousness=None,
-                 herbs=None,
-                 event_triggered=False):
+                 name: str,
+                 moon_start: int,
+                 moons_until: int,
+                 severity: str,
+                 mortality: int = 0,
+                 born_with: bool = False,
+                 complication: (str|None) = None,
+                 risks: list = None,
+                 illness_infectiousness: list = None,
+                 event_triggered: bool = False):
         self.name = name
-        self.severity = severity
-        self.congenital = congenital
+        self.moon_start = moon_start
         self.moons_until = moons_until
+        self.severity = severity
         self.mortality = mortality
-        self.risks = risks
-        self.illness_infectiousness = illness_infectiousness
-        self.herbs = herbs if herbs else []
+        self.born_with = born_with
+        self.complication = complication
+        self.risks = risks if risks else []
+        self.illness_infectiousness = illness_infectiousness if illness_infectiousness else []
         self.new = event_triggered
 
         self.current_mortality = mortality
@@ -263,16 +279,6 @@ class PermanentCondition:
     # moons_until is used if you want a delay between when the cat
     # contracts the condition and when the cat presents that condition
 
-    @property
-    def current_mortality(self):
-        """
-        TODO: DOCS
-        """
-        return self._current_mortality
-
-    @current_mortality.setter
-    def current_mortality(self, value):
-        """
-        TODO: DOCS
-        """
-        self._current_mortality = value
+    def __getitem__(self, key):
+        """Allows you to treat this like a dictionary if you want."""
+        return getattr(self, key)

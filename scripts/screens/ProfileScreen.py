@@ -1607,8 +1607,8 @@ class ProfileScreen(Screens):
                 text_list.append(f"{insert} 1 moon")
             
             # infected or festering
-            if 'complication' in keys:
-                complication = self.the_cat.injuries[name]["complication"]
+            if "complication" in keys:
+                complication = self.the_cat.injuries[name].complication
                 if complication is not None:
                     if 'a festering wound' in self.the_cat.illnesses:
                         complication = 'festering'

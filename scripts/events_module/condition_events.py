@@ -5,7 +5,7 @@ from copy import deepcopy
 from scripts.cat.cats import Cat
 from scripts.cat.history import History
 from scripts.cat.pelts import Pelt
-from scripts.conditions import medical_cats_condition_fulfilled, get_amount_cat_for_one_medic
+from scripts.conditions import PermanentCondition, medical_cats_condition_fulfilled, get_amount_cat_for_one_medic
 from scripts.utility import event_text_adjust, get_med_cats, change_relationship_values, change_clan_relations, \
     history_text_adjust
 from scripts.game_structure.game_essentials import game
@@ -494,12 +494,12 @@ class Condition_Events():
                 if illness in ['an infected wound', 'a festering wound']:
                     for injury in cat.injuries:
                         keys = cat.injuries[injury].keys()
-                        if 'complication' in keys:
-                            cat.injuries[injury]['complication'] = None
+                        if "complication" in keys:
+                            cat.injuries[injury]["complication"] = None
                     for condition in cat.permanent_condition:
                         keys = cat.permanent_condition[condition].keys()
-                        if 'complication' in keys:
-                            cat.permanent_condition[condition]['complication'] = None
+                        if "complication" in keys:
+                            cat.permanent_condition[condition]["complication"] = None
                 cat.healed_condition = False
 
                 # move to next illness, the cat can't get a risk from an illness that has healed
@@ -905,10 +905,10 @@ class Condition_Events():
                     elif new_condition_name == 'a festering wound':
                         complication = 'festering'
                     if complication is not None:
-                        if 'complication' in keys:
-                            dictionary[condition]['complication'] = complication
+                        if "complication" in keys:
+                            dictionary[condition]["complication"] = complication
                         else:
-                            dictionary[condition].update({'complication': complication})
+                            dictionary[condition].update({"complication": complication})
                     break
                 elif new_condition_name in Condition_Events.PERMANENT:
                     cat.get_permanent_condition(new_condition_name, event_triggered=event_triggered)
@@ -937,16 +937,14 @@ class Condition_Events():
             return
 
         if usable_herbs:
-            keys = conditions[condition].keys()
             # determine the effect of the herb
             possible_effects = []
-            if conditions[condition]['mortality'] != 0:
+            if conditions[condition].mortality != 0:
                 possible_effects.append('mortality')
-            if conditions[condition]["risks"]:
+            if conditions[condition].risks:
                 possible_effects.append('risks')
-            if 'duration' in keys:
-                if conditions[condition]['duration'] > 1:
-                    possible_effects.append('duration')
+            if not isinstance(conditions[condition], PermanentCondition) and conditions[condition].duration > 1:
+                possible_effects.append('duration')
             if not possible_effects:
                 return
 
@@ -990,7 +988,7 @@ class Condition_Events():
                     conditions[condition]["mortality"] = 1
             elif effect == 'duration':
                 effect_message = 'They will heal sooner.'
-                conditions[condition]["duration"] -= 1
+                conditions[condition].duration -= 1
             elif effect == 'risks':
                 effect_message = 'The risks associated with their condition are lowered.'
                 for risk in conditions[condition]["risks"]:

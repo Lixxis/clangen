@@ -1376,11 +1376,11 @@ class Cat():
         if not self.is_ill():
             return True
 
-        if self.illnesses[illness]["event_triggered"]:
-            self.illnesses[illness]["event_triggered"] = False
+        if self.illnesses[illness].event_triggered:
+            self.illnesses[illness].event_triggered = False
             return True
 
-        mortality = self.illnesses[illness]["mortality"]
+        mortality = self.illnesses[illness].mortality
 
         # leader should have a higher chance of death
         if self.status == "leader" and mortality != 0:
@@ -1608,6 +1608,7 @@ class Cat():
 
         new_illness = Illness(
             name=name,
+            moon_start=game.clan.age if game.clan else 0,
             severity=illness_severity,
             mortality=mortality,
             infectiousness=illness["infectiousness"],
@@ -1619,15 +1620,7 @@ class Cat():
         )
 
         if new_illness.name not in self.illnesses:
-            self.illnesses[new_illness.name] = {
-                "severity": new_illness.severity,
-                "mortality": new_illness.current_mortality,
-                "infectiousness": new_illness.infectiousness,
-                "duration": new_illness.duration,
-                "moon_start": game.clan.age if game.clan else 0,
-                "risks": new_illness.risks,
-                "event_triggered": new_illness.new
-            }
+            self.illnesses[new_illness.name] = new_illness
 
     def get_injured(self, name, event_triggered=False, lethal=True, severity='default'):
         if game.clan and game.clan.game_mode == "classic":
@@ -1671,10 +1664,12 @@ class Cat():
 
         new_injury = Injury(
             name=name,
+            moon_start=game.clan.age if game.clan else 0,
             severity=injury_severity,
             duration=injury["duration"],
             medicine_duration=duration,
             mortality=mortality,
+            complication=None,
             risks=injury["risks"],
             illness_infectiousness=injury["illness_infectiousness"],
             also_got=injury["also_got"],
@@ -1683,17 +1678,7 @@ class Cat():
         )
 
         if new_injury.name not in self.injuries:
-            self.injuries[new_injury.name] = {
-                "severity": new_injury.severity,
-                "mortality": new_injury.current_mortality,
-                "duration": new_injury.duration,
-                "moon_start": game.clan.age if game.clan else 0,
-                "illness_infectiousness": new_injury.illness_infectiousness,
-                "risks": new_injury.risks,
-                "complication": None,
-                "cause_permanent": new_injury.cause_permanent,
-                "event_triggered": new_injury.new
-            }
+            self.injuries[new_injury.name] = new_injury
 
         if len(new_injury.also_got) > 0 and not int(random() * 5):
             avoided = False
@@ -1781,27 +1766,20 @@ class Cat():
 
         new_perm_condition = PermanentCondition(
             name=name,
+            moon_start=game.clan.age if game.clan else 0,
+            moons_until=moons_until,
             severity=condition["severity"],
             congenital=condition["congenital"],
-            moons_until=moons_until,
             mortality=mortality,
+            born_with=born_with,
+            complication=None,
             risks=condition["risks"],
             illness_infectiousness=condition["illness_infectiousness"],
             event_triggered=event_triggered
         )
 
         if new_perm_condition.name not in self.permanent_condition:
-            self.permanent_condition[new_perm_condition.name] = {
-                "severity": new_perm_condition.severity,
-                "born_with": born_with,
-                "moons_until": new_perm_condition.moons_until,
-                "moon_start": game.clan.age if game.clan else 0,
-                "mortality": new_perm_condition.current_mortality,
-                "illness_infectiousness": new_perm_condition.illness_infectiousness,
-                "risks": new_perm_condition.risks,
-                "complication": None,
-                "event_triggered": new_perm_condition.new
-            }
+            self.permanent_condition = new_perm_condition
             new_condition = True
         return new_condition
 
@@ -1817,7 +1795,6 @@ class Cat():
                 not_working = True
                 break
         return not_working
-
     
     def retire_cat(self):
         """This is only for cats that retire due to health condition"""
@@ -1932,8 +1909,60 @@ class Cat():
         try:
             with open(condition_cat_directory, 'r') as read_file:
                 rel_data = ujson.loads(read_file.read())
-                self.illnesses = rel_data.get("illnesses", {})
-                self.injuries = rel_data.get("injuries", {})
+                # ILLNESSES
+                for name, value in rel_data.get("illnesses", {}).items():
+                    if name not in ILLNESSES:
+                        print(f"WARNING: loaded illness {name} is not in the illnesses collection.")
+                        continue
+                    self.illnesses[name] = Illness(
+                        name=name,
+                        moon_start=value["moon_start"],
+                        severity=value["severity"],
+                        mortality=value["mortality"],
+                        infectiousness=value["infectiousness"],
+                        duration=value["duration"],
+                        medicine_duration=ILLNESSES[name]["medicine_duration"],
+                        medicine_mortality=ILLNESSES[name]["medicine_mortality"][self.age],
+                        risks=value["risks"],
+                        event_triggered=value["event_triggered"]
+                    )
+
+                # INJURIES
+                for name, value in rel_data.get("injuries", {}).items():
+                    if name not in INJURIES:
+                        print(f"WARNING: loaded injury {name} is not in the injuries collection.")
+                        continue
+                    self.injuries[name] = Injury(
+                        name=name,
+                        moon_start=value["moon_start"],
+                        severity=value["severity"],
+                        mortality=value["mortality"],
+                        duration=value["duration"],
+                        medicine_duration=INJURIES[name]["medicine_duration"],
+                        complication=value["complication"],
+                        risks=value["risks"],
+                        illness_infectiousness=value["illness_infectiousness"],
+                        cause_permanent=value["cause_permanent"],
+                        event_triggered=value["event_triggered"]
+                    )
+                
+                # PERMANENT CONDITIONS
+                for name, value in rel_data.get("permanent conditions", {}).items():
+                    if name not in PERMANENT:
+                        print(f"WARNING: loaded permanent condition {name} is not in the permanent conditions collection.")
+                        continue
+                    self.permanent_condition[name] = PermanentCondition(
+                        name=name,
+                        moon_start=value["moon_start"],
+                        moons_until=value["moons_until"],
+                        severity=value["severity"],
+                        mortality=value["mortality"],
+                        born_with=value["born_with"],
+                        risks=value["risks"],
+                        illness_infectiousness=value["illness_infectiousness"],
+                        complication=value["complication"],
+                        event_triggered=value["event_triggered"]
+                    )
                 self.permanent_condition = rel_data.get("permanent conditions", {})
 
             if "paralyzed" in self.permanent_condition and not self.pelt.paralyzed:
@@ -2100,7 +2129,7 @@ class Cat():
         if is_former_mentor and not game.clan.clan_settings['romantic with former mentor']:
             return False
 
-		#current mentor
+        #current mentor
         if other_cat.ID in self.apprentice or self.ID in other_cat.apprentice:
             return False
 
