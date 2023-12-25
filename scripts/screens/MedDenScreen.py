@@ -456,10 +456,10 @@ class MedDenScreen(Screens):
                 condition_list.extend(cat.injuries.keys())
             if cat.illnesses:
                 condition_list.extend(cat.illnesses.keys())
-            if cat.permanent_condition:
-                for condition in cat.permanent_condition:
-                    if cat.permanent_condition[condition]["moons_until"] == -2:
-                        condition_list.extend(cat.permanent_condition.keys())
+            if cat.permanent_conditions:
+                for condition in cat.permanent_conditions:
+                    if cat.permanent_conditions[condition]["moons_until"] == -2:
+                        condition_list.extend(cat.permanent_conditions.keys())
             conditions = ",<br>".join(condition_list)
 
             self.cat_buttons["able_cat" + str(i)] = UISpriteButton(scale(pygame.Rect

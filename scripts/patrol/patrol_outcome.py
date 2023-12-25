@@ -533,7 +533,7 @@ class PatrolOutcome():
                 
                 old_injuries = list(_cat.injuries.keys())
                 old_illnesses = list(_cat.illnesses.keys())
-                old_perm_cond = list(_cat.permanent_condition.keys())
+                old_perm_cond = list(_cat.permanent_conditions.keys())
                 give_injury = choice(possible_injuries)
                 if give_injury in INJURIES:
                     _cat.get_injured(give_injury, lethal=lethal)
@@ -548,7 +548,7 @@ class PatrolOutcome():
                 given_conditions = []
                 given_conditions.extend([x for x in _cat.injuries.keys() if x not in old_injuries])
                 given_conditions.extend([x for x in _cat.illnesses.keys() if x not in old_illnesses])
-                given_conditions.extend([x for x in _cat.permanent_condition.keys() if x not in old_perm_cond])
+                given_conditions.extend([x for x in _cat.permanent_conditions.keys() if x not in old_perm_cond])
                 # History is also ties to "no_results"  
                 if not block.get("no_results"):
                     for given_condition in given_conditions:

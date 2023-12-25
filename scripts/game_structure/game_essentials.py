@@ -419,7 +419,7 @@ class Game():
             # should allow closing and reloading to clear conditions on
             # classic, just in case a condition is accidently applied.
             if game.game_mode != "classic":
-                inter_cat.save_condition()
+                inter_cat.save_conditions()
 
             if inter_cat.history:
                 inter_cat.save_history(directory + '/history')

@@ -275,11 +275,11 @@ class Pregnancy_Events():
 
         if clan.game_mode != 'classic':
             try:
-                if cat.injuries["pregnant"]["severity"] == "minor":
-                    cat.injuries["pregnant"]["severity"] = "major"
+                if cat.injuries["pregnant"].severity == "minor":
+                    cat.injuries["pregnant"].severity = "major"
                     text += choice(Pregnancy_Events.PREGNANT_STRINGS["major_severity"])
             except:
-                print("Is this an old save? Cat does not have the pregnant condition")
+                print(f"Is this an old save? Cat {cat.ID} does not have the pregnant condition")
 
         text = event_text_adjust(Cat, text, cat, clan=clan)
         game.cur_events_list.append(Single_Event(text, "birth_death", cat.ID))
@@ -362,7 +362,7 @@ class Pregnancy_Events():
 
         if clan.game_mode != 'classic':
             try:
-                death_chance = cat.injuries["pregnant"]["mortality"]
+                death_chance = cat.injuries["pregnant"].current_mortality
             except:
                 death_chance = 40
         else:
@@ -697,10 +697,10 @@ class Pregnancy_Events():
             if game.clan and not int(random.random() * game.config["cat_generation"]["base_permanent_condition"]) \
                     and game.clan.game_mode != 'classic':
                 kit.congenital_condition(kit)
-                for condition in kit.permanent_condition:
-                    if kit.permanent_condition[condition] == 'born without a leg':
+                for condition in kit.permanent_conditions:
+                    if kit.permanent_conditions[condition] == 'born without a leg':
                         kit.pelt.scars.append('NOPAW')
-                    elif kit.permanent_condition[condition] == 'born without a tail':
+                    elif kit.permanent_conditions[condition] == 'born without a tail':
                         kit.pelt.scars.append('NOTAIL')
                 Condition_Events.handle_already_disabled(kit)
 

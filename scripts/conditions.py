@@ -106,12 +106,13 @@ class Illness:
         self.current_duration = duration
         self.current_mortality = mortality
 
-        #amount_per_med = get_amount_cat_for_one_medic(game.clan)
-        #if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
-        #                                    amount_per_med):
-        #    self.current_duration = medicine_duration
-        #    self.current_mortality = medicine_mortality
+        amount_per_med = get_amount_cat_for_one_medic(game.clan)
+        if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
+                                            amount_per_med):
+            self.current_duration = medicine_duration
+            self.current_mortality = medicine_mortality
 
+    # Those properties might change / be removed because it will be updated with herbs?
     @property
     def current_duration(self):
         """
@@ -195,11 +196,12 @@ class Injury:
         self.current_duration = duration
         self.current_mortality = mortality
 
-        #amount_per_med = get_amount_cat_for_one_medic(game.clan)
-        #if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
-        #                                    amount_per_med):
-        #    self.current_duration = medicine_duration
+        amount_per_med = get_amount_cat_for_one_medic(game.clan)
+        if medical_cats_condition_fulfilled(game.cat_class.all_cats.values(),
+                                            amount_per_med):
+            self.current_duration = medicine_duration
 
+    # Those properties might change / be removed because it will be updated with herbs?
     @property
     def current_duration(self):
         """
@@ -268,7 +270,7 @@ class PermanentCondition:
         self.complication = complication
         self.risks = risks if risks else []
         self.illness_infectiousness = illness_infectiousness if illness_infectiousness else []
-        self.new = event_triggered
+        self.event_triggered = event_triggered
 
         self.current_mortality = mortality
 
@@ -278,6 +280,20 @@ class PermanentCondition:
 
     # moons_until is used if you want a delay between when the cat
     # contracts the condition and when the cat presents that condition
+
+    @property
+    def current_mortality(self):
+        """
+        If a the current mortality is set, check if the clan has enough medicine cats and the bonus can be applied.
+        """
+        return self._current_mortality
+
+    @current_mortality.setter
+    def current_mortality(self, value):
+        """
+        If a the current mortality is set, check if the clan has enough medicine cats and the bonus can be applied.
+        """
+        self._current_mortality = value
 
     def __getitem__(self, key):
         """Allows you to treat this like a dictionary if you want."""

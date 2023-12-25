@@ -881,9 +881,9 @@ class ProfileScreen(Screens):
                 output += f"nutrition status: 100%\n"
 
         if the_cat.is_disabled():
-            for condition in the_cat.permanent_condition:
-                if the_cat.permanent_condition[condition]['born_with'] is True and \
-                        the_cat.permanent_condition[condition]["moons_until"] != -2:
+            for condition in the_cat.permanent_conditions:
+                if the_cat.permanent_conditions[condition]['born_with'] is True and \
+                        the_cat.permanent_conditions[condition]["moons_until"] != -2:
                     continue
                 output += 'has a permanent condition'
 
@@ -1497,8 +1497,8 @@ class ProfileScreen(Screens):
             MANAGER)
         
         # gather a list of all the conditions and info needed.
-        all_illness_injuries = [(i, self.get_condition_details(i)) for i in self.the_cat.permanent_condition if
-                                not (self.the_cat.permanent_condition[i]['born_with'] and self.the_cat.permanent_condition[i]["moons_until"] != -2)]
+        all_illness_injuries = [(i, self.get_condition_details(i)) for i in self.the_cat.permanent_conditions if
+                                not (self.the_cat.permanent_conditions[i]['born_with'] and self.the_cat.permanent_conditions[i]["moons_until"] != -2)]
         all_illness_injuries.extend([(i, self.get_condition_details(i)) for i in self.the_cat.injuries])
         all_illness_injuries.extend([(i, self.get_condition_details(i)) for i in self.the_cat.illnesses if
                                     i not in ("an infected wound", "a festering wound")])
@@ -1564,16 +1564,14 @@ class ProfileScreen(Screens):
     def get_condition_details(self, name):
         """returns the relevant condition details as one string with line breaks"""
         text_list = []
-        cat_name = self.the_cat.name
-
         # collect details for perm conditions
-        if name in self.the_cat.permanent_condition:
+        if name in self.the_cat.permanent_conditions:
             # display if the cat was born with it
-            if self.the_cat.permanent_condition[name]["born_with"] is True:
+            if self.the_cat.permanent_conditions[name]["born_with"] is True:
                 text_list.append(f"born with this condition")
             else:
                 # moons with the condition if not born with condition
-                moons_with = game.clan.age - self.the_cat.permanent_condition[name]["moon_start"]
+                moons_with = game.clan.age - self.the_cat.permanent_conditions[name]["moon_start"]
                 if moons_with != 1:
                     text_list.append(f"has had this condition for {moons_with} moons")
                 else:
@@ -1583,7 +1581,7 @@ class ProfileScreen(Screens):
             text_list.append('permanent condition')
 
             # infected or festering
-            complication = self.the_cat.permanent_condition[name].get("complication", None)
+            complication = self.the_cat.permanent_conditions[name].get("complication", None)
             if complication is not None:
                 if 'a festering wound' in self.the_cat.illnesses:
                     complication = 'festering'
@@ -1591,9 +1589,9 @@ class ProfileScreen(Screens):
 
         # collect details for injuries
         if name in self.the_cat.injuries:
+            relevant_injury = self.the_cat.injuries[name]
             # moons with condition
-            keys = self.the_cat.injuries[name].keys()
-            moons_with = game.clan.age - self.the_cat.injuries[name]["moon_start"]
+            moons_with = game.clan.age - relevant_injury.moon_start
             insert = 'has been hurt for'
             
             if name == 'recovering from birth':
@@ -1607,7 +1605,7 @@ class ProfileScreen(Screens):
                 text_list.append(f"{insert} 1 moon")
             
             # infected or festering
-            if "complication" in keys:
+            if relevant_injury.complication:
                 complication = self.the_cat.injuries[name].complication
                 if complication is not None:
                     if 'a festering wound' in self.the_cat.illnesses:

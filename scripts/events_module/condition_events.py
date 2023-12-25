@@ -493,13 +493,11 @@ class Condition_Events():
                 # make sure complications get reset if infection or fester were healed
                 if illness in ['an infected wound', 'a festering wound']:
                     for injury in cat.injuries:
-                        keys = cat.injuries[injury].keys()
-                        if "complication" in keys:
-                            cat.injuries[injury]["complication"] = None
-                    for condition in cat.permanent_condition:
-                        keys = cat.permanent_condition[condition].keys()
-                        if "complication" in keys:
-                            cat.permanent_condition[condition]["complication"] = None
+                        if cat.injuries[injury].complication:
+                            cat.injuries[injury].complication = None
+                    for condition in cat.permanent_conditions:
+                        if cat.injuries[injury].complication:
+                            cat.permanent_conditions[condition].complication = None
                 cat.healed_condition = False
 
                 # move to next illness, the cat can't get a risk from an illness that has healed
@@ -596,7 +594,7 @@ class Condition_Events():
 
                 if condition_got is not None:
                     # gather potential event strings for gotten condition
-                    possible_string_list = Condition_Events.PERMANENT_CONDITION_GOT_STRINGS[injury][condition_got]
+                    possible_string_list = Condition_Events.permanent_conditions_GOT_STRINGS[injury][condition_got]
 
                     # choose event string and ensure Clan's med cat number aligns with event text
                     random_index = random.randrange(0, len(possible_string_list))
@@ -649,7 +647,7 @@ class Condition_Events():
             "partial hearing loss": "deaf"
         }
 
-        conditions = deepcopy(cat.permanent_condition)
+        conditions = deepcopy(cat.permanent_conditions)
         for condition in conditions:
 
             # checking if the cat has a congenital condition to reveal and handling duration and death
@@ -731,7 +729,7 @@ class Condition_Events():
                 Condition_Events.use_herbs(cat, condition, conditions, Condition_Events.PERMANENT)
 
             # give risks
-            Condition_Events.give_risks(cat, event_list, condition, condition_progression, conditions, cat.permanent_condition)
+            Condition_Events.give_risks(cat, event_list, condition, condition_progression, conditions, cat.permanent_conditions)
 
         Condition_Events.determine_retirement(cat, triggered)
 
@@ -749,11 +747,11 @@ class Condition_Events():
         if not triggered and not cat.dead and cat.status not in \
                 ['leader', 'medicine cat', 'kitten', 'newborn', 'medicine cat apprentice', 'mediator',
                  'mediator apprentice', 'elder']:
-            for condition in cat.permanent_condition:
-                if cat.permanent_condition[condition]['severity'] not in ['major', 'severe']:
+            for condition in cat.permanent_conditions:
+                if cat.permanent_conditions[condition]['severity'] not in ['major', 'severe']:
                     continue
                     
-                if cat.permanent_condition[condition]['severity'] == "severe":
+                if cat.permanent_conditions[condition]['severity'] == "severe":
                     # Higher changes for "severe". These are meant to be nearly 100% without
                     # being 100%
                     retire_chances = {
@@ -808,9 +806,9 @@ class Condition_Events():
     @staticmethod
     def give_risks(cat, event_list, condition, progression, conditions, dictionary):
         event_triggered = False
-        if dictionary == cat.permanent_condition:
+        if dictionary == cat.permanent_conditions:
             event_triggered = True
-        for risk in conditions[condition]["risks"]:
+        for risk in conditions[condition].risks:
             if risk["name"] in (cat.injuries or cat.illnesses):
                 continue
             if risk["name"] == 'an infected wound' and 'a festering wound' in cat.illnesses:
@@ -840,7 +838,7 @@ class Condition_Events():
                 new_condition_name = risk['name']
 
                 # lower risk of getting it again if not a perm condition
-                if dictionary != cat.permanent_condition:
+                if dictionary != cat.permanent_conditions:
                     saved_condition = dictionary[condition]["risks"]
                     for old_risk in saved_condition:
                         if old_risk['name'] == risk['name']:
@@ -898,17 +896,13 @@ class Condition_Events():
                     cat.get_ill(new_condition_name, event_triggered=event_triggered)
                     if dictionary == cat.illnesses or removed_condition:
                         break
-                    keys = dictionary[condition].keys()
                     complication = None
                     if new_condition_name == 'an infected wound':
                         complication = 'infected'
                     elif new_condition_name == 'a festering wound':
                         complication = 'festering'
                     if complication is not None:
-                        if "complication" in keys:
-                            dictionary[condition]["complication"] = complication
-                        else:
-                            dictionary[condition].update({"complication": complication})
+                        dictionary[condition].complication = complication
                     break
                 elif new_condition_name in Condition_Events.PERMANENT:
                     cat.get_permanent_condition(new_condition_name, event_triggered=event_triggered)
@@ -939,7 +933,7 @@ class Condition_Events():
         if usable_herbs:
             # determine the effect of the herb
             possible_effects = []
-            if conditions[condition].mortality != 0:
+            if conditions[condition].current_mortality != 0:
                 possible_effects.append('mortality')
             if conditions[condition].risks:
                 possible_effects.append('risks')
@@ -983,15 +977,15 @@ class Condition_Events():
             effect_message = 'this should not show up'
             if effect == 'mortality':
                 effect_message = 'They will be less likely to die.'
-                conditions[condition]["mortality"] += 11 - modifier + int(amount_used * 1.5)
-                if conditions[condition]["mortality"] < 1:
-                    conditions[condition]["mortality"] = 1
+                conditions[condition].current_mortality += 11 - modifier + int(amount_used * 1.5)
+                if conditions[condition].current_mortality < 1:
+                    conditions[condition].current_mortality = 1
             elif effect == 'duration':
                 effect_message = 'They will heal sooner.'
                 conditions[condition].duration -= 1
             elif effect == 'risks':
                 effect_message = 'The risks associated with their condition are lowered.'
-                for risk in conditions[condition]["risks"]:
+                for risk in conditions[condition].risks:
                     risk["chance"] += 11 - modifier + int(amount_used * 1.5)
                     if risk["chance"] < 0:
                         risk["chance"] = 0
@@ -1000,9 +994,9 @@ class Condition_Events():
             game.herb_events_list.append(text)
         else:
             # if they didn't get any herbs, make them more likely to die!! kill the kitties >:)
-            if conditions[condition]["mortality"] > 2:
-                conditions[condition]["mortality"] -= 1
-            for risk in conditions[condition]["risks"]:
+            if conditions[condition].current_mortality > 2:
+                conditions[condition].current_mortality -= 1
+            for risk in conditions[condition].risks:
                 if risk['chance'] > 2:
                     risk['chance'] -= 1
 

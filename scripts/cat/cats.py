@@ -204,7 +204,7 @@ class Cat():
         self.healed_condition = None
         self.leader_death_heal = None
         self.also_got = False
-        self.permanent_condition = {}
+        self.permanent_conditions = {}
         self.df = False
         self.experience_level = None
         
@@ -1380,7 +1380,7 @@ class Cat():
             self.illnesses[illness].event_triggered = False
             return True
 
-        mortality = self.illnesses[illness].mortality
+        mortality = self.illnesses[illness].current_mortality
 
         # leader should have a higher chance of death
         if self.status == "leader" and mortality != 0:
@@ -1407,7 +1407,7 @@ class Cat():
 
         moons_with = game.clan.age - self.illnesses[illness]["moon_start"]
 
-        if self.illnesses[illness]["duration"] - moons_with <= 0:
+        if self.illnesses[illness].duration - moons_with <= 0:
             self.healed_condition = True
             return False
 
@@ -1416,11 +1416,11 @@ class Cat():
         if not self.is_injured():
             return True
 
-        if self.injuries[injury]["event_triggered"] is True:
-            self.injuries[injury]["event_triggered"] = False
+        if self.injuries[injury].event_triggered:
+            self.injuries[injury].event_triggered = False
             return True
 
-        mortality = self.injuries[injury]["mortality"]
+        mortality = self.injuries[injury].current_mortality
 
         # leader should have a higher chance of death
         if self.status == "leader" and mortality != 0:
@@ -1435,9 +1435,12 @@ class Cat():
             return False
 
         moons_with = game.clan.age - self.injuries[injury]["moon_start"]
+        
+        if self.ID == "34":
+            print("TODO")
 
         # if the cat has an infected wound, the wound shouldn't heal till the illness is cured
-        if not self.injuries[injury]["complication"] and self.injuries[injury]["duration"] - moons_with <= 0:
+        if not self.injuries[injury].complication and self.injuries[injury].current_duration - moons_with <= 0:
             self.healed_condition = True
             return False
 
@@ -1446,23 +1449,23 @@ class Cat():
         if not self.is_disabled():
             return "skip"
 
-        if self.permanent_condition[condition]["event_triggered"]:
-            self.permanent_condition[condition]["event_triggered"] = False
+        if self.permanent_conditions[condition].event_triggered:
+            self.permanent_conditions[condition].event_triggered = False
             return "skip"
 
-        mortality = self.permanent_condition[condition]["mortality"]
-        moons_until = self.permanent_condition[condition]["moons_until"]
-        born_with = self.permanent_condition[condition]["born_with"]
+        mortality = self.permanent_conditions[condition].current_mortality
+        moons_until = self.permanent_conditions[condition].moons_until
+        born_with = self.permanent_conditions[condition].born_with
 
         # handling the countdown till a congenital condition is revealed
         if moons_until is not None and moons_until >= 0 and born_with is True:
-            self.permanent_condition[condition]["moons_until"] = int(moons_until - 1)
-            self.permanent_condition[condition]["moons_with"] = 0
-            if self.permanent_condition[condition]["moons_until"] != -1:
+            self.permanent_conditions[condition].moons_until = int(moons_until - 1)
+            self.permanent_conditions[condition]["moons_with"] = 0
+            if self.permanent_conditions[condition].moons_until != -1:
                 return "skip"
-        if self.permanent_condition[condition]["moons_until"] == -1 and \
-                self.permanent_condition[condition]["born_with"] is True:
-            self.permanent_condition[condition]["moons_until"] = -2
+        if self.permanent_conditions[condition].moons_until == -1 and \
+                self.permanent_conditions[condition].born_with is True:
+            self.permanent_conditions[condition].moons_until = -2
             return "reveal"
 
         # leader should have a higher chance of death
@@ -1778,8 +1781,8 @@ class Cat():
             event_triggered=event_triggered
         )
 
-        if new_perm_condition.name not in self.permanent_condition:
-            self.permanent_condition = new_perm_condition
+        if new_perm_condition.name not in self.permanent_conditions:
+            self.permanent_conditions = new_perm_condition
             new_condition = True
         return new_condition
 
@@ -1824,7 +1827,7 @@ class Cat():
 
     def is_disabled(self):
         is_disabled = True
-        if len(self.permanent_condition) <= 0:
+        if len(self.permanent_conditions) <= 0:
             is_disabled = False
         return is_disabled is not False
 
@@ -1864,7 +1867,7 @@ class Cat():
                 game.cur_events_list.append(Single_Event(text, "health", [self.ID, cat.ID]))
                 self.get_ill(illness_name)
 
-    def save_condition(self):
+    def save_conditions(self):
         # save conditions for each cat
         clanname = None
         if game.switches['clan_name'] != '':
@@ -1891,7 +1894,7 @@ class Cat():
             conditions["injuries"] = self.injuries
 
         if self.is_disabled():
-            conditions["permanent conditions"] = self.permanent_condition
+            conditions["permanent conditions"] = self.permanent_conditions
 
         game.safe_save(condition_file_path, conditions)
 
@@ -1951,7 +1954,7 @@ class Cat():
                     if name not in PERMANENT:
                         print(f"WARNING: loaded permanent condition {name} is not in the permanent conditions collection.")
                         continue
-                    self.permanent_condition[name] = PermanentCondition(
+                    self.permanent_conditions[name] = PermanentCondition(
                         name=name,
                         moon_start=value["moon_start"],
                         moons_until=value["moons_until"],
@@ -1963,9 +1966,8 @@ class Cat():
                         complication=value["complication"],
                         event_triggered=value["event_triggered"]
                     )
-                self.permanent_condition = rel_data.get("permanent conditions", {})
 
-            if "paralyzed" in self.permanent_condition and not self.pelt.paralyzed:
+            if "paralyzed" in self.permanent_conditions and not self.pelt.paralyzed:
                 self.pelt.paralyzed = True
 
         except Exception as e:

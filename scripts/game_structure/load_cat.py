@@ -199,9 +199,9 @@ def json_load():
         cat.load_conditions()
 
         # this is here to handle paralyzed cats in old saves
-        if cat.pelt.paralyzed and "paralyzed" not in cat.permanent_condition:
+        if cat.pelt.paralyzed and "paralyzed" not in cat.permanent_conditions:
             cat.get_permanent_condition("paralyzed")
-        elif "paralyzed" in cat.permanent_condition and not cat.pelt.paralyzed:
+        elif "paralyzed" in cat.permanent_conditions and not cat.pelt.paralyzed:
             cat.pelt.paralyzed = True
 
         # load the relationships
@@ -490,12 +490,12 @@ def version_convert(version_info):
                     c.illnesses[con].pop("moons_with")
                 c.illnesses[con]["moon_start"] = game.clan.age - moons_with
                 
-            for con in c.permanent_condition:
+            for con in c.permanent_conditions:
                 moons_with = 0
-                if "moons_with" in c.permanent_condition[con]:
-                    moons_with = c.permanent_condition[con]["moons_with"]
-                    c.permanent_condition[con].pop("moons_with")
-                c.permanent_condition[con]["moon_start"] = game.clan.age - moons_with
+                if "moons_with" in c.permanent_conditions[con]:
+                    moons_with = c.permanent_conditions[con]["moons_with"]
+                    c.permanent_conditions[con].pop("moons_with")
+                c.permanent_conditions[con]["moon_start"] = game.clan.age - moons_with
             
     if version < 3 and game.clan.freshkill_pile:
         # freshkill start for older clans
