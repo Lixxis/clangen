@@ -594,7 +594,7 @@ class Condition_Events():
 
                 if condition_got is not None:
                     # gather potential event strings for gotten condition
-                    possible_string_list = Condition_Events.permanent_conditions_GOT_STRINGS[injury][condition_got]
+                    possible_string_list = Condition_Events.PERMANENT_CONDITION_GOT_STRINGS[injury][condition_got]
 
                     # choose event string and ensure Clan's med cat number aligns with event text
                     random_index = random.randrange(0, len(possible_string_list))

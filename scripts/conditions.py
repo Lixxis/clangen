@@ -174,7 +174,7 @@ class Injury:
                  mortality: int,
                  duration: int,
                  medicine_duration: int,
-                 complication: (str|None) = None,
+                 complication = None,
                  risks: list = None,
                  illness_infectiousness: list = None,
                  also_got: list = None,
@@ -257,7 +257,7 @@ class PermanentCondition:
                  severity: str,
                  mortality: int = 0,
                  born_with: bool = False,
-                 complication: (str|None) = None,
+                 complication = None,
                  risks: list = None,
                  illness_infectiousness: list = None,
                  event_triggered: bool = False):
