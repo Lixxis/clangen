@@ -256,6 +256,7 @@ class PermanentCondition:
                  moons_until: int,
                  severity: str,
                  mortality: int = 0,
+                 congenital: str ='never',
                  born_with: bool = False,
                  complication = None,
                  risks: list = None,
@@ -265,6 +266,7 @@ class PermanentCondition:
         self.moon_start = moon_start
         self.moons_until = moons_until
         self.severity = severity
+        self.congenital = congenital
         self.mortality = mortality
         self.born_with = born_with
         self.complication = complication
