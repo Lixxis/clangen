@@ -1,6 +1,8 @@
 import os
 import random
 from math import floor
+
+from dnd.stats import Stat
 from .game_essentials import game
 from ..cat.history import History
 from ..cat.skills import CatSkills
@@ -135,7 +137,11 @@ def json_load():
                                               aggress=facets[2], stable=facets[3])
             else:
                 new_cat.personality = Personality(trait=cat["trait"], kit_trait=new_cat.age in ["newborn", "kitten"])
-                
+
+            if "stat" in cat:
+                new_cat.stat = Stat(cat["stat"]["str"],cat["stat"]["dex"],cat["stat"]["con"],cat["stat"]["int"],cat["stat"]["cha"])
+            else:
+                new_cat.stat = Stat()
                 
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = cat["former_mentor"] if "former_mentor" in cat else []

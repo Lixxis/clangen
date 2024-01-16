@@ -134,7 +134,6 @@ class ProfileScreen(Screens):
         self.cat_thought = None
         self.cat_name = None
         self.placeholder_tab_4 = None
-        self.placeholder_tab_3 = None
         self.placeholder_tab_2 = None
         self.backstory_tab_button = None
         self.dangerous_tab_button = None
@@ -147,6 +146,7 @@ class ProfileScreen(Screens):
         self.the_cat = None
         self.checkboxes = {}
         self.profile_elements = {}
+        self.dnd_tab_button = None
 
     def handle_event(self, event):
 
@@ -209,6 +209,8 @@ class ProfileScreen(Screens):
                 self.the_cat.favourite = True
                 self.profile_elements["favourite_button"].show()
                 self.profile_elements["not_favourite_button"].hide()
+            elif event.ui_element == self.dnd_tab_button:
+                self.toggle_dnd_tab()
             else:
                 self.handle_tab_events(event)
 
@@ -409,9 +411,8 @@ class ProfileScreen(Screens):
             object_id="#conditions_tab_button", manager=MANAGER
         )
 
-        self.placeholder_tab_3 = UIImageButton(scale(pygame.Rect((800, 1244), (352, 60))), "",
-                                               object_id="#cat_tab_3_blank_button", starting_height=1, manager=MANAGER)
-        self.placeholder_tab_3.disable()
+        self.dnd_tab_button = UIImageButton(scale(pygame.Rect((800, 1244), (352, 60))), "",
+                                               object_id="#conditions_tab_button", starting_height=1, manager=MANAGER)
 
         self.placeholder_tab_4 = UIImageButton(scale(pygame.Rect((1152, 1244), (352, 60))), "",
                                                object_id="#cat_tab_4_blank_button", manager=MANAGER)
@@ -447,7 +448,7 @@ class ProfileScreen(Screens):
         self.dangerous_tab_button.kill()
         self.backstory_tab_button.kill()
         self.conditions_tab_button.kill()
-        self.placeholder_tab_3.kill()
+        self.dnd_tab_button.kill()
         self.placeholder_tab_4.kill()
         self.inspect_button.kill()
         self.close_current_tab()
@@ -1972,6 +1973,22 @@ class ProfileScreen(Screens):
         elif self.open_tab == 'conditions':
             self.display_conditions_page()
 
+        # DND - stuff Tab
+        elif self.open_tab == 'dnd':
+            if self.history_text_box:
+                self.history_text_box.kill()
+            stat = self.the_cat.stat
+            dnd_string = "strength: " + str(stat.str) + " (" + str(stat.modifier[stat.str]) + ")<br>"
+            dnd_string += "dexterity: " + str(stat.dex) + " (" + str(stat.modifier[stat.dex]) + ")<br>"
+            dnd_string += "constitution: " + str(stat.con) + " (" + str(stat.modifier[stat.con]) + ")<br>"
+            dnd_string += "intelligence: " + str(stat.int) + " (" + str(stat.modifier[stat.int]) + ")<br>"
+            dnd_string += "charisma: " + str(stat.cha) + " (" + str(stat.modifier[stat.cha]) + ")<br>"
+            self.history_text_box = UITextBoxTweaked(
+                dnd_string,scale(pygame.Rect((200, 946), (1200, 298))),
+                object_id="#text_box_26_horizleft_pad_10_14",
+                line_spacing=1, manager=MANAGER
+            )
+
     def close_current_tab(self):
         """Closes current tab. """
         if self.open_tab is None:
@@ -2024,7 +2041,28 @@ class ProfileScreen(Screens):
             self.conditions_background.kill()
             self.condition_container.kill()
 
+        elif self.open_tab == 'dnd':
+            self.backstory_background.kill()
+            self.history_text_box.kill()
         self.open_tab = None
+
+    # DND - stuff
+    
+    def toggle_dnd_tab(self):
+        """Opens the tab with the dnd information."""
+        previous_open_tab = self.open_tab
+
+        # This closes the current tab, so only one can be open at a time
+        self.close_current_tab()
+
+        if previous_open_tab == 'dnd':
+            pass
+        else:
+            self.open_tab = 'dnd'
+            self.backstory_background = pygame_gui.elements.UIImage(scale(pygame.Rect((178, 930), (1240, 314))),
+                                                                    self.backstory_tab)
+            self.backstory_background.disable()
+            self.update_disabled_buttons_and_text()
 
     # ---------------------------------------------------------------------------- #
     #                               cat platforms                                  #

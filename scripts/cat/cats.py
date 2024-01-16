@@ -5,6 +5,8 @@ import os.path
 import itertools
 import sys
 
+from dnd.stats import Stat
+
 from .history import History
 from .skills import CatSkills
 from ..housekeeping.datadir import get_save_dir
@@ -373,6 +375,9 @@ class Cat():
 
         if self.ID not in ["0", None]:
             Cat.insert_cat(self)
+
+		# DND - STUFF
+        self.stat = Stat()
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID
@@ -2924,6 +2929,7 @@ class Cat():
                 "opacity": self.pelt.opacity,
                 "prevent_fading": self.prevent_fading,
                 "favourite": self.favourite,
+                "stat": self.stat.get_stat_dict()
             }
 
 
