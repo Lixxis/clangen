@@ -878,8 +878,8 @@ class Patrol():
                     increment = int(adaption.split("_")[0])
                     new_idx = prey_size.index(chosen_prey_size) + increment
                     # check that the increment does not lead to a overflow
-                    new_idx = new_idx if new_idx <= len(chosen_prey_size) else len(chosen_prey_size)
-                    chosen_prey_size = prey_size[new_idx]
+                    new_idx = new_idx if new_idx < len(prey_size) else len(prey_size)-1
+                    chosen_prey_size = deepcopy(prey_size[new_idx])
 
             # add default prey for fail outcomes - if prey tag is missing
             for outcome in patrol.fail_outcomes:
@@ -905,9 +905,9 @@ class Patrol():
             # get the prey size with the most outcomes
             most_prey_size = ""
             max_occurrences = 0
-            for prey_size, amount in prey_types.items():
+            for size, amount in prey_types.items():
                 if amount >= max_occurrences and most_prey_size != chosen_prey_size:
-                    most_prey_size = prey_size
+                    most_prey_size = size
 
             if chosen_prey_size == most_prey_size:
                 filtered_patrols.append(patrol)
