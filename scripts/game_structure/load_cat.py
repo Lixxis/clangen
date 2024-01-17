@@ -1,8 +1,8 @@
 import os
 import random
 from math import floor
+import logging
 
-from dnd.stats import Stat
 from .game_essentials import game
 from ..cat.history import History
 from ..cat.skills import CatSkills
@@ -18,7 +18,8 @@ from scripts.utility import update_sprite, is_iterable
 from random import choice
 from scripts.cat_relations.inheritance import Inheritance
 
-import logging
+from scripts.dnd.stats import Stats
+
 logger = logging.getLogger(__name__)
 
 def load_cats():
@@ -139,9 +140,9 @@ def json_load():
                 new_cat.personality = Personality(trait=cat["trait"], kit_trait=new_cat.age in ["newborn", "kitten"])
 
             if "stat" in cat:
-                new_cat.stat = Stat(cat["stat"]["str"],cat["stat"]["dex"],cat["stat"]["con"],cat["stat"]["int"],cat["stat"]["cha"])
+                new_cat.stat = Stats(cat["stat"]["str"],cat["stat"]["dex"],cat["stat"]["con"],cat["stat"]["int"],cat["stat"]["cha"])
             else:
-                new_cat.stat = Stat()
+                new_cat.stat = Stats()
                 
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = cat["former_mentor"] if "former_mentor" in cat else []

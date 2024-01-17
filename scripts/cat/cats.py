@@ -5,8 +5,6 @@ import os.path
 import itertools
 import sys
 
-from dnd.stats import Stat
-
 from .history import History
 from .skills import CatSkills
 from ..housekeeping.datadir import get_save_dir
@@ -29,6 +27,7 @@ from scripts.event_class import Single_Event
 from .thoughts import Thoughts
 from scripts.cat_relations.inheritance import Inheritance
 
+from scripts.dnd.stats import Stats
 
 class Cat():
     dead_cats = []
@@ -377,7 +376,7 @@ class Cat():
             Cat.insert_cat(self)
 
 		# DND - STUFF
-        self.stat = Stat()
+        self.stat = Stats()
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID

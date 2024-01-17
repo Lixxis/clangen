@@ -1,6 +1,6 @@
 import random
 
-class Stat:
+class Stats:
     """Represents the dnd stats for one cat."""
     modifier = {
         8: -1,

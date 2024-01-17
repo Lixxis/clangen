@@ -147,6 +147,9 @@ class ProfileScreen(Screens):
         self.checkboxes = {}
         self.profile_elements = {}
         self.dnd_tab_button = None
+        self.dnd_stats_background = None
+        self.dnd_skill_background = None
+        self.dnd_stats_text_box = None
 
     def handle_event(self, event):
 
@@ -412,7 +415,7 @@ class ProfileScreen(Screens):
         )
 
         self.dnd_tab_button = UIImageButton(scale(pygame.Rect((800, 1244), (352, 60))), "",
-                                               object_id="#conditions_tab_button", starting_height=1, manager=MANAGER)
+                                               object_id="#dnd_stats_button", manager=MANAGER)
 
         self.placeholder_tab_4 = UIImageButton(scale(pygame.Rect((1152, 1244), (352, 60))), "",
                                                object_id="#cat_tab_4_blank_button", manager=MANAGER)
@@ -1975,15 +1978,20 @@ class ProfileScreen(Screens):
 
         # DND - stuff Tab
         elif self.open_tab == 'dnd':
-            if self.history_text_box:
-                self.history_text_box.kill()
+            if self.dnd_stats_text_box:
+                self.dnd_stats_text_box.kill()
             stat = self.the_cat.stat
-            dnd_string = "strength: " + str(stat.str) + " (" + str(stat.modifier[stat.str]) + ")<br>"
-            dnd_string += "dexterity: " + str(stat.dex) + " (" + str(stat.modifier[stat.dex]) + ")<br>"
-            dnd_string += "constitution: " + str(stat.con) + " (" + str(stat.modifier[stat.con]) + ")<br>"
-            dnd_string += "intelligence: " + str(stat.int) + " (" + str(stat.modifier[stat.int]) + ")<br>"
-            dnd_string += "charisma: " + str(stat.cha) + " (" + str(stat.modifier[stat.cha]) + ")<br>"
-            self.history_text_box = UITextBoxTweaked(
+            modifier = "+" if stat.modifier[stat.str] >= 0 else ""
+            dnd_string = "strength: " + str(stat.str) + " (" + modifier + str(stat.modifier[stat.str]) + ")<br>"
+            modifier = "+" if stat.modifier[stat.dex] >= 0 else ""
+            dnd_string += "dexterity: " + str(stat.dex) + " (" + modifier + str(stat.modifier[stat.dex]) + ")<br>"
+            modifier = "+" if stat.modifier[stat.con] >= 0 else ""
+            dnd_string += "constitution: " + str(stat.con) + " (" + modifier + str(stat.modifier[stat.con]) + ")<br>"
+            modifier = "+" if stat.modifier[stat.int] >= 0 else ""
+            dnd_string += "intelligence: " + str(stat.int) + " (" + modifier + str(stat.modifier[stat.int]) + ")<br>"
+            modifier = "+" if stat.modifier[stat.cha] >= 0 else ""
+            dnd_string += "charisma: " + str(stat.cha) + " (" + modifier + str(stat.modifier[stat.cha]) + ")<br>"
+            self.dnd_stats_text_box = UITextBoxTweaked(
                 dnd_string,scale(pygame.Rect((200, 946), (1200, 298))),
                 object_id="#text_box_26_horizleft_pad_10_14",
                 line_spacing=1, manager=MANAGER
@@ -2042,8 +2050,9 @@ class ProfileScreen(Screens):
             self.condition_container.kill()
 
         elif self.open_tab == 'dnd':
-            self.backstory_background.kill()
-            self.history_text_box.kill()
+            self.dnd_stats_background.kill()
+            self.dnd_skill_background.kill()
+            self.dnd_stats_text_box.kill()
         self.open_tab = None
 
     # DND - stuff
@@ -2059,9 +2068,12 @@ class ProfileScreen(Screens):
             pass
         else:
             self.open_tab = 'dnd'
-            self.backstory_background = pygame_gui.elements.UIImage(scale(pygame.Rect((178, 930), (1240, 314))),
+            self.dnd_stats_background = pygame_gui.elements.UIImage(scale(pygame.Rect((178, 930), (610, 314))),
                                                                     self.backstory_tab)
-            self.backstory_background.disable()
+            self.dnd_skill_background = pygame_gui.elements.UIImage(scale(pygame.Rect((810, 930), (610, 314))),
+                                                                    self.backstory_tab)
+            self.dnd_stats_background.disable()
+            self.dnd_skill_background.disable()
             self.update_disabled_buttons_and_text()
 
     # ---------------------------------------------------------------------------- #

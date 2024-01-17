@@ -3856,7 +3856,7 @@
             }
         }
     },
-	"#wasteland_tab": {
+    "#wasteland_tab": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -3873,7 +3873,7 @@
             }
         }
     },
-	"#lakeside_tab": {
+    "#lakeside_tab": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4111,7 +4111,7 @@
             }
         }
     },
-	"#freshkill_pile_button": {
+    "#freshkill_pile_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4125,6 +4125,23 @@
             },
             "disabled_image": {
                 "path": "resources/images/buttons/freshkill_pile_unavailable.png"
+            }
+        }
+    },
+    "#dnd_stats_button": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/dnd_stats.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/dnd_stats_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/dnd_stats.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/dnd_stats.png"
             }
         }
     }
