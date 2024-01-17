@@ -1485,7 +1485,7 @@ class Events:
             if cat.not_working() and int(random.random() * 3):
                 return
 
-            if cat.experience > cat.experience_levels_range["trainee"][1]:
+            if cat.experience > cat.experience_levels_range["level 1"][1]:
                 return
 
             if cat.status == "medicine cat apprentice":

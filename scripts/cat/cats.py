@@ -68,13 +68,27 @@ class Cat():
     # EX levels and ranges.
     # Ranges are inclusive to both bounds
     experience_levels_range = {
-        "untrained": (0, 0),
-        "trainee": (1, 50),
-        "prepared": (51, 110),
-        "competent": (110, 170),
-        "proficient": (171, 240),
-        "expert": (241, 320),
-        "master": (321, 321)
+        "level 0": (0, 0),
+        "level 1": (1, 50),
+        "level 2": (51, 110),
+        "level 3": (111, 170),
+        "level 4": (171, 240),
+        "level 5": (241, 320),
+        "level 6": (321, 410),
+        "level 7": (411, 500),
+        "level 8": (501, 600),
+        "level 9": (601, 700),
+        "level 10": (701, 800),
+        "level 11": (801, 900),
+        "level 12": (901, 1000),
+        "level 13": (1001, 1100),
+        "level 14": (1101, 1200),
+        "level 15": (1201, 1300),
+        "level 16": (1301, 1400),
+        "level 17": (1401, 1500),
+        "level 18": (1501, 1600),
+        "level 19": (1601, 1700),
+        "level 20": (1701, 1800),
     }
 
     default_pronouns = [
@@ -328,14 +342,14 @@ class Cat():
                     self.experience += exp + 3
                     m -= 1
             elif self.age in ['young adult', 'adult']:
-                self.experience = randint(Cat.experience_levels_range["prepared"][0],
-                                          Cat.experience_levels_range["proficient"][1])
+                self.experience = randint(Cat.experience_levels_range["level 2"][0],
+                                          Cat.experience_levels_range["level 4"][1])
             elif self.age in ['senior adult']:
-                self.experience = randint(Cat.experience_levels_range["competent"][0],
-                                          Cat.experience_levels_range["expert"][1])
+                self.experience = randint(Cat.experience_levels_range["level 3"][0],
+                                          Cat.experience_levels_range["level 5"][1])
             elif self.age in ['senior']:
-                self.experience = randint(Cat.experience_levels_range["competent"][0],
-                                          Cat.experience_levels_range["master"][1])
+                self.experience = randint(Cat.experience_levels_range["level 4"][0],
+                                          Cat.experience_levels_range["level 6"][1])
             else:
                 self.experience = 0
                 
@@ -2417,18 +2431,18 @@ class Cat():
         output = ""
 
         # Determine the chance of failure.
-        if mediator.experience_level == "untrained":
+        if mediator.experience_level == "level 0":
             chance = 15
-        if mediator.experience_level == "trainee":
+        if mediator.experience_level == "level 1":
             # Negative bonus for very low.
             chance = 20
-        elif mediator.experience_level == "prepared":
+        elif mediator.experience_level == "level 2":
             chance = 35
-        elif mediator.experience_level == "proficient":
+        elif mediator.experience_level == "level 4":
             chance = 55
-        elif mediator.experience_level == "expert":
+        elif mediator.experience_level == "level 5":
             chance = 70
-        elif mediator.experience_level == "master":
+        elif mediator.experience_level == "level 6":
             chance = 100
         else:
             chance = 40
@@ -2809,8 +2823,8 @@ class Cat():
 
     @experience.setter
     def experience(self, exp: int):
-        if exp > self.experience_levels_range["master"][1]:
-            exp = self.experience_levels_range["master"][1]
+        if exp > self.experience_levels_range["level 20"][1]:
+            exp = self.experience_levels_range["level 20"][1]
         self._experience = int(exp)
 
         for x in self.experience_levels_range:
