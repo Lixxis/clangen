@@ -18,7 +18,8 @@ from scripts.utility import update_sprite, is_iterable
 from random import choice
 from scripts.cat_relations.inheritance import Inheritance
 
-from scripts.dnd.stats import Stats
+from scripts.dnd.dnd_stats import Stats
+from scripts.dnd.dnd_skills import DnDSkillType, DnDSkills
 
 logger = logging.getLogger(__name__)
 
@@ -139,10 +140,22 @@ def json_load():
             else:
                 new_cat.personality = Personality(trait=cat["trait"], kit_trait=new_cat.age in ["newborn", "kitten"])
 
-            if "stat" in cat:
-                new_cat.stat = Stats(cat["stat"]["str"],cat["stat"]["dex"],cat["stat"]["con"],cat["stat"]["int"],cat["stat"]["cha"])
+            if "dnd_stat" in cat:
+                new_cat.dnd_stats = Stats(
+                    cat["dnd_stats"]["str"],
+                    cat["dnd_stats"]["dex"],
+                    cat["dnd_stats"]["con"],
+                    cat["dnd_stats"]["int"],
+                    cat["dnd_stats"]["cha"]
+                )
+                new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
             else:
-                new_cat.stat = Stats()
+                new_cat.dnd_stats = Stats()
+                new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
+
+                if "dnd_proficiency" in cat:
+                    new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
+                
                 
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = cat["former_mentor"] if "former_mentor" in cat else []

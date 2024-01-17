@@ -5,6 +5,8 @@ from random import choice
 
 import pygame
 
+from scripts.dnd.dnd_stats import StatType
+
 from ..cat.history import History
 from ..housekeeping.datadir import get_save_dir
 from ..game_structure.windows import ChangeCatName, SpecifyCatGender, KillCat, ChangeCatToggles
@@ -150,6 +152,7 @@ class ProfileScreen(Screens):
         self.dnd_stats_background = None
         self.dnd_skill_background = None
         self.dnd_stats_text_box = None
+        self.dnd_skill_text_box = None
 
     def handle_event(self, event):
 
@@ -1980,19 +1983,50 @@ class ProfileScreen(Screens):
         elif self.open_tab == 'dnd':
             if self.dnd_stats_text_box:
                 self.dnd_stats_text_box.kill()
-            stat = self.the_cat.stat
-            modifier = "+" if stat.modifier[stat.str] >= 0 else ""
-            dnd_string = "strength: " + str(stat.str) + " (" + modifier + str(stat.modifier[stat.str]) + ")<br>"
-            modifier = "+" if stat.modifier[stat.dex] >= 0 else ""
-            dnd_string += "dexterity: " + str(stat.dex) + " (" + modifier + str(stat.modifier[stat.dex]) + ")<br>"
-            modifier = "+" if stat.modifier[stat.con] >= 0 else ""
-            dnd_string += "constitution: " + str(stat.con) + " (" + modifier + str(stat.modifier[stat.con]) + ")<br>"
-            modifier = "+" if stat.modifier[stat.int] >= 0 else ""
-            dnd_string += "intelligence: " + str(stat.int) + " (" + modifier + str(stat.modifier[stat.int]) + ")<br>"
-            modifier = "+" if stat.modifier[stat.cha] >= 0 else ""
-            dnd_string += "charisma: " + str(stat.cha) + " (" + modifier + str(stat.modifier[stat.cha]) + ")<br>"
+            if self.dnd_skill_text_box:
+                self.dnd_skill_text_box.kill()
+            
+            # DND - stats
+            stat = self.the_cat.dnd_stats
+            dnd_stat_string = "<b>Basic stats:</b> <br>" 
+            mod_str = "+" if stat.modifier[stat.str] >= 0 else ""
+            dnd_stat_string += "strength: " + str(stat.str) + " (" + mod_str + str(stat.modifier[stat.str]) + ")<br>"
+            mod_str = "+" if stat.modifier[stat.dex] >= 0 else ""
+            dnd_stat_string += "dexterity: " + str(stat.dex) + " (" + mod_str + str(stat.modifier[stat.dex]) + ")<br>"
+            mod_str = "+" if stat.modifier[stat.con] >= 0 else ""
+            dnd_stat_string += "constitution: " + str(stat.con) + " (" + mod_str + str(stat.modifier[stat.con]) + ")<br>"
+            mod_str = "+" if stat.modifier[stat.int] >= 0 else ""
+            dnd_stat_string += "intelligence: " + str(stat.int) + " (" + mod_str + str(stat.modifier[stat.int]) + ")<br>"
+            mod_str = "+" if stat.modifier[stat.wis] >= 0 else ""
+            dnd_stat_string += "wisdom: " + str(stat.wis) + " (" + mod_str + str(stat.modifier[stat.wis]) + ")<br>"
+            mod_str = "+" if stat.modifier[stat.cha] >= 0 else ""
+            dnd_stat_string += "charisma: " + str(stat.cha) + " (" + mod_str + str(stat.modifier[stat.cha]) + ")<br>"
             self.dnd_stats_text_box = UITextBoxTweaked(
-                dnd_string,scale(pygame.Rect((200, 946), (1200, 298))),
+                dnd_stat_string,scale(pygame.Rect((200, 946), (580, 350))),
+                object_id="#text_box_26_horizleft_pad_10_14",
+                line_spacing=1, manager=MANAGER
+            )
+
+            # DND - skills
+            skills = self.the_cat.dnd_skills
+            dnd_skill_string = "<b>Skills:</b> (proficiency is bold) <br>"
+            for skill, modifier in skills.skills.items():
+                mod_str = "+"
+                if modifier < 0:
+                    mod_str = ""
+                if skill in skills.proficiency:
+                    dnd_skill_string += "<b>"
+                dnd_skill_string += f"{skill.value} (" + mod_str + str(modifier) + ") "
+
+                for base, value_list in skills.skill_based.items():
+                    if skill in value_list:
+                        dnd_skill_string += f" - <i>{base.value} based </i><br>"
+
+                if skill in skills.proficiency:
+                    dnd_skill_string += "</b>"
+
+            self.dnd_skill_text_box = UITextBoxTweaked(
+                dnd_skill_string, scale(pygame.Rect((830, 946), (580, 298))),
                 object_id="#text_box_26_horizleft_pad_10_14",
                 line_spacing=1, manager=MANAGER
             )
@@ -2053,6 +2087,7 @@ class ProfileScreen(Screens):
             self.dnd_stats_background.kill()
             self.dnd_skill_background.kill()
             self.dnd_stats_text_box.kill()
+            self.dnd_skill_text_box.kill()
         self.open_tab = None
 
     # DND - stuff

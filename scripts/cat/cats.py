@@ -27,7 +27,8 @@ from scripts.event_class import Single_Event
 from .thoughts import Thoughts
 from scripts.cat_relations.inheritance import Inheritance
 
-from scripts.dnd.stats import Stats
+from scripts.dnd.dnd_stats import Stats
+from scripts.dnd.dnd_skills import DnDSkills
 
 class Cat():
     dead_cats = []
@@ -376,7 +377,8 @@ class Cat():
             Cat.insert_cat(self)
 
 		# DND - STUFF
-        self.stat = Stats()
+        self.dnd_stats = Stats()
+        self.dnd_skills = DnDSkills()
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID
@@ -2928,7 +2930,8 @@ class Cat():
                 "opacity": self.pelt.opacity,
                 "prevent_fading": self.prevent_fading,
                 "favourite": self.favourite,
-                "stat": self.stat.get_stat_dict()
+                "dnd_stats": self.dnd_stats.get_stat_dict(),
+                "dnd_proficiency": self.dnd_skills.get_proficiency_list(),
             }
 
 
