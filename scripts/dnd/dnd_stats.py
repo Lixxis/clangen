@@ -1,5 +1,8 @@
+import copy
 from enum import Enum
 import random
+
+from scripts.game_structure.game_essentials import game
 
 class StatType(Enum):
     STRENGTH = "strength"
@@ -22,15 +25,41 @@ class Stats:
         15: 2
     }
 
-    def __init__(self, str = None, dex = None, con = None, int = None, wis = None, cha = None):
+    def __init__(self, str = 0, dex = 0, con = 0, int = 0, wis = 0, cha = 0):
         self._stats = {
-            StatType.STRENGTH: str if str else random.randint(8,15),
-            StatType.DEXTERITY: dex if dex else random.randint(8,15),
-            StatType.CONSTITUTION: con if con else random.randint(8,15),
-            StatType.INTELLIGENCE: int if int else random.randint(8,15),
-            StatType.WISDOM: wis if wis else random.randint(8,15),
-            StatType.CHARISMA: cha if cha else random.randint(8,15)
+            StatType.STRENGTH: str,
+            StatType.DEXTERITY: dex,
+            StatType.CONSTITUTION: con,
+            StatType.INTELLIGENCE: int,
+            StatType.WISDOM: wis,
+            StatType.CHARISMA: cha
         }
+        array = copy.deepcopy(game.dnd_config["start_array"])
+        if self._stats[StatType.STRENGTH] == 0:
+            stat = random.choice(array)
+            self._stats[StatType.STRENGTH] = stat
+            array.remove(stat)
+        if self._stats[StatType.DEXTERITY] == 0:
+            stat = random.choice(array)
+            self._stats[StatType.DEXTERITY] = stat
+            array.remove(stat)
+        if self._stats[StatType.CONSTITUTION] == 0:
+            stat = random.choice(array)
+            self._stats[StatType.CONSTITUTION] = stat
+            array.remove(stat)
+        if self._stats[StatType.INTELLIGENCE] == 0:
+            stat = random.choice(array)
+            self._stats[StatType.INTELLIGENCE] = stat
+            array.remove(stat)
+        if self._stats[StatType.WISDOM] == 0:
+            stat = random.choice(array)
+            self._stats[StatType.WISDOM] = stat
+            array.remove(stat)
+        if self._stats[StatType.CHARISMA] == 0:
+            stat = random.choice(array)
+            self._stats[StatType.CHARISMA] = stat
+            array.remove(stat)
+
 
     def get_stat_dict(self):
         return {
@@ -48,10 +77,10 @@ class Stats:
 
     @str.setter
     def str(self, value):
-        if value < 8:
-            value = 8
-        if value > 15:
-            value = 15
+        if value < game.dnd_config["min_stat"]:
+            value = game.dnd_config["min_stat"]
+        if value > game.dnd_config["max_stat"]:
+            value = game.dnd_config["max_stat"]
         self._stats[StatType.STRENGTH] = value
 
     def inc_str(self):
@@ -63,10 +92,10 @@ class Stats:
 
     @dex.setter
     def dex(self, value):
-        if value < 8:
-            value = 8
-        if value > 15:
-            value = 15
+        if value < game.dnd_config["min_stat"]:
+            value = game.dnd_config["min_stat"]
+        if value > game.dnd_config["max_stat"]:
+            value = game.dnd_config["max_stat"]
         self._stats[StatType.DEXTERITY] = value
 
     def inc_dex(self):
@@ -78,10 +107,10 @@ class Stats:
 
     @con.setter
     def con(self, value):
-        if value < 8:
-            value = 8
-        if value > 15:
-            value = 15
+        if value < game.dnd_config["min_stat"]:
+            value = game.dnd_config["min_stat"]
+        if value > game.dnd_config["max_stat"]:
+            value = game.dnd_config["max_stat"]
         self._stats[StatType.CONSTITUTION] = value
 
     def inc_con(self):
@@ -93,10 +122,10 @@ class Stats:
 
     @int.setter
     def int(self, value):
-        if value < 8:
-            value = 8
-        if value > 15:
-            value = 15
+        if value < game.dnd_config["min_stat"]:
+            value = game.dnd_config["min_stat"]
+        if value > game.dnd_config["max_stat"]:
+            value = game.dnd_config["max_stat"]
         self._stats[StatType.INTELLIGENCE] = value
 
     def inc_int(self):
@@ -108,10 +137,10 @@ class Stats:
 
     @wis.setter
     def wis(self, value):
-        if value < 8:
-            value = 8
-        if value > 15:
-            value = 15
+        if value < game.dnd_config["min_stat"]:
+            value = game.dnd_config["min_stat"]
+        if value > game.dnd_config["max_stat"]:
+            value = game.dnd_config["max_stat"]
         self._stats[StatType.WISDOM] = value
 
     def inc_wis(self):
@@ -123,10 +152,10 @@ class Stats:
 
     @cha.setter
     def cha(self, value):
-        if value < 8:
-            value = 8
-        if value > 15:
-            value = 15
+        if value < game.dnd_config["min_stat"]:
+            value = game.dnd_config["min_stat"]
+        if value > game.dnd_config["max_stat"]:
+            value = game.dnd_config["max_stat"]
         self._stats[StatType.CHARISMA] = value
 
     def inc_cha(self):

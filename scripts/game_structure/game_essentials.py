@@ -178,6 +178,7 @@ class Game():
     cat_class = None
     config = {}
     prey_config = {}
+    dnd_config = {}
 
     rpc = None
 
@@ -194,6 +195,9 @@ class Game():
 
         with open(f"resources/prey_config.json", 'r') as read_file:
             self.prey_config = ujson.loads(read_file.read())
+        
+        with open(f"resources/dnd_config.json", 'r') as read_file:
+            self.dnd_config = ujson.loads(read_file.read())
 
         if self.config['fun']['april_fools']:
             self.config['fun']['newborns_can_roam'] = True
