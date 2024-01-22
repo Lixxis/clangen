@@ -127,6 +127,7 @@ class Clan():
         self.game_mode = game_mode
         self.pregnancy_data = {}
         self.inheritance = {}
+        self.xp = {}
         
         # Init Settings
         self.clan_settings = {}
@@ -465,6 +466,7 @@ class Clan():
         self.save_herbs(game.clan)
         self.save_disaster(game.clan)
         self.save_pregnancy(game.clan)
+        self.save_xp(game.clan)
 
         self.save_clan_settings()
         if game.clan.game_mode in ['expanded', 'cruel season']:
@@ -771,6 +773,7 @@ class Clan():
         self.load_pregnancy(game.clan)
         self.load_herbs(game.clan)
         self.load_disaster(game.clan)
+        self.load_xp(game.clan)
         if game.clan.game_mode != "classic":
             self.load_freshkill_pile(game.clan)
         game.switches['error_message'] = ''
@@ -1003,6 +1006,42 @@ class Clan():
             }
 
         game.safe_save(f"{get_save_dir()}/{game.clan.name}/nutrition_info.json", data)
+
+    def load_xp(self, clan):
+        """
+        Load the xp levels which are used to define if a level-up screen should show or not.
+        """
+        if not game.clan.name:
+            return
+
+        file_path = get_save_dir() + f"/{game.clan.name}/xp.json"
+        try:
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as read_file:  # pylint: disable=redefined-outer-name
+                    clan.xp = ujson.load(read_file)
+                    for cat_id, cat in Cat.all_cats.items():
+                        if cat.faded and cat_id in clan.xp.keys():
+                            del clan.xp[cat_id]
+                        elif not cat.faded and cat_id not in clan.xp.keys():
+                            clan.xp[cat_id] = cat.experience_level
+            else:
+                clan.xp = {}
+                for cat_id, cat in Cat.all_cats.items():
+                    if not cat.faded:
+                        clan.xp[cat_id] = cat.experience_level
+        except:
+            clan.xp = {}
+            for cat_id, cat in Cat.all_cats.items():
+                if not cat.faded:
+                    clan.xp[cat_id] = cat.experience_level
+
+    def save_xp(self, clan):
+        """
+        Save the xp levels which are used to define if a level-up screen should show or not.
+        """
+        if clan.game_mode == "classic" or not clan.xp:
+            return
+        game.safe_save(f"{get_save_dir()}/{game.clan.name}/xp.json", clan.xp)
 
     ## Properties
 
