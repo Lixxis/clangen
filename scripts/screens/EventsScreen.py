@@ -630,6 +630,12 @@ class EventsScreen(Screens):
         # Set the scroll bar to the last position it was at
         if self.scroll_height.get(self.event_display_type):
             self.event_container.vert_scroll_bar.set_scroll_from_start_percentage(self.scroll_height[self.event_display_type])
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            for cat in leveled_cats:
+                DnDCatLevels(cat)
+            update_levels(leveled_cats)
+
 
     def make_cat_buttons(self, button_pressed):
         """ Makes the buttons that take you to the profile. """
