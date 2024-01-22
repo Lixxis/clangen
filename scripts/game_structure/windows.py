@@ -21,7 +21,6 @@ from pygame_gui.elements import UIWindow
 
 from scripts.housekeeping.datadir import get_save_dir, get_cache_dir, get_saved_images_dir, get_data_dir
 from scripts.game_structure import image_cache
-from scripts.game_structure.game_essentials import game, screen_x, screen_y
 from scripts.game_structure.image_button import UIImageButton, UITextBoxTweaked
 from scripts.housekeeping.progress_bar_updater import UIUpdateProgressBar
 from scripts.housekeeping.update import self_update, UpdateChannel, get_latest_version_number
@@ -974,6 +973,7 @@ class ChangelogPopup(UIWindow):
                 game.switches['window_open'] = False
                 self.kill()
 
+
 class RelationshipLog(UIWindow):
     """This window allows the user to see the relationship log of a certain relationship."""
 
@@ -1286,6 +1286,7 @@ class EventLoading(UIWindow):
     def kill(self):
         self.end_animation = True
         super().kill()
+
 
 class ChangeCatToggles(UIWindow):
     """This window allows the user to edit various cat behavior toggles"""

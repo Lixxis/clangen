@@ -2,6 +2,8 @@ from random import choice, sample
 import pygame
 import pygame_gui
 
+from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+
 from .Screens import Screens
 from scripts.utility import get_text_box_theme, scale, shorten_text_to_fit
 from scripts.game_structure.image_button import UIImageButton, UISpriteButton
@@ -218,6 +220,11 @@ class PatrolScreen(Screens):
     def handle_patrol_complete_events(self, event):
         if event.ui_element == self.elements['patrol_again']:
             self.open_choose_cats_screen()
+            leveled_cats = get_leveled_cat()
+            if leveled_cats:
+                for cat in leveled_cats:
+                    DnDCatLevels(cat)
+                update_levels(leveled_cats)
         elif event.ui_element == self.elements["clan_return"]:
             self.change_screen('camp screen')
 
@@ -226,6 +233,11 @@ class PatrolScreen(Screens):
         self.update_heading_text(f'{game.clan.name}Clan')
         self.show_menu_buttons()
         self.open_choose_cats_screen()
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            for cat in leveled_cats:
+                DnDCatLevels(cat)
+            update_levels(leveled_cats)
 
     def update_button(self):
         """" Updates button availabilities. """

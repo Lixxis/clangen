@@ -531,7 +531,6 @@ class ProfileScreen(Screens):
 
         # Create cat image object
         self.profile_elements["cat_image"] = pygame_gui.elements.UIImage(scale(pygame.Rect((200, 400), (300, 300))),
-
                                                                          pygame.transform.scale(
                                                                              self.the_cat.sprite,
                                                                              (300, 300)), manager=MANAGER)

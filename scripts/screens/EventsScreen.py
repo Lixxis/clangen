@@ -1,5 +1,7 @@
 import pygame_gui
 
+from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+
 from .Screens import Screens
 import pygame
 from scripts.events import events_class
@@ -347,6 +349,12 @@ class EventsScreen(Screens):
         self.update_heading_text(f'{game.clan.name}Clan')
         self.show_menu_buttons()
         self.update_events_display()
+
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            for cat in leveled_cats:
+                DnDCatLevels(cat)
+            update_levels(leveled_cats)
 
     def exit_screen(self):
         self.open_involved_cat_button = None

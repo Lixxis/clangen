@@ -2,6 +2,8 @@ import pygame
 from math import ceil
 import pygame_gui
 
+from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+
 from .Screens import Screens
 from scripts.cat.cats import Cat
 from scripts.game_structure.image_button import UISpriteButton, UIImageButton
@@ -380,6 +382,11 @@ class ListScreen(Screens):
         self.update_filter_buttons()
 
         self.update_search_cats("")  # This will list all the cats, and create the button objects.
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            for cat in leveled_cats:
+                DnDCatLevels(cat)
+            update_levels(leveled_cats)
 
     def update_bg(self):
         if self.current_group == 'sc':

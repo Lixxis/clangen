@@ -4,7 +4,7 @@ import traceback
 from copy import deepcopy
 import random
 
-from scripts.dnd.dnd_leveling import get_leveled_cat
+from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
 
 from .Screens import Screens
 
@@ -209,7 +209,10 @@ class ClanScreen(Screens):
 
         self.update_buttons_and_text()
         leveled_cats = get_leveled_cat()
-        print (leveled_cats)
+        if leveled_cats:
+            for cat in leveled_cats:
+                DnDCatLevels(cat)
+            update_levels(leveled_cats)
 
     def exit_screen(self):
         # removes the cat sprites.
