@@ -1,5 +1,28 @@
 {
-	"min_stat": 8,
-	"max_stat": 20,
-	"start_array": [8,10,12,13,14,15]
+    "min_stat": 8,
+    "max_stat": 20,
+    "start_array": [8,10,12,13,14,15],
+    "leveling":{
+        "level 0": null,
+        "level 1": "stat:1",
+        "level 2": null,
+        "level 3": "stat:1",
+        "level 4": "skill:1",
+        "level 5": null,
+        "level 6": "stat:1",
+        "level 7": "skill:1",
+        "level 8": null,
+        "level 9": "stat:1",
+        "level 10": "skill:1",
+        "level 11": null,
+        "level 12": "stat:2",
+        "level 13": "skill:1",
+        "level 14": null,
+        "level 15": "stat:1",
+        "level 16": "skill:2",
+        "level 17": null,
+        "level 18": "stat:2",
+        "level 19": "skill:2",
+        "level 20": "stat:1"
+    }
 }
