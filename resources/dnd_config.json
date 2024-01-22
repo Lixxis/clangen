@@ -4,7 +4,7 @@
     "start_array": [8,10,12,13,14,15],
     "leveling":{
         "level 0": null,
-        "level 1": "stat:1",
+        "level 1": null,
         "level 2": null,
         "level 3": "stat:1",
         "level 4": "skill:1",

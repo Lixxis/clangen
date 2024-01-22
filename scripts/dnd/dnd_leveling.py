@@ -46,7 +46,7 @@ class DnDCatLevels(UIWindow):
         )
         self.heading = pygame_gui.elements.UITextBox(f"<b>- {self.the_cat.name} leveled up -</b>",
                                                      scale(pygame.Rect(
-                                                         (20, 20), (760, 150))),
+                                                         (20, 20), (760, 80))),
                                                      object_id="#text_box_30_horizcenter_spacing_95",
                                                      manager=MANAGER,
                                                      container=self)
@@ -63,12 +63,13 @@ class DnDCatLevels(UIWindow):
         self.wis_inc_button = None
         self.cha_dec_button = None
         self.cha_inc_button = None
-        self.update_stat_buttons()
 
         image_pos_x = 250
         if self.update_skill or self.update_stat:
             image_pos_x = 50
-        self.cat_image = pygame_gui.elements.UIImage(scale(pygame.Rect((image_pos_x, 45), (300, 300))),
+            self.init_stat_info()
+
+        self.cat_image = pygame_gui.elements.UIImage(scale(pygame.Rect((image_pos_x, 60), (300, 300))),
                                                      pygame.transform.scale(self.the_cat.sprite,(300, 300)),
                                                      manager=MANAGER,
                                                      container=self)
@@ -131,43 +132,72 @@ class DnDCatLevels(UIWindow):
             self.cha_dec_button.kill()
         if self.cha_inc_button:
             self.cha_inc_button.kill()
-        
 
-    def update_stat_buttons(self):
+    def init_stat_info(self):
         self.kill_stats_buttons()
         stat = self.the_cat.dnd_stats
         dnd_stat_string = "strength: " + str(stat.str) + "<br>"
         dnd_stat_string += "dexterity: " + str(stat.dex) + "<br>"
         dnd_stat_string += "constitution: " + str(stat.con) + "<br>"
         dnd_stat_string += "intelligence: " + str(stat.int) + "<br>"
-        dnd_stat_string += "wisdom: " + str(stat.wis) + " <br>"
-        dnd_stat_string += "charisma: " + str(stat.cha) + " <br>"
+        dnd_stat_string += "wisdom: " + str(stat.wis) + "<br>"
+        dnd_stat_string += "charisma: " + str(stat.cha)
         if self.stat_info:
             self.stat_info.kill()
         self.stat_info = pygame_gui.elements.UITextBox(dnd_stat_string,
-                                                     scale(pygame.Rect((450, 110), (400, 350))),
+                                                     scale(pygame.Rect((400, 110), (250, 380))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
 
-        self.str_dec_button = UIImageButton(scale(pygame.Rect((380, 110), (68, 68))), "", 
-                                            object_id="#arrow_left_button", 
+        self.str_dec_button = UIImageButton(scale(pygame.Rect((350, 122), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
                                             manager=MANAGER,
                                             container=self)
-        self.str_inc_button = UIImageButton(scale(pygame.Rect((680, 110), (68, 68))), "",
-                                            object_id="#arrow_right_button",
+        self.str_inc_button = UIImageButton(scale(pygame.Rect((670, 122), (44, 44))), "",
+                                            object_id="#exit_window_button",
                                             manager=MANAGER,
                                             container=self)
-        self.dex_dec_button = None
-        self.dex_inc_button = None
-        self.con_dec_button = None
-        self.con_inc_button = None
-        self.int_dec_button = None
-        self.int_inc_button = None
-        self.wis_dec_button = None
-        self.wis_inc_button = None
-        self.cha_dec_button = None
-        self.cha_inc_button = None
+        self.dex_dec_button = UIImageButton(scale(pygame.Rect((350, 182), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.dex_inc_button = UIImageButton(scale(pygame.Rect((670, 182), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.con_dec_button = UIImageButton(scale(pygame.Rect((350, 242), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.con_inc_button = UIImageButton(scale(pygame.Rect((670, 242), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.int_dec_button = UIImageButton(scale(pygame.Rect((350, 302), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.int_inc_button = UIImageButton(scale(pygame.Rect((670, 302), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.wis_dec_button = UIImageButton(scale(pygame.Rect((350, 362), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.wis_inc_button = UIImageButton(scale(pygame.Rect((670, 362), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.cha_dec_button = UIImageButton(scale(pygame.Rect((350, 422), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
+        self.cha_inc_button = UIImageButton(scale(pygame.Rect((670, 422), (44, 44))), "", 
+                                            object_id="#exit_window_button", 
+                                            manager=MANAGER,
+                                            container=self)
 
     def process_event(self, event):
         super().process_event(event)
