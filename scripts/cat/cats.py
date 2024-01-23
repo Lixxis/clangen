@@ -390,9 +390,14 @@ class Cat():
         if self.ID not in ["0", None]:
             Cat.insert_cat(self)
 
-		# DND - STUFF
+        # DND - STUFF
         self.dnd_stats = Stats()
+        p1_cat = Cat.fetch_cat(parent1)
+        p2_cat = Cat.fetch_cat(parent2)
+        #print("CAT - ", self.name)
+        self.dnd_stats.inheritance(p1_cat, p2_cat)
         self.dnd_skills = DnDSkills()
+        self.dnd_skills.update_skills(self.dnd_stats)
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID

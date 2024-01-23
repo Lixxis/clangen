@@ -28,6 +28,11 @@ class Stats:
         18: 3,
         19: 4,
         20: 4,
+        21: 4,
+        22: 5,
+        23: 5,
+        24: 5,
+        25: 6,
     }
 
     def __init__(self, str = 0, dex = 0, con = 0, int = 0, wis = 0, cha = 0):
@@ -65,7 +70,6 @@ class Stats:
             self._stats[StatType.CHARISMA] = stat
             array.remove(stat)
 
-
     def get_stat_dict(self):
         return {
             "str": self.str,
@@ -75,6 +79,38 @@ class Stats:
             "wis": self.wis,
             "cha": self.cha
         }
+
+    def inheritance(self, parent1 = None, parent2 = None):
+        "Handles the inheritance of stats of parents."
+        possible_inheritance = [s_type for s_type in StatType]
+        if parent1:
+            inh_stats1 = random.choice(possible_inheritance)
+            stat1 = parent1.dnd_stats._stats[inh_stats1]
+            possible_inheritance.remove(inh_stats1)
+            inh_stats2 = random.choice(possible_inheritance)
+            stat2 = parent1.dnd_stats._stats[inh_stats2]
+            if stat1 > game.dnd_config["max_inheritance"]:
+                stat1 = game.dnd_config["max_inheritance"]
+            if stat2 > game.dnd_config["max_inheritance"]:
+                stat2 = game.dnd_config["max_inheritance"]
+            #print(f"INHERITING1: {inh_stats1} - {stat1} - prev: {self._stats[inh_stats1]}")
+            #print(f"INHERITING1: {inh_stats2} - {stat2} - prev: {self._stats[inh_stats2]}")
+            self._stats[inh_stats1] = stat1
+            self._stats[inh_stats2] = stat2
+        if parent2:
+            inh_stats1 = random.choice(possible_inheritance)
+            stat1 = parent1.dnd_stats._stats[inh_stats1]
+            possible_inheritance.remove(inh_stats1)
+            inh_stats2 = random.choice(possible_inheritance)
+            stat2 = parent1.dnd_stats._stats[inh_stats2]
+            if stat1 > game.dnd_config["max_inheritance"]:
+                stat1 = game.dnd_config["max_inheritance"]
+            if stat2 > game.dnd_config["max_inheritance"]:
+                stat2 = game.dnd_config["max_inheritance"]
+            #print(f"INHERITING2: {inh_stats1} - {stat1} - prev: {self._stats[inh_stats1]}")
+            #print(f"INHERITING2: {inh_stats2} - {stat2} - prev: {self._stats[inh_stats2]}")
+            self._stats[inh_stats1] = stat1
+            self._stats[inh_stats2] = stat2
 
     @property
     def str(self):
