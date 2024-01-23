@@ -4365,5 +4365,39 @@
                 "path": "resources/images/dnd/dnd_stats.png"
             }
         }
+    },
+    "#dnd_stats_add": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/add_button.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/add_button_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/add_button.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/add_button_unavailable.png"
+            }
+        }
+    },
+    "#dnd_stats_sub": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/sub_button.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/sub_button_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/sub_button.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/sub_button_unavailable.png"
+            }
+        }
     }
 }

@@ -19,7 +19,7 @@ from random import choice
 from scripts.cat_relations.inheritance import Inheritance
 
 from scripts.dnd.dnd_stats import Stats
-from scripts.dnd.dnd_skills import DnDSkillType, DnDSkills
+from scripts.dnd.dnd_skills import DnDSkills
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +146,7 @@ def json_load():
                     cat["dnd_stats"]["dex"],
                     cat["dnd_stats"]["con"],
                     cat["dnd_stats"]["int"],
+                    cat["dnd_stats"]["wis"],
                     cat["dnd_stats"]["cha"]
                 )
                 new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
