@@ -75,11 +75,11 @@ class DnDCatLevels(UIWindow):
         self.cha_inc_button = None
 
         image_pos_x = 250
-        if self.update_skill or self.update_stat:
+        if self.update_stat:
             image_pos_x = 50
             self.update_stat_info()
 
-        self.cat_image = pygame_gui.elements.UIImage(scale(pygame.Rect((image_pos_x, 60), (300, 300))),
+        self.cat_image = pygame_gui.elements.UIImage(scale(pygame.Rect((image_pos_x, 80), (300, 300))),
                                                      pygame.transform.scale(self.the_cat.sprite,(300, 300)),
                                                      manager=MANAGER,
                                                      container=self)
@@ -142,7 +142,7 @@ class DnDCatLevels(UIWindow):
     def update_stat_info(self):
         self.kill_stats_buttons()
         stat = self.the_cat.dnd_stats
-        text_pos_x = 400
+        text_pos_x = 360
         button_pos_x_decr = 650
         button_pos_x_incr = 700
 
@@ -152,15 +152,15 @@ class DnDCatLevels(UIWindow):
         if self.stat_info:
             self.stat_info.kill()
         self.stat_info = pygame_gui.elements.UITextBox("points to give: " + str(self.update_stat),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y-30), (250, 80))),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y-30), (300, 80))),
                                                      object_id="#text_box_22_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
 
         if self.str_info:
             self.str_info.kill()
-        self.str_info = pygame_gui.elements.UITextBox("strength: " + str(stat.str + self.str_increase),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (250, 80))),
+        self.str_info = pygame_gui.elements.UITextBox("STRENGTH: " + str(stat.str + self.str_increase),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
@@ -179,8 +179,8 @@ class DnDCatLevels(UIWindow):
             self.dex_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.dex_info = pygame_gui.elements.UITextBox("dexterity: " + str(stat.dex + self.dex_increase),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (250, 80))),
+        self.dex_info = pygame_gui.elements.UITextBox("DEXTERITY: " + str(stat.dex + self.dex_increase),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
@@ -199,8 +199,8 @@ class DnDCatLevels(UIWindow):
             self.con_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.con_info = pygame_gui.elements.UITextBox("constitution: " + str(stat.con + self.con_increase),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (250, 80))),
+        self.con_info = pygame_gui.elements.UITextBox("CONSTITUTION: " + str(stat.con + self.con_increase),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
@@ -219,8 +219,8 @@ class DnDCatLevels(UIWindow):
             self.int_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.int_info = pygame_gui.elements.UITextBox("intelligence: " + str(stat.int + self.int_increase),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (250, 80))),
+        self.int_info = pygame_gui.elements.UITextBox("INTELLIGENCE: " + str(stat.int + self.int_increase),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
@@ -239,8 +239,8 @@ class DnDCatLevels(UIWindow):
             self.wis_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.wis_info = pygame_gui.elements.UITextBox("wisdom: " + str(stat.wis + self.wis_increase),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (250, 80))),
+        self.wis_info = pygame_gui.elements.UITextBox("WISDOM: " + str(stat.wis + self.wis_increase),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
@@ -259,8 +259,8 @@ class DnDCatLevels(UIWindow):
             self.cha_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.cha_info = pygame_gui.elements.UITextBox("charisma: " + str(stat.cha + self.cha_increase),
-                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (250, 80))),
+        self.cha_info = pygame_gui.elements.UITextBox("CHARISMA: " + str(stat.cha + self.cha_increase),
+                                                     scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
                                                      container=self)
