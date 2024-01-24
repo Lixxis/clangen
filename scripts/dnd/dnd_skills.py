@@ -1,5 +1,6 @@
 
 from enum import Enum
+from scripts.cat.skills import SkillPath
 
 from scripts.dnd.dnd_stats import StatType, Stats
 
@@ -20,7 +21,7 @@ class DnDSkillType(Enum):
     PERFORMANCE = "performance"
     PERSUASION = "persuasion"
     RELIGION = "religion"
-    SLEIGHT_OF_HAND = "sleight of hand"
+    SLEIGHT_OF_PAW = "sleight of paw"
     STEALTH = "stealth"
     SURVIVAL = "survival"
     
@@ -33,7 +34,7 @@ class DnDSkills:
         ],
         StatType.DEXTERITY: [
             DnDSkillType.ACROBATICS,
-            DnDSkillType.SLEIGHT_OF_HAND,
+            DnDSkillType.SLEIGHT_OF_PAW,
             DnDSkillType.STEALTH,
         ],
         StatType.CONSTITUTION: [],
@@ -59,6 +60,32 @@ class DnDSkills:
         ],
     }
 
+    skill_mapping = {
+        SkillPath.TEACHER: DnDSkillType.HISTORY,
+        SkillPath.HUNTER: DnDSkillType.SURVIVAL,
+        SkillPath.FIGHTER: DnDSkillType.ATHLETICS,
+        SkillPath.RUNNER: DnDSkillType.ACROBATICS,
+        SkillPath.CLIMBER: DnDSkillType.ATHLETICS,
+        SkillPath.SWIMMER: DnDSkillType.ACROBATICS,
+        SkillPath.SPEAKER: DnDSkillType.DECEPTION,
+        SkillPath.MEDIATOR: DnDSkillType.PERSUASION,
+        SkillPath.CLEVER: DnDSkillType.INVESTIGATION,
+        SkillPath.INSIGHTFUL: DnDSkillType.INSIGHT,
+        SkillPath.SENSE: DnDSkillType.PERCEPTION,
+        SkillPath.KIT: DnDSkillType.PERFORMANCE,
+        SkillPath.STORY: DnDSkillType.PERFORMANCE,
+        SkillPath.LORE: DnDSkillType.HISTORY,
+        SkillPath.CAMP: DnDSkillType.SLEIGHT_OF_PAW,
+        SkillPath.HEALER: DnDSkillType.MEDICINE,
+        SkillPath.STAR: DnDSkillType.RELIGION,
+        SkillPath.DARK: DnDSkillType.INTIMIDATION,
+        SkillPath.OMEN: DnDSkillType.NATURE,
+        SkillPath.DREAM: DnDSkillType.RELIGION,
+        SkillPath.CLAIRVOYANT: DnDSkillType.ARCANA,
+        SkillPath.PROPHET: DnDSkillType.ANIMAL_HANDLING,
+        SkillPath.GHOST: DnDSkillType.STEALTH,
+    }
+
     def __init__(self, stats = None):
         self.skills = {
             DnDSkillType.ACROBATICS: 0,
@@ -76,7 +103,7 @@ class DnDSkills:
             DnDSkillType.PERFORMANCE: 0,
             DnDSkillType.PERSUASION: 0,
             DnDSkillType.RELIGION: 0,
-            DnDSkillType.SLEIGHT_OF_HAND: 0,
+            DnDSkillType.SLEIGHT_OF_PAW: 0,
             DnDSkillType.STEALTH: 0,
             DnDSkillType.SURVIVAL: 0
         }

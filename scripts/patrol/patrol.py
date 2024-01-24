@@ -11,7 +11,9 @@ import pygame
 from os.path import exists as path_exists
 
 from scripts.cat.history import History
+from scripts.cat.skills import HiddenSkillEnum, SkillPath
 from scripts.clan import Clan
+from scripts.dnd.dnd_skills import DnDSkillType, DnDSkills
 from scripts.utility import (
     get_personality_compatibility,
     check_relationship_value,
@@ -37,6 +39,7 @@ When adding new patrols, use \n to add a paragraph break in the text
 
 class Patrol():
     used_patrols = []
+
     
     def __init__(self):
         
@@ -51,7 +54,19 @@ class Patrol():
 
         self.patrol_statuses = {}
         self.patrol_status_list = []
-        
+        self.chosen_success = None
+        self.chosen_failure = None
+        self.default_skills = []
+        self.default_skills_mapper = {
+            "hunting" : [DnDSkillType.ANIMAL_HANDLING, DnDSkillType.INVESTIGATION, DnDSkillType.STEALTH, DnDSkillType.SURVIVAL],
+            "border": [DnDSkillType.ATHLETICS, DnDSkillType.DECEPTION, DnDSkillType.INTIMIDATION, DnDSkillType.PERSUASION],
+            "training": [DnDSkillType.ACROBATICS, DnDSkillType.HISTORY, DnDSkillType.INSIGHT, DnDSkillType.PERFORMANCE, DnDSkillType.ARCANA],
+            "med": [DnDSkillType.MEDICINE, DnDSkillType.NATURE, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.PERCEPTION, DnDSkillType.RELIGION]
+        }
+
+        self.cat_to_roll = None
+        self.stat_to_roll = None
+
         # Holds new cats for easy access
         self.new_cats: List[List[Cat]] = []
 
@@ -104,8 +119,7 @@ class Patrol():
                 return self.process_text(self.patrol_event.decline_text, None), "", None
             else:
                 return "Error - no event chosen", "", None
-        
-        return self.determine_outcome(antagonize=(path == "antag"))
+        return self.determine_outcome(antagonize=(path == "antag")),
         
     def add_patrol_cats(self, patrol_cats: List[Cat], clan: Clan) -> None:
         """Add the list of cats to the patrol class and handles to set all needed values.
@@ -553,9 +567,11 @@ class Patrol():
         romantic_patrols = []
         special_date = get_special_date()
         # This make sure general only gets hunting, border, or training patrols
-		# chose fix type will make it not depending on the content amount
+        # chose fix type will make it not depending on the content amount
         if patrol_type == "general":
             patrol_type = random.choice(["hunting", "border", "training"])
+        
+        self.default_skills = self.default_skills_mapper[patrol_type]
 
         # makes sure that it grabs patrols in the correct biomes, season, with the correct number of cats
         for patrol in possible_patrols:
@@ -675,6 +691,7 @@ class Patrol():
                         self.patrol_event.fail_outcomes
                         
         # Filter the outcomes. Do this only once - this is also where stat cats are determined
+        # DnD stuff: outcomes don't depend on the of a cat anymore
         success_outcomes = PatrolOutcome.prepare_allowed_outcomes(success_outcomes, self)
         fail_outcomes = PatrolOutcome.prepare_allowed_outcomes(fail_outcomes, self)
         
@@ -688,7 +705,47 @@ class Patrol():
         
         # Run the chosen outcome
         return final_event.execute_outcome(self)
+
+    def determine_dnd_skill_need(self, antagonize=False) -> List[str]:
+        if self.patrol_event is None:
+            return
         
+        # First Step - Filter outcomes and pick a fail and success outcome
+        success_outcomes = self.patrol_event.antag_success_outcomes if antagonize else \
+                           self.patrol_event.success_outcomes
+        fail_outcomes = self.patrol_event.antag_fail_outcomes if antagonize else \
+                        self.patrol_event.fail_outcomes
+                        
+        # Filter the outcomes. Do this only once - this is also where stat cats are determined
+        # DnD stuff: outcomes don't depend on the of a cat anymore
+        success_outcomes = PatrolOutcome.prepare_allowed_outcomes(success_outcomes, self)
+        fail_outcomes = PatrolOutcome.prepare_allowed_outcomes(fail_outcomes, self)
+        
+        # Choose a success and fail outcome
+        self.chosen_success = choices(success_outcomes, weights=[x.weight for x in success_outcomes])[0]
+        self.chosen_failure = choices(fail_outcomes, weights=[x.weight for x in fail_outcomes])[0]
+        
+        skill_to_roll = []
+        skill_list = self.chosen_success.stat_skill
+        if skill_list:
+            for skill_string in skill_list:
+                path = skill_string.split(",")[0]
+                if isinstance(path, str):
+                    # Try to conter to Skillpath or HiddenSkillEnum
+                    try:
+                        path = SkillPath[path]
+                    except KeyError:
+                        try:
+                            path = HiddenSkillEnum[path]
+                        except KeyError:
+                            print(f"{path} is not a real skill path")
+                            return False
+                elif isinstance(path, SkillPath):
+                    skill_to_roll.append(DnDSkills.skill_mapping[path])
+        
+        # return which skill needs to get a easier roll
+        return skill_to_roll
+
     def calculate_success(self, success_outcome: PatrolOutcome, fail_outcome: PatrolOutcome) -> Tuple[PatrolOutcome, bool]:
         """Returns both the chosen event, and a boolian that's True if success, and False is fail."""
         

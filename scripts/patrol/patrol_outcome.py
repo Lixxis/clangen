@@ -18,7 +18,7 @@ from scripts.utility import (
     change_relationship_values, create_new_cat,
 )
 from scripts.game_structure.game_essentials import game
-from scripts.cat.skills import SkillPath
+from scripts.cat.skills import HiddenSkillEnum, SkillPath
 from scripts.cat.cats import Cat, ILLNESSES, INJURIES, PERMANENT, BACKSTORIES
 from scripts.cat.pelts import Pelt
 from scripts.cat_relations.relationship import Relationship
@@ -242,38 +242,38 @@ class PatrolOutcome():
         # Patrol leader is the only one allowed to be stat_cat in patrols equal to or less than than two cats 
         if not allowed_specfic and len(patrol.patrol_cats) <= 2:
             allowed_specfic = ["p_l"]
-
         
         possible_stat_cats = []
-        for kitty in patrol.patrol_cats:
+        for inter_cat in patrol.patrol_cats:
             # First, the blanet requirments
             if "app" in self.can_have_stat \
-                    and kitty.status not in ['apprentice', "medicine cat apprentice"]:
+                    and inter_cat.status not in ['apprentice', "medicine cat apprentice"]:
                 continue
             
-            if "adult" in self.can_have_stat and kitty.status in ['apprentice', "medicine cat apprentice"]:
+            if "adult" in self.can_have_stat and inter_cat.status in ['apprentice', "medicine cat apprentice"]:
                 continue
             
-            if "healer" in self.can_have_stat and kitty.status not in ["medicine cat", "medicine cat apprentice"]:
+            if "healer" in self.can_have_stat and inter_cat.status not in ["medicine cat", "medicine cat apprentice"]:
                 continue
                 
             # Then, move on the the specfic requirements. 
-            if not self._allowed_stat_cat_specfic(kitty, patrol, allowed_specfic):
+            if not self._allowed_stat_cat_specfic(inter_cat, patrol, allowed_specfic):
                 continue
             
-            possible_stat_cats.append(kitty)
+            possible_stat_cats.append(inter_cat)
             
     
         print('POSSIBLE STAT CATS',  [str(i.name) for i in possible_stat_cats])
 
         
         actual_stat_cats = []
-        for kitty in possible_stat_cats:            
-            if kitty.personality.trait in self.stat_trait:
-                actual_stat_cats.append(kitty)
-                
-            if kitty.skills.check_skill_requirement_list(self.stat_skill):
-                actual_stat_cats.append(kitty)
+        for inter_cat in possible_stat_cats:            
+            if inter_cat.personality.trait in self.stat_trait:
+                actual_stat_cats.append(inter_cat)
+            
+            # DnD stuff: for dnd every cat has every skill, the chances are only influenced
+            #if kitty.skills.check_skill_requirement_list(self.stat_skill):
+            #    actual_stat_cats.append(kitty)
         
         if actual_stat_cats:
             self.stat_cat = choice(actual_stat_cats)

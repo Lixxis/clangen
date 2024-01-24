@@ -3,6 +3,7 @@ import pygame
 import pygame_gui
 
 from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+from scripts.dnd.dnd_rolling import DnDRolling
 
 from .Screens import Screens
 from scripts.utility import get_text_box_theme, scale, shorten_text_to_fit
@@ -607,6 +608,12 @@ class PatrolScreen(Screens):
 
     def run_patrol_proceed(self, user_input):
         """Proceeds the patrol - to be run in the seperate thread. """
+        #skills = self.patrol_obj.determine_dnd_skill_need(antagonize=(user_input in ["antag", "antagonize"]))
+        #if not skills:
+        #    print("********** DEFAULT")
+        #    skills = self.patrol_obj.default_skills
+        #print("********** BEFOREHAND:", skills)
+        #DnDRolling(self.current_patrol, skills)
         
         if user_input in ["nopro", "notproceed"]:
             self.display_text, self.results_text, self.outcome_art = self.patrol_obj.proceed_patrol("decline")
