@@ -4399,5 +4399,56 @@
                 "path": "resources/images/dnd/sub_button_unavailable.png"
             }
         }
+    },
+    "#dnd_prof_free": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/prof_free_button.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/prof_free_button_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/prof_free_button.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/prof_free_button_unavailable.png"
+            }
+        }
+    },
+    "#dnd_prof_selected": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/prof_select_button.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/prof_select_button_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/prof_select_button.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/prof_select_button.png"
+            }
+        }
+    },
+    "#dnd_prof": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/prof_button.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/prof_button.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/prof_button.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/prof_button.png"
+            }
+        }
     }
 }
