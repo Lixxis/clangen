@@ -107,7 +107,7 @@ class DnDSkills:
             DnDSkillType.STEALTH: 0,
             DnDSkillType.SURVIVAL: 0
         }
-        self.proficiency = [DnDSkillType.ACROBATICS]
+        self.proficiency = []
         if stats:
             self.update_skills(stats)
 

@@ -72,7 +72,7 @@ clan_cat_schema = Schema(
 
 
 def get_validated_clan_cat_data(cat: dict):
-    data = clan_cat_schema.validate(cat)
+    #data = clan_cat_schema.validate(cat)
     return cat
 
 def get_all_validated_clan_cats_data(catData: list) -> dict:
