@@ -66,6 +66,8 @@ class Patrol():
 
         self.cat_to_roll = None
         self.stat_to_roll = None
+        self.chosen_success = None
+        self.chosen_failure = None
 
         # Holds new cats for easy access
         self.new_cats: List[List[Cat]] = []
@@ -104,7 +106,7 @@ class Patrol():
             self.patrol_event = romantic_event_choice
         else:
             self.patrol_event = normal_event_choice
-            
+
         Patrol.used_patrols.append(self.patrol_event.patrol_id)
         
         return self.process_text(self.patrol_event.intro_text, None)
@@ -119,7 +121,7 @@ class Patrol():
                 return self.process_text(self.patrol_event.decline_text, None), "", None
             else:
                 return "Error - no event chosen", "", None
-        return self.determine_outcome(antagonize=(path == "antag")),
+        return self.determine_outcome(antagonize=(path == "antag"))
         
     def add_patrol_cats(self, patrol_cats: List[Cat], clan: Clan) -> None:
         """Add the list of cats to the patrol class and handles to set all needed values.
@@ -696,15 +698,15 @@ class Patrol():
         fail_outcomes = PatrolOutcome.prepare_allowed_outcomes(fail_outcomes, self)
         
         # Choose a success and fail outcome
-        chosen_success = choices(success_outcomes, weights=[x.weight for x in success_outcomes])[0]
-        chosen_failure = choices(fail_outcomes, weights=[x.weight for x in fail_outcomes])[0]
+        self.chosen_success = choices(success_outcomes, weights=[x.weight for x in success_outcomes])[0]
+        self.chosen_failure = choices(fail_outcomes, weights=[x.weight for x in fail_outcomes])[0]
         
-        final_event, success = self.calculate_success(chosen_success, chosen_failure)
+        #final_event, success = self.calculate_success(chosen_success, chosen_failure)
         
-        print(f"PATROL ID: {self.patrol_event.patrol_id} | SUCCESS: {success}")        
+        print(f"PATROL ID: {self.patrol_event.patrol_id}")# | SUCCESS: {success}")        
         
         # Run the chosen outcome
-        return final_event.execute_outcome(self)
+        #return final_event.execute_outcome(self)
 
     def determine_dnd_skill_need(self, antagonize=False) -> List[str]:
         if self.patrol_event is None:

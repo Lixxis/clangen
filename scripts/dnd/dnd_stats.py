@@ -80,6 +80,22 @@ class Stats:
             "cha": self.cha
         }
 
+    def get_display_text(self):
+        return_text = ""
+        mod_str = "+" if self.modifier[self.str] >= 0 else ""
+        return_text += "strength: " + str(self.str) + " (" + mod_str + str(self.modifier[self.str]) + ")<br>"
+        mod_str = "+" if self.modifier[self.dex] >= 0 else ""
+        return_text += "dexterity: " + str(self.dex) + " (" + mod_str + str(self.modifier[self.dex]) + ")<br>"
+        mod_str = "+" if self.modifier[self.con] >= 0 else ""
+        return_text += "constitution: " + str(self.con) + " (" + mod_str + str(self.modifier[self.con]) + ")<br>"
+        mod_str = "+" if self.modifier[self.int] >= 0 else ""
+        return_text += "intelligence: " + str(self.int) + " (" + mod_str + str(self.modifier[self.int]) + ")<br>"
+        mod_str = "+" if self.modifier[self.wis] >= 0 else ""
+        return_text += "wisdom: " + str(self.wis) + " (" + mod_str + str(self.modifier[self.wis]) + ")<br>"
+        mod_str = "+" if self.modifier[self.cha] >= 0 else ""
+        return_text += "charisma: " + str(self.cha) + " (" + mod_str + str(self.modifier[self.cha]) + ")<br>"
+        return return_text
+
     def inheritance(self, parent1 = None, parent2 = None):
         "Handles the inheritance of stats of parents."
         possible_inheritance = [s_type for s_type in StatType]
