@@ -67,7 +67,16 @@ clan_cat_schema = Schema(
     Optional("opacity", default=100): int,
     Optional("prevent_fading", default=False): bool,
     Optional("favourite", default=False): bool,
-    }
+    "dnd_stats": {
+        Optional("str", default=0): int,
+        Optional("dex", default=0): int,
+        Optional("con", default=0): int,
+        Optional("int", default=0): int,
+        Optional("wis", default=0): int,
+        Optional("cha", default=0): int,
+    },
+    Optional("dnd_proficiency", default=[]): list
+	}
 )
 
 
