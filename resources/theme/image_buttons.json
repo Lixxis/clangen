@@ -4450,5 +4450,22 @@
                 "path": "resources/images/dnd/prof_button.png"
             }
         }
+    },
+	"#dnd_dice": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/dice.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/dice_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/dice.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/dice_unavailable.png"
+            }
+        }
     }
 }

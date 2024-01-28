@@ -111,7 +111,7 @@ class DnDSkills:
         if stats:
             self.update_skills(stats)
 
-    def get_display_text(self):
+    def get_display_text(self, with_base = False):
         dnd_skill_string = ""
         for skill, modifier in self.skills.items():
             mod_str = "+"
@@ -121,13 +121,17 @@ class DnDSkills:
                 dnd_skill_string += "<b>"
             dnd_skill_string += f"{skill.value} (" + mod_str + str(modifier) + ") "
 
-            for base, value_list in self.skill_based.items():
-                if skill in value_list:
-                    dnd_skill_string += f" - <i>{base.value} based </i><br>"
+            if with_base:
+                for base, value_list in self.skill_based.items():
+                    if skill in value_list:
+                        dnd_skill_string += f" - <i>{base.value} based </i><br>"
+            else:
+                dnd_skill_string += "<br>"
 
             if skill in self.proficiency:
                 dnd_skill_string += "</b>"
         return dnd_skill_string
+
 
     def set_proficiency(self, skill_type: DnDSkillType):
         if skill_type not in self.proficiency:
