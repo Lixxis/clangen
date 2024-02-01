@@ -121,7 +121,7 @@ class Patrol():
                 return self.process_text(self.patrol_event.decline_text, None), "", None
             else:
                 return "Error - no event chosen", "", None
-        return self.determine_outcome(antagonize=(path == "antag"))
+        return self.decide_outcome(antagonize=(path == "antag"))
         
     def add_patrol_cats(self, patrol_cats: List[Cat], clan: Clan) -> None:
         """Add the list of cats to the patrol class and handles to set all needed values.
@@ -681,8 +681,7 @@ class Patrol():
 
         return all_patrol_events
 
-    def determine_outcome(self, antagonize=False) -> Tuple[str]:
-        
+    def decide_outcome(self, antagonize=False) -> Tuple[str]:
         if self.patrol_event is None:
             return
         
@@ -790,7 +789,15 @@ class Patrol():
         
         success = int(random.random() * 120) < success_chance
         return (success_outcome if success else fail_outcome, success)
-        
+
+    def roll_outcome(self):
+        print("TODO the roll")
+        success = True
+        final_event = self.chosen_success
+        if not success:
+            final_event = self.chosen_failure
+        return final_event.execute_outcome(self)
+
     def update_resources(self, biome_dir, leaf):
         resource_dir = "resources/dicts/patrols/"
         # HUNTING #

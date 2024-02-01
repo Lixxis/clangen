@@ -999,6 +999,18 @@ class PatrolScreen(Screens):
             self.selected_cat = self.patrol_obj.patrol_cats[5]
         elif event.ui_element == self.elements["dice"]:
             self.selected_cat = None
+            self.elements["dice"].kill()
+            self.elements["selected_image"].kill()
+            self.elements['selected_name'].kill()
+            self.elements['skill_info'].kill()
+            self.elements["patrol_info"].kill()
+            self.elements['intro_image'].show()
+            for skill in self.skill_buttons.keys():
+                self.skill_buttons[skill].kill()
+            self.skill_buttons = {}
+            for skill in self.skill_info.keys():
+                self.skill_info[skill].kill()
+            self.skill_info = {}
             self.rolling_patrol_thread = self.loading_screen_start_work(self.run_patrol_rolling, "rolling")
         if self.selected_cat is not None:
             # Now, if the selected cat is not None, we rebuild everything with the correct cat info
@@ -1020,8 +1032,8 @@ class PatrolScreen(Screens):
                 object_id=get_text_box_theme("#text_box_30_horizcenter"),
                 manager=MANAGER)
 
-            dnd_skill_string = "<b>Skills:</b> (proficiency is bold) <br>"
-            dnd_skill_string += self.selected_cat.dnd_skills.get_display_text(False)
+            dnd_skill_string = "<b>Skills:</b> (relevant bold) <br>"
+            dnd_skill_string += self.selected_cat.dnd_skills.get_display_text(False, self.patrol_obj.default_skills)
             if "skill_info" in self.elements:
                 self.elements['skill_info'].kill()
             self.elements['skill_info'] = pygame_gui.elements.UITextBox(
@@ -1046,7 +1058,7 @@ class PatrolScreen(Screens):
             self.elements["dice"].disable()
 
     def run_patrol_rolling(self):
-        print("ON RUNNING ROLLING")
+        self.display_text, self.results_text, self.outcome_art = self.patrol_obj.roll_outcome()
 
     def open_patrol_rolling_screen(self):
         self.patrol_stage = "rolling"

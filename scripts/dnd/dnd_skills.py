@@ -86,6 +86,72 @@ class DnDSkills:
         SkillPath.GHOST: DnDSkillType.STEALTH,
     }
 
+    backstory_categories_proficiency = {
+        "loner_backstories": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "rogue_backstories": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "kittypet_backstories": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "former_clancat_backstories": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "healer_backstories": {
+            "chance": 1,
+            "proficiency": [],
+        }
+    }
+
+    special_backstories_proficiency = {
+        "guided1": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "guided2": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "guided3": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "guided4": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "disgraced1": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "disgraced2": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "disgraced3": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "medicine_cat": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "refugee3": {
+            "chance": 1,
+            "proficiency": [],
+        },
+        "refugee4": {
+            "chance": 1,
+            "proficiency": [],
+        },
+    }
+
     def __init__(self, stats = None):
         self.skills = {
             DnDSkillType.ACROBATICS: 0,
@@ -111,13 +177,16 @@ class DnDSkills:
         if stats:
             self.update_skills(stats)
 
-    def get_display_text(self, with_base = False):
+    def get_display_text(self, with_base = False, bold_skills = None):
         dnd_skill_string = ""
+        skills_to_bold = bold_skills if bold_skills else []
         for skill, modifier in self.skills.items():
             mod_str = "+"
             if modifier < 0:
                 mod_str = ""
-            if skill in self.proficiency:
+            if skill in self.proficiency and len(skills_to_bold) < 1:
+                dnd_skill_string += "<b>"
+            elif skill in skills_to_bold:
                 dnd_skill_string += "<b>"
             dnd_skill_string += f"{skill.value} (" + mod_str + str(modifier) + ") "
 
@@ -128,10 +197,11 @@ class DnDSkills:
             else:
                 dnd_skill_string += "<br>"
 
-            if skill in self.proficiency:
+            if skill in self.proficiency and len(skills_to_bold) < 1:
+                dnd_skill_string += "</b>"
+            elif skill in skills_to_bold:
                 dnd_skill_string += "</b>"
         return dnd_skill_string
-
 
     def set_proficiency(self, skill_type: DnDSkillType):
         if skill_type not in self.proficiency:
