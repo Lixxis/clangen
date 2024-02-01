@@ -56,7 +56,7 @@ class Patrol():
         self.patrol_status_list = []
         self.chosen_success = None
         self.chosen_failure = None
-        self.default_skills = []
+        self.skills_to_roll = []
         self.default_skills_mapper = {
             "hunting" : [DnDSkillType.ANIMAL_HANDLING, DnDSkillType.INVESTIGATION, DnDSkillType.STEALTH, DnDSkillType.SURVIVAL],
             "border": [DnDSkillType.ATHLETICS, DnDSkillType.DECEPTION, DnDSkillType.INTIMIDATION, DnDSkillType.PERSUASION],
@@ -573,7 +573,7 @@ class Patrol():
         if patrol_type == "general":
             patrol_type = random.choice(["hunting", "border", "training"])
         
-        self.default_skills = self.default_skills_mapper[patrol_type]
+        self.skills_to_roll = self.default_skills_mapper[patrol_type]
 
         # makes sure that it grabs patrols in the correct biomes, season, with the correct number of cats
         for patrol in possible_patrols:
@@ -702,50 +702,11 @@ class Patrol():
         
         #final_event, success = self.calculate_success(chosen_success, chosen_failure)
         
+        self.find_skills() # overwrite default skills if possible
         print(f"PATROL ID: {self.patrol_event.patrol_id}")# | SUCCESS: {success}")        
         
         # Run the chosen outcome
         #return final_event.execute_outcome(self)
-
-    def determine_dnd_skill_need(self, antagonize=False) -> List[str]:
-        if self.patrol_event is None:
-            return
-        
-        # First Step - Filter outcomes and pick a fail and success outcome
-        success_outcomes = self.patrol_event.antag_success_outcomes if antagonize else \
-                           self.patrol_event.success_outcomes
-        fail_outcomes = self.patrol_event.antag_fail_outcomes if antagonize else \
-                        self.patrol_event.fail_outcomes
-                        
-        # Filter the outcomes. Do this only once - this is also where stat cats are determined
-        # DnD stuff: outcomes don't depend on the of a cat anymore
-        success_outcomes = PatrolOutcome.prepare_allowed_outcomes(success_outcomes, self)
-        fail_outcomes = PatrolOutcome.prepare_allowed_outcomes(fail_outcomes, self)
-        
-        # Choose a success and fail outcome
-        self.chosen_success = choices(success_outcomes, weights=[x.weight for x in success_outcomes])[0]
-        self.chosen_failure = choices(fail_outcomes, weights=[x.weight for x in fail_outcomes])[0]
-        
-        skill_to_roll = []
-        skill_list = self.chosen_success.stat_skill
-        if skill_list:
-            for skill_string in skill_list:
-                path = skill_string.split(",")[0]
-                if isinstance(path, str):
-                    # Try to conter to Skillpath or HiddenSkillEnum
-                    try:
-                        path = SkillPath[path]
-                    except KeyError:
-                        try:
-                            path = HiddenSkillEnum[path]
-                        except KeyError:
-                            print(f"{path} is not a real skill path")
-                            return False
-                elif isinstance(path, SkillPath):
-                    skill_to_roll.append(DnDSkills.skill_mapping[path])
-        
-        # return which skill needs to get a easier roll
-        return skill_to_roll
 
     def calculate_success(self, success_outcome: PatrolOutcome, fail_outcome: PatrolOutcome) -> Tuple[PatrolOutcome, bool]:
         """Returns both the chosen event, and a boolian that's True if success, and False is fail."""
@@ -790,13 +751,46 @@ class Patrol():
         success = int(random.random() * 120) < success_chance
         return (success_outcome if success else fail_outcome, success)
 
-    def roll_outcome(self):
-        print("TODO the roll")
-        success = True
+    def roll_outcome(self, cat, skill):
+        needed_number = int(self.patrol_event.chance_of_success / 4)
+        if needed_number < 1:
+            needed_number = 0
+        rolled_number = randint(0,20) # d20 roll
+        print("ROLLED NUMBER: ", rolled_number , "; modifier: ", cat.dnd_skills.skills[skill])
+        rolled_number += cat.dnd_skills.skills[skill] # modifier added
+        print("FINISHED ROLLED NUMBER: ", rolled_number, ", needed number: ", needed_number)
+
         final_event = self.chosen_success
-        if not success:
+        if needed_number > rolled_number:
+            print("NO success")
             final_event = self.chosen_failure
+        else:
+            print("SUCCESS!")
         return final_event.execute_outcome(self)
+
+    def find_skills(self):
+        skill_to_replace = []
+        translated_skills = []
+        if self.chosen_success.stat_skill:
+            skill_to_replace = self.chosen_success.stat_skill
+        elif self.chosen_failure.stat_skill:
+            skill_to_replace = self.chosen_failure.stat_skill
+
+        for normal_skill in skill_to_replace:
+            path = normal_skill.split(",")[0]
+            # Try to conter to Skillpath or HiddenSkillEnum
+            try:
+                path = SkillPath[path]
+            except KeyError:
+                try:
+                    path = HiddenSkillEnum[path]
+                except KeyError:
+                    print(f"{path} is not a real skill path")
+                    return False
+            if isinstance(path, SkillPath):
+                translated_skills.append(DnDSkills.skill_mapping[path])
+        if len(translated_skills) > 0:
+            self.skills_to_roll = list(dict.fromkeys(translated_skills))
 
     def update_resources(self, biome_dir, leaf):
         resource_dir = "resources/dicts/patrols/"

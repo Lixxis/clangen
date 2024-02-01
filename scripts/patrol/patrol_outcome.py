@@ -267,7 +267,7 @@ class PatrolOutcome():
 
         
         actual_stat_cats = []
-        for inter_cat in possible_stat_cats:            
+        for inter_cat in possible_stat_cats:
             if inter_cat.personality.trait in self.stat_trait:
                 actual_stat_cats.append(inter_cat)
             
