@@ -54,7 +54,7 @@ class DnDCatLevels(UIWindow):
                          resizable=False)
 
         self.heading = pygame_gui.elements.UITextBox(
-            f"<b>- {self.the_cat.name} leveled up -</b>",
+            f"<b>- {self.the_cat.name} leveled up ({self.the_cat.experience_level}) -</b>",
             scale(pygame.Rect((20, 20), (760, 80))),
             object_id="#text_box_30_horizcenter_spacing_95",
             manager=MANAGER,
