@@ -1,7 +1,8 @@
 
 from enum import Enum
-from scripts.cat.skills import SkillPath
 
+from scripts.cat.skills import SkillPath
+from scripts.dnd.dnd_linages import LinageType
 from scripts.dnd.dnd_stats import StatType, Stats
 
 
@@ -84,6 +85,13 @@ class DnDSkills:
         SkillPath.CLAIRVOYANT: DnDSkillType.ARCANA,
         SkillPath.PROPHET: DnDSkillType.ANIMAL_HANDLING,
         SkillPath.GHOST: DnDSkillType.STEALTH,
+    }
+
+    linage_proficiency = {
+        LinageType.CAT : [],
+        LinageType.HIGH_ELF : [],
+        LinageType.DWARF : [],
+        LinageType.ORC : []
     }
 
     backstory_categories_proficiency = {

@@ -736,8 +736,6 @@ class ProfileScreen(Screens):
         # MATE
         if len(the_cat.mate) > 0:
             output += "\n"
-            
-            
             mate_names = []
             # Grab the names of only the first two, since that's all we will display
             for _m in the_cat.mate[:2]:
@@ -749,18 +747,17 @@ class ProfileScreen(Screens):
                         former_indicate = "(living)"
                     else:
                         former_indicate = "(dead)"
-                    
                     mate_names.append(f"{str(mate_ob.name)} {former_indicate}")
                 elif mate_ob.outside != self.the_cat.outside:
                     mate_names.append(f"{str(mate_ob.name)} (away)")
                 else:
                     mate_names.append(f"{str(mate_ob.name)}")
-                    
+
             if len(the_cat.mate) == 1:
                 output += "mate: " 
             else:
                 output += "mates: "
-            
+
             output += ", ".join(mate_names)
             
             if len(the_cat.mate) > 2:
@@ -769,6 +766,10 @@ class ProfileScreen(Screens):
                     output += " others"
                 else:
                     output += " other"
+
+        # DnD Linage
+        linage = the_cat.dnd_linage.linage_type.value
+        output += f"\nlinage: {linage}"
 
         if not the_cat.dead:
             # NEWLINE ----------

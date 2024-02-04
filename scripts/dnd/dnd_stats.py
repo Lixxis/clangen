@@ -2,6 +2,7 @@ import copy
 from enum import Enum
 import random
 
+from scripts.dnd.dnd_linages import LinageType
 from scripts.game_structure.game_essentials import game
 
 class StatType(Enum):
@@ -33,6 +34,13 @@ class Stats:
         23: 5,
         24: 5,
         25: 6,
+    }
+
+    linage_proficiency = {
+        LinageType.CAT : [],
+        LinageType.HIGH_ELF : [],
+        LinageType.DWARF : [],
+        LinageType.ORC : []
     }
 
     def __init__(self, str = 0, dex = 0, con = 0, int = 0, wis = 0, cha = 0):

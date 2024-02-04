@@ -5,6 +5,8 @@ import os.path
 import itertools
 import sys
 
+from scripts.dnd.dnd_linages import Linage
+
 from .history import History
 from .skills import CatSkills
 from ..housekeeping.datadir import get_save_dir
@@ -392,10 +394,10 @@ class Cat():
             Cat.insert_cat(self)
 
         # DND - STUFF
+        self.dnd_linage = Linage()
         self.dnd_stats = Stats()
         p1_cat = Cat.fetch_cat(parent1)
         p2_cat = Cat.fetch_cat(parent2)
-        #print("CAT - ", self.name)
         self.dnd_stats.inheritance(p1_cat, p2_cat)
         self.dnd_skills = DnDSkills()
         self.dnd_skills.update_skills(self.dnd_stats)

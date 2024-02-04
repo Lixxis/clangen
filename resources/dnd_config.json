@@ -1,9 +1,9 @@
 {
     "min_stat": 8,
     "max_stat": 25,
-	"max_inheritance": 17,
+    "max_inheritance": 17,
     "start_array": [8,10,12,13,14,15],
-    "leveling":{
+    "leveling": {
         "level 0": null,
         "level 1": null,
         "level 2": null,
@@ -25,5 +25,11 @@
         "level 18": "stat:2",
         "level 19": "skill:2",
         "level 20": "stat:1"
+    },
+    "linage_distribution": {
+        "cat" : 40,
+        "high elf": 25,
+        "dwarf": 15,
+        "orc": 10
     }
 }
