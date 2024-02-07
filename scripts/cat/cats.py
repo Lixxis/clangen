@@ -2698,6 +2698,7 @@ class Cat():
 
         file_name += ".png"
 
+		# TODO: dnd stuff - faded according to race
         self.sprite = image_cache.load_image(f"sprites/faded/{file_name}").convert_alpha()
 
     @staticmethod

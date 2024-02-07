@@ -185,6 +185,7 @@ def load_data():
     
     #load in the spritesheets
     sprites.load_all()
+    sprites.load_all_dnd()
 
     clan_list = game.read_clans()
     if clan_list:
