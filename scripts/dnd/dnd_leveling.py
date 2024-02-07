@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 
 from re import sub
+from scripts.dnd.dnd_types import StatType
 from scripts.utility import scale
 from scripts.cat.cats import Cat
 from scripts.game_structure.game_essentials import game, MANAGER
@@ -371,13 +372,13 @@ class DnDCatLevels(UIWindow):
 
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
             if event.ui_element == self.done_button:
-                stat = self.the_cat.dnd_stats
-                self.the_cat.dnd_stats.str = stat.str + self.str_increase
-                self.the_cat.dnd_stats.dex = stat.dex + self.dex_increase
-                self.the_cat.dnd_stats.con = stat.con + self.con_increase
-                self.the_cat.dnd_stats.int = stat.int + self.int_increase
-                self.the_cat.dnd_stats.wis = stat.wis + self.wis_increase
-                self.the_cat.dnd_stats.cha = stat.cha + self.cha_increase
+                stats = self.the_cat.dnd_stats.stats
+                self.the_cat.dnd_stats.stats[StatType.STRENGTH] = stats[StatType.STRENGTH] + self.str_increase
+                self.the_cat.dnd_stats.stats[StatType.DEXTERITY] = stats[StatType.DEXTERITY] + self.dex_increase
+                self.the_cat.dnd_stats.stats[StatType.CONSTITUTION] = stats[StatType.CONSTITUTION] + self.con_increase
+                self.the_cat.dnd_stats.stats[StatType.INTELLIGENCE] = stats[StatType.INTELLIGENCE] + self.int_increase
+                self.the_cat.dnd_stats.stats[StatType.WISDOM] = stats[StatType.WISDOM] + self.wis_increase
+                self.the_cat.dnd_stats.stats[StatType.CHARISMA] = stats[StatType.CHARISMA] + self.cha_increase
                 self.the_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.the_cat.dnd_skills.update_skills(self.the_cat.dnd_stats)
                 game.switches['window_open'] = False

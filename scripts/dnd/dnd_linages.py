@@ -1,13 +1,8 @@
-from enum import Enum
 from random import choice
+from scripts.dnd.dnd_types import LinageType
 
 from scripts.game_structure.game_essentials import game
 
-class LinageType(Enum):
-    CAT = "cat"
-    HIGH_ELF = "high elf"
-    DWARF = "dwarf"
-    ORC = "orc"
 
 class Linage:
     """Represent a race/linage of a cat."""

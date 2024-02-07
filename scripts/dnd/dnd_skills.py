@@ -1,31 +1,7 @@
-
-from enum import Enum
-
 from scripts.cat.skills import SkillPath
-from scripts.dnd.dnd_linages import LinageType
-from scripts.dnd.dnd_stats import StatType, Stats
+from scripts.dnd.dnd_stats import Stats
+from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType
 
-
-class DnDSkillType(Enum):
-    ACROBATICS = "acrobatics"
-    ANIMAL_HANDLING = "animal handling"
-    ARCANA = "arcana"
-    ATHLETICS = "athletics"
-    DECEPTION = "deception"
-    HISTORY = "history"
-    INSIGHT = "insight"
-    INTIMIDATION = "intimidation"
-    INVESTIGATION = "investigation"
-    MEDICINE = "medicine"
-    NATURE = "nature"
-    PERCEPTION = "perception"
-    PERFORMANCE = "performance"
-    PERSUASION = "persuasion"
-    RELIGION = "religion"
-    SLEIGHT_OF_PAW = "sleight of paw"
-    STEALTH = "stealth"
-    SURVIVAL = "survival"
-    
 
 class DnDSkills:
     """Represents the dnd skills for one cat."""
@@ -88,10 +64,30 @@ class DnDSkills:
     }
 
     linage_proficiency = {
-        LinageType.CAT : [],
-        LinageType.HIGH_ELF : [],
-        LinageType.DWARF : [],
-        LinageType.ORC : []
+        LinageType.CAT : {
+            "amount": 2,
+            "prof":[
+                {"skill": DnDSkillType.SURVIVAL, "chance": 20}
+            ]
+        },
+        LinageType.HIGH_ELF : {
+            "amount": 2,
+            "prof":[
+                {"skill": DnDSkillType.SURVIVAL, "chance": 20}
+            ]
+        },
+        LinageType.DWARF : {
+            "amount": 2,
+            "prof":[
+                {"skill": DnDSkillType.SURVIVAL, "chance": 20}
+            ]
+        },
+        LinageType.ORC : {
+            "amount": 2,
+            "prof":[
+                {"skill": DnDSkillType.SURVIVAL, "chance": 20}
+            ]
+        }
     }
 
     backstory_categories_proficiency = {
@@ -234,10 +230,9 @@ class DnDSkills:
     def update_skills(self, stats: Stats):
         # set all the skills according to the connected stats
         for stat_type in self.skill_based.keys():
-            modifier = stats.modifier[stats._stats[stat_type]]
+            modifier = stats.modifier[stats.genetic_stats[stat_type]]
             for skill_type in self.skill_based[stat_type]:
                 self.skills[skill_type] = modifier
         # add the proficiency bonus
         for proficiency_type in self.proficiency:
             self.skills[proficiency_type] += 1
-        return

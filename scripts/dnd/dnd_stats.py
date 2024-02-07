@@ -1,17 +1,8 @@
 import copy
-from enum import Enum
 import random
 
-from scripts.dnd.dnd_linages import LinageType
+from scripts.dnd.dnd_types import StatType, LinageType
 from scripts.game_structure.game_essentials import game
-
-class StatType(Enum):
-    STRENGTH = "strength"
-    DEXTERITY = "dexterity"
-    CONSTITUTION = "constitution"
-    INTELLIGENCE = "intelligence"
-    WISDOM = "wisdom"
-    CHARISMA = "charisma"
 
 class Stats:
     """Represents the dnd stats for one cat."""
@@ -37,14 +28,14 @@ class Stats:
     }
 
     linage_proficiency = {
-        LinageType.CAT : [],
-        LinageType.HIGH_ELF : [],
-        LinageType.DWARF : [],
-        LinageType.ORC : []
+        LinageType.CAT : [StatType.CHARISMA],
+        LinageType.HIGH_ELF : [StatType.INTELLIGENCE],
+        LinageType.DWARF : [StatType.WISDOM],
+        LinageType.ORC : [StatType.STRENGTH, StatType.CONSTITUTION]
     }
 
     def __init__(self, str = 0, dex = 0, con = 0, int = 0, wis = 0, cha = 0):
-        self._stats = {
+        self.genetic_stats = {
             StatType.STRENGTH: str,
             StatType.DEXTERITY: dex,
             StatType.CONSTITUTION: con,
@@ -52,56 +43,83 @@ class Stats:
             StatType.WISDOM: wis,
             StatType.CHARISMA: cha
         }
+        # stats are used for all checks, those are get the linage buffs added
+        self.stats = {
+            StatType.STRENGTH: str,
+            StatType.DEXTERITY: dex,
+            StatType.CONSTITUTION: con,
+            StatType.INTELLIGENCE: int,
+            StatType.WISDOM: wis,
+            StatType.CHARISMA: cha
+        }
+        self.init_array()
+
+    def init_array(self):
+        "Handles the initialization with the array method"
         array = copy.deepcopy(game.dnd_config["start_array"])
-        if self._stats[StatType.STRENGTH] == 0:
+        if self.genetic_stats[StatType.STRENGTH] == 0:
             stat = random.choice(array)
-            self._stats[StatType.STRENGTH] = stat
+            self.genetic_stats[StatType.STRENGTH] = stat
             array.remove(stat)
-        if self._stats[StatType.DEXTERITY] == 0:
+        if self.genetic_stats[StatType.DEXTERITY] == 0:
             stat = random.choice(array)
-            self._stats[StatType.DEXTERITY] = stat
+            self.genetic_stats[StatType.DEXTERITY] = stat
             array.remove(stat)
-        if self._stats[StatType.CONSTITUTION] == 0:
+        if self.genetic_stats[StatType.CONSTITUTION] == 0:
             stat = random.choice(array)
-            self._stats[StatType.CONSTITUTION] = stat
+            self.genetic_stats[StatType.CONSTITUTION] = stat
             array.remove(stat)
-        if self._stats[StatType.INTELLIGENCE] == 0:
+        if self.genetic_stats[StatType.INTELLIGENCE] == 0:
             stat = random.choice(array)
-            self._stats[StatType.INTELLIGENCE] = stat
+            self.genetic_stats[StatType.INTELLIGENCE] = stat
             array.remove(stat)
-        if self._stats[StatType.WISDOM] == 0:
+        if self.genetic_stats[StatType.WISDOM] == 0:
             stat = random.choice(array)
-            self._stats[StatType.WISDOM] = stat
+            self.genetic_stats[StatType.WISDOM] = stat
             array.remove(stat)
-        if self._stats[StatType.CHARISMA] == 0:
+        if self.genetic_stats[StatType.CHARISMA] == 0:
             stat = random.choice(array)
-            self._stats[StatType.CHARISMA] = stat
+            self.genetic_stats[StatType.CHARISMA] = stat
             array.remove(stat)
 
+    def update_linage(self, linage: LinageType):
+        "Adding the linage buffs to the stats which are used to get outcome and stuff"
+        for stat_type in self.stats.keys():
+            linage_buff = 1 if stat_type in self.linage_proficiency[linage] else 0
+            self.stats[stat_type] = self.genetic_stats[stat_type] + linage_buff
+
     def get_stat_dict(self):
+        "Returns the genetic stats for save purpose."
         return {
-            "str": self.str,
-            "dex": self.dex,
-            "con": self.con,
-            "int": self.int,
-            "wis": self.wis,
-            "cha": self.cha
+            "str": self.genetic_stats[StatType.STRENGTH],
+            "dex": self.genetic_stats[StatType.DEXTERITY],
+            "con": self.genetic_stats[StatType.CONSTITUTION],
+            "int": self.genetic_stats[StatType.INTELLIGENCE],
+            "wis": self.genetic_stats[StatType.WISDOM],
+            "cha": self.genetic_stats[StatType.CHARISMA]
         }
 
     def get_display_text(self):
+        "Returns a html string which describe the stats"
         return_text = ""
-        mod_str = "+" if self.modifier[self.str] >= 0 else ""
-        return_text += "strength: " + str(self.str) + " (" + mod_str + str(self.modifier[self.str]) + ")<br>"
-        mod_str = "+" if self.modifier[self.dex] >= 0 else ""
-        return_text += "dexterity: " + str(self.dex) + " (" + mod_str + str(self.modifier[self.dex]) + ")<br>"
-        mod_str = "+" if self.modifier[self.con] >= 0 else ""
-        return_text += "constitution: " + str(self.con) + " (" + mod_str + str(self.modifier[self.con]) + ")<br>"
-        mod_str = "+" if self.modifier[self.int] >= 0 else ""
-        return_text += "intelligence: " + str(self.int) + " (" + mod_str + str(self.modifier[self.int]) + ")<br>"
-        mod_str = "+" if self.modifier[self.wis] >= 0 else ""
-        return_text += "wisdom: " + str(self.wis) + " (" + mod_str + str(self.modifier[self.wis]) + ")<br>"
-        mod_str = "+" if self.modifier[self.cha] >= 0 else ""
-        return_text += "charisma: " + str(self.cha) + " (" + mod_str + str(self.modifier[self.cha]) + ")<br>"
+        strength = self.stats[StatType.STRENGTH ]
+        mod_str = "+" if self.modifier[strength] >= 0 else ""
+        return_text += "strength: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")<br>"
+        dexterity = self.stats[StatType.DEXTERITY]
+        mod_str = "+" if self.modifier[dexterity] >= 0 else ""
+        return_text += "dexterity: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")<br>"
+        constitution = self.stats[StatType.CONSTITUTION]
+        mod_str = "+" if self.modifier[constitution] >= 0 else ""
+        return_text += "constitution: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")<br>"
+        intelligence = self.stats[StatType.INTELLIGENCE]
+        mod_str = "+" if self.modifier[intelligence] >= 0 else ""
+        return_text += "intelligence: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")<br>"
+        wisdom = self.stats[StatType.WISDOM]
+        mod_str = "+" if self.modifier[wisdom] >= 0 else ""
+        return_text += "wisdom: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")<br>"
+        charisma = self.stats[StatType.WISDOM]
+        mod_str = "+" if self.modifier[charisma] >= 0 else ""
+        return_text += "charisma: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")<br>"
         return return_text
 
     def inheritance(self, parent1 = None, parent2 = None):
@@ -109,119 +127,29 @@ class Stats:
         possible_inheritance = [s_type for s_type in StatType]
         if parent1:
             inh_stats1 = random.choice(possible_inheritance)
-            stat1 = parent1.dnd_stats._stats[inh_stats1]
+            stat1 = parent1.dnd_stats.genetic_stats[inh_stats1]
             possible_inheritance.remove(inh_stats1)
             inh_stats2 = random.choice(possible_inheritance)
-            stat2 = parent1.dnd_stats._stats[inh_stats2]
+            stat2 = parent1.dnd_stats.genetic_stats[inh_stats2]
             if stat1 > game.dnd_config["max_inheritance"]:
                 stat1 = game.dnd_config["max_inheritance"]
             if stat2 > game.dnd_config["max_inheritance"]:
                 stat2 = game.dnd_config["max_inheritance"]
-            #print(f"INHERITING1: {inh_stats1} - {stat1} - prev: {self._stats[inh_stats1]}")
-            #print(f"INHERITING1: {inh_stats2} - {stat2} - prev: {self._stats[inh_stats2]}")
-            self._stats[inh_stats1] = stat1
-            self._stats[inh_stats2] = stat2
+            #print(f"INHERITING1: {inh_stats1} - {stat1} - prev: {self.genetic_stats[inh_stats1]}")
+            #print(f"INHERITING1: {inh_stats2} - {stat2} - prev: {self.genetic_stats[inh_stats2]}")
+            self.genetic_stats[inh_stats1] = stat1
+            self.genetic_stats[inh_stats2] = stat2
         if parent2:
             inh_stats1 = random.choice(possible_inheritance)
-            stat1 = parent1.dnd_stats._stats[inh_stats1]
+            stat1 = parent1.dnd_stats.genetic_stats[inh_stats1]
             possible_inheritance.remove(inh_stats1)
             inh_stats2 = random.choice(possible_inheritance)
-            stat2 = parent1.dnd_stats._stats[inh_stats2]
+            stat2 = parent1.dnd_stats.genetic_stats[inh_stats2]
             if stat1 > game.dnd_config["max_inheritance"]:
                 stat1 = game.dnd_config["max_inheritance"]
             if stat2 > game.dnd_config["max_inheritance"]:
                 stat2 = game.dnd_config["max_inheritance"]
-            #print(f"INHERITING2: {inh_stats1} - {stat1} - prev: {self._stats[inh_stats1]}")
-            #print(f"INHERITING2: {inh_stats2} - {stat2} - prev: {self._stats[inh_stats2]}")
-            self._stats[inh_stats1] = stat1
-            self._stats[inh_stats2] = stat2
-
-    @property
-    def str(self):
-        return self._stats[StatType.STRENGTH]
-
-    @str.setter
-    def str(self, value):
-        if value < game.dnd_config["min_stat"]:
-            value = game.dnd_config["min_stat"]
-        if value > game.dnd_config["max_stat"]:
-            value = game.dnd_config["max_stat"]
-        self._stats[StatType.STRENGTH] = value
-
-    def inc_str(self):
-        self.str += 1
-
-    @property
-    def dex(self):
-        return self._stats[StatType.DEXTERITY]
-
-    @dex.setter
-    def dex(self, value):
-        if value < game.dnd_config["min_stat"]:
-            value = game.dnd_config["min_stat"]
-        if value > game.dnd_config["max_stat"]:
-            value = game.dnd_config["max_stat"]
-        self._stats[StatType.DEXTERITY] = value
-
-    def inc_dex(self):
-        self.dex += 1
-
-    @property
-    def con(self):
-        return self._stats[StatType.CONSTITUTION]
-
-    @con.setter
-    def con(self, value):
-        if value < game.dnd_config["min_stat"]:
-            value = game.dnd_config["min_stat"]
-        if value > game.dnd_config["max_stat"]:
-            value = game.dnd_config["max_stat"]
-        self._stats[StatType.CONSTITUTION] = value
-
-    def inc_con(self):
-        self.con += 1
-
-    @property
-    def int(self):
-        return self._stats[StatType.INTELLIGENCE]
-
-    @int.setter
-    def int(self, value):
-        if value < game.dnd_config["min_stat"]:
-            value = game.dnd_config["min_stat"]
-        if value > game.dnd_config["max_stat"]:
-            value = game.dnd_config["max_stat"]
-        self._stats[StatType.INTELLIGENCE] = value
-
-    def inc_int(self):
-        self.int += 1
-
-    @property
-    def wis(self):
-        return self._stats[StatType.WISDOM]
-
-    @wis.setter
-    def wis(self, value):
-        if value < game.dnd_config["min_stat"]:
-            value = game.dnd_config["min_stat"]
-        if value > game.dnd_config["max_stat"]:
-            value = game.dnd_config["max_stat"]
-        self._stats[StatType.WISDOM] = value
-
-    def inc_wis(self):
-        self.wis += 1
-
-    @property
-    def cha(self):
-        return self._stats[StatType.CHARISMA]
-
-    @cha.setter
-    def cha(self, value):
-        if value < game.dnd_config["min_stat"]:
-            value = game.dnd_config["min_stat"]
-        if value > game.dnd_config["max_stat"]:
-            value = game.dnd_config["max_stat"]
-        self._stats[StatType.CHARISMA] = value
-
-    def inc_cha(self):
-        self.cha += 1
+            #print(f"INHERITING2: {inh_stats1} - {stat1} - prev: {self.genetic_stats[inh_stats1]}")
+            #print(f"INHERITING2: {inh_stats2} - {stat2} - prev: {self.genetic_stats[inh_stats2]}")
+            self.genetic_stats[inh_stats1] = stat1
+            self.genetic_stats[inh_stats2] = stat2
