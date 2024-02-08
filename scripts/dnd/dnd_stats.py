@@ -25,6 +25,11 @@ class Stats:
         23: 5,
         24: 5,
         25: 6,
+        26: 6,
+        27: 6,
+        28: 7,
+        29: 7,
+        30: 8,
     }
 
     linage_proficiency = {
@@ -36,21 +41,21 @@ class Stats:
 
     def __init__(self, str = 0, dex = 0, con = 0, int = 0, wis = 0, cha = 0):
         self.genetic_stats = {
-            StatType.STRENGTH: str,
-            StatType.DEXTERITY: dex,
-            StatType.CONSTITUTION: con,
-            StatType.INTELLIGENCE: int,
-            StatType.WISDOM: wis,
-            StatType.CHARISMA: cha
+            StatType.STRENGTH: str if str <= 30 else 30,
+            StatType.DEXTERITY: dex if dex <= 30 else 30,
+            StatType.CONSTITUTION: con if con <= 30 else 30,
+            StatType.INTELLIGENCE: int if int <= 30 else 30,
+            StatType.WISDOM: wis if wis <= 30 else 30,
+            StatType.CHARISMA: cha if cha <= 30 else 30,
         }
         # stats are used for all checks, those are get the linage buffs added
         self.stats = {
-            StatType.STRENGTH: str,
-            StatType.DEXTERITY: dex,
-            StatType.CONSTITUTION: con,
-            StatType.INTELLIGENCE: int,
-            StatType.WISDOM: wis,
-            StatType.CHARISMA: cha
+            StatType.STRENGTH: str if str <= 30 else 30,
+            StatType.DEXTERITY: dex if dex <= 30 else 30,
+            StatType.CONSTITUTION: con if con <= 30 else 30,
+            StatType.INTELLIGENCE: int if int <= 30 else 30,
+            StatType.WISDOM: wis if wis <= 30 else 30,
+            StatType.CHARISMA: cha if cha <= 30 else 30,
         }
         self.linage = None
         self.init_array()

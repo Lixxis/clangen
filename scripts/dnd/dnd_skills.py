@@ -227,10 +227,10 @@ class DnDSkills:
                 self.proficiency.append(keys[0])
                 self.skills[keys[0]] += 1
 
-    def update_skills(self, stats: Stats):
+    def update_skills(self, cat_stats: Stats):
         # set all the skills according to the connected stats
         for stat_type in self.skill_based.keys():
-            modifier = stats.modifier[stats.genetic_stats[stat_type]]
+            modifier = cat_stats.modifier[cat_stats.stats[stat_type]]
             for skill_type in self.skill_based[stat_type]:
                 self.skills[skill_type] = modifier
         # add the proficiency bonus

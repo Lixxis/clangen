@@ -985,7 +985,7 @@ class PatrolScreen(Screens):
             for skill in self.patrol_obj.skills_to_roll:
                 if event.ui_element == self.skill_buttons[skill.value]:
                     self.skill_to_roll = skill
-            self.update_skills()
+            self.update_skills_information()
         if "cat0" in self.elements and event.ui_element == self.elements["cat0"]:
             self.selected_cat = self.patrol_obj.patrol_cats[0]
         elif "cat1" in self.elements and event.ui_element == self.elements["cat1"]:
@@ -1086,9 +1086,9 @@ class PatrolScreen(Screens):
         )
 
         self.skill_buttons = {}
-        self.update_skills()
+        self.update_skills_information()
 
-    def update_skills(self):
+    def update_skills_information(self):
         if self.patrol_stage != "rolling":
             return
         for skill in self.skill_buttons.keys():

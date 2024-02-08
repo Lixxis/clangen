@@ -1,4 +1,5 @@
 from __future__ import annotations
+from collections import Counter
 from random import choice, randint, sample, random, choices, getrandbits, randrange
 from typing import Dict, List, Any
 import os.path
@@ -6,6 +7,7 @@ import itertools
 import sys
 
 from scripts.dnd.dnd_linages import Linage
+from scripts.dnd.dnd_types import LinageType
 
 from .history import History
 from .skills import CatSkills
@@ -345,13 +347,13 @@ class Cat():
                     m -= 1
             elif self.age in ['young adult', 'adult']:
                 self.experience = randint(Cat.experience_levels_range["level 2"][0],
-                                          Cat.experience_levels_range["level 4"][1])
-            elif self.age in ['senior adult']:
-                self.experience = randint(Cat.experience_levels_range["level 3"][0],
-                                          Cat.experience_levels_range["level 5"][1])
-            elif self.age in ['senior']:
-                self.experience = randint(Cat.experience_levels_range["level 4"][0],
                                           Cat.experience_levels_range["level 6"][1])
+            elif self.age in ['senior adult']:
+                self.experience = randint(Cat.experience_levels_range["level 4"][0],
+                                          Cat.experience_levels_range["level 8"][1])
+            elif self.age in ['senior']:
+                self.experience = randint(Cat.experience_levels_range["level 6"][0],
+                                          Cat.experience_levels_range["level 10"][1])
             else:
                 self.experience = 0
                 
@@ -394,14 +396,51 @@ class Cat():
             Cat.insert_cat(self)
 
         # DND - STUFF
-        self.dnd_linage = Linage()
+        possible_linages = []
+        if parent1:
+            parent_cat = Cat.fetch_cat(parent1)
+            if parent_cat:
+                possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * 2)
+            grand_parents = parent_cat.get_parents()
+            for grand_parent in grand_parents:
+                grand_parent_cat = Cat.fetch_cat(grand_parent)
+                if grand_parent_cat: 
+                    possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
+        
+        if parent2 and parent1:
+            parent_cat = Cat.fetch_cat(parent2)
+            if parent_cat:
+                possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * 2)
+            grand_parents = parent_cat.get_parents()
+            for grand_parent in grand_parents:
+                grand_parent_cat = Cat.fetch_cat(grand_parent)
+                if grand_parent_cat:
+                    possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
+        elif parent1: # single parent
+            max_amount = 0
+            linage_distribution = game.dnd_config["linage_distribution"]
+            possible_linages = []
+            for linage in LinageType:
+                if linage.value in linage_distribution:
+                    if linage_distribution[linage.value] > max_amount:
+                        max_amount = linage_distribution[linage.value]
+                    possible_linages.extend([linage.value] * linage_distribution[linage.value])
+            parent_cat = Cat.fetch_cat(parent1)
+            if parent_cat:
+                possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * int(max_amount * 1.5))
+
+        if len(possible_linages) > 0:
+            possible_linages = Counter(possible_linages)
+        else:
+            possible_linages = None
+        self.dnd_linage = Linage(possible_linages)
         self.dnd_stats = Stats()
+        self.dnd_skills = DnDSkills()
         p1_cat = Cat.fetch_cat(parent1)
         p2_cat = Cat.fetch_cat(parent2)
         self.dnd_stats.inheritance(p1_cat, p2_cat)
-        self.dnd_skills = DnDSkills()
-        self.dnd_skills.update_skills(self.dnd_stats)
         self.dnd_stats.update_stats(self.dnd_linage.linage_type)
+        self.dnd_skills.update_skills(self.dnd_stats)
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID
@@ -667,7 +706,6 @@ class Cat():
                     Cat.grief_strings[cat.ID] = []
                 
                 Cat.grief_strings[cat.ID].append((text, (self.ID, cat.ID), "negative"))
-                
 
     def familial_grief(self, living_cat: Cat):
         """
@@ -2699,7 +2737,7 @@ class Cat():
 
         file_name += ".png"
 
-		# TODO: dnd stuff - faded according to race
+        # TODO: dnd stuff - faded according to race
         self.sprite = image_cache.load_image(f"sprites/faded/{file_name}").convert_alpha()
 
     @staticmethod

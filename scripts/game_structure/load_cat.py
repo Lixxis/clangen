@@ -144,6 +144,8 @@ def json_load():
 
             if "dnd_linage" in cat:
                 new_cat.dnd_linage = Linage({cat["dnd_linage"]: 100})
+            else:
+                new_cat.dnd_linage = Linage()
 
             if "dnd_stats" in cat:
                 new_cat.dnd_stats = Stats(
@@ -154,23 +156,14 @@ def json_load():
                     cat["dnd_stats"]["wis"],
                     cat["dnd_stats"]["cha"]
                 )
-                new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
-                if "dnd_proficiency" in cat:
-                    new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
-                if new_cat.dnd_linage == None:
-                    new_cat.dnd_linage = Linage()
-                new_cat.dnd_stats.update_stats(new_cat.dnd_linage.linage_type)
             else:
                 new_cat.dnd_stats = Stats()
-                new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
-                if new_cat.dnd_linage == None:
-                    new_cat.dnd_linage = Linage()
-                new_cat.dnd_stats.update_stats(new_cat.dnd_linage.linage_type)
 
-                if "dnd_proficiency" in cat:
-                    new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
-                
-                
+            new_cat.dnd_stats.update_stats(new_cat.dnd_linage.linage_type)
+            new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
+            if "dnd_proficiency" in cat:
+                new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
+
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = cat["former_mentor"] if "former_mentor" in cat else []
             new_cat.patrol_with_mentor = cat["patrol_with_mentor"] if "patrol_with_mentor" in cat else 0
