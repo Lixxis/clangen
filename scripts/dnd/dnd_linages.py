@@ -13,5 +13,6 @@ class Linage:
 
         to_choose = []
         for linage in LinageType:
-            to_choose.extend([linage] * linage_distribution[linage.value])
+            if linage.value in linage_distribution:
+                to_choose.extend([linage] * linage_distribution[linage.value])
         self.linage_type = choice(to_choose)

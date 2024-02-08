@@ -1046,12 +1046,12 @@ class Clan():
                 clan.xp = {}
                 for cat_id, cat in Cat.all_cats.items():
                     if not cat.faded:
-                        clan.xp[cat_id] = cat.experience_level
+                        clan.xp[cat_id] = "level 0"
         except:
             clan.xp = {}
             for cat_id, cat in Cat.all_cats.items():
                 if not cat.faded:
-                    clan.xp[cat_id] = cat.experience_level
+                    clan.xp[cat_id] = "level 0"
 
     def save_xp(self, clan):
         """

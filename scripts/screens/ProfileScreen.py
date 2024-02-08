@@ -1988,7 +1988,7 @@ class ProfileScreen(Screens):
             
             # DND - stats
             dnd_stat_string = "<b>Basic stats:</b> (linage buff is bold) <br>" 
-            dnd_stat_string += self.the_cat.dnd_stats.get_display_text()
+            dnd_stat_string += self.the_cat.dnd_stats.get_display_text(True)
             self.dnd_stats_text_box = UITextBoxTweaked(
                 dnd_stat_string,scale(pygame.Rect((200, 946), (580, 350))),
                 object_id="#text_box_26_horizleft_pad_10_14",
@@ -1997,7 +1997,7 @@ class ProfileScreen(Screens):
 
             # DND - skills
             dnd_skill_string = "<b>Skills:</b> (proficiency is bold) <br>"
-            dnd_skill_string += self.the_cat.dnd_skills.get_display_text()
+            dnd_skill_string += self.the_cat.dnd_skills.get_display_text(True)
             self.dnd_skill_text_box = UITextBoxTweaked(
                 dnd_skill_string, scale(pygame.Rect((830, 946), (580, 298))),
                 object_id="#text_box_26_horizleft_pad_10_14",

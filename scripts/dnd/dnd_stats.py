@@ -83,11 +83,12 @@ class Stats:
             self.genetic_stats[StatType.CHARISMA] = stat
             array.remove(stat)
 
-    def update_stats(self, linage: LinageType):
+    def update_stats(self, linage = None):
         "Adding the linage buffs to the stats which are used to get outcome and stuff"
-        self.linage = linage
+        if linage:
+            self.linage = linage
         for stat_type in self.stats.keys():
-            linage_buff = 1 if stat_type in self.linage_proficiency[linage] else 0
+            linage_buff = 1 if stat_type in self.linage_proficiency[self.linage] else 0
             self.stats[stat_type] = self.genetic_stats[stat_type] + linage_buff
 
     def get_stat_dict(self):
@@ -101,42 +102,42 @@ class Stats:
             "cha": self.genetic_stats[StatType.CHARISMA]
         }
 
-    def get_display_text(self):
+    def get_display_text(self, linage_bold = False):
         "Returns a html string which describe the stats"
         return_text = ""
         strength = self.stats[StatType.STRENGTH ]
         mod_str = "+" if self.modifier[strength] >= 0 else ""
-        if StatType.STRENGTH in self.linage_proficiency[self.linage]:
+        if StatType.STRENGTH in self.linage_proficiency[self.linage] and linage_bold:
             return_text += "<b>strength: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")</b><br>"
         else:
             return_text += "strength: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")<br>"
         dexterity = self.stats[StatType.DEXTERITY]
         mod_str = "+" if self.modifier[dexterity] >= 0 else ""
-        if StatType.DEXTERITY in self.linage_proficiency[self.linage]:
+        if StatType.DEXTERITY in self.linage_proficiency[self.linage] and linage_bold:
             return_text += "<b>dexterity: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")</b><br>"
         else:
             return_text += "dexterity: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")<br>"
         constitution = self.stats[StatType.CONSTITUTION]
         mod_str = "+" if self.modifier[constitution] >= 0 else ""
-        if StatType.CONSTITUTION in self.linage_proficiency[self.linage]:
+        if StatType.CONSTITUTION in self.linage_proficiency[self.linage] and linage_bold:
             return_text += "<b>constitution: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")</b><br>"
         else:
             return_text += "constitution: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")<br>"
         intelligence = self.stats[StatType.INTELLIGENCE]
         mod_str = "+" if self.modifier[intelligence] >= 0 else ""
-        if StatType.INTELLIGENCE in self.linage_proficiency[self.linage]:
+        if StatType.INTELLIGENCE in self.linage_proficiency[self.linage] and linage_bold:
             return_text += "<b>intelligence: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")</b><br>"
         else:
             return_text += "intelligence: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")<br>"
         wisdom = self.stats[StatType.WISDOM]
         mod_str = "+" if self.modifier[wisdom] >= 0 else ""
-        if StatType.WISDOM in self.linage_proficiency[self.linage]:
+        if StatType.WISDOM in self.linage_proficiency[self.linage] and linage_bold:
             return_text += "<b>wisdom: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")</b><br>"
         else:
             return_text += "wisdom: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")<br>"
         charisma = self.stats[StatType.CHARISMA]
         mod_str = "+" if self.modifier[charisma] >= 0 else ""
-        if StatType.CHARISMA in self.linage_proficiency[self.linage]:
+        if StatType.CHARISMA in self.linage_proficiency[self.linage] and linage_bold:
             return_text += "<b>charisma: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")</b><br>"
         else:
             return_text += "charisma: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")<br>"

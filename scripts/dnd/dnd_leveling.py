@@ -43,7 +43,7 @@ class DnDCatLevels(UIWindow):
         if self.update_stat:
             image_pos_x = 50
 
-        if self.update_skill > 0:
+        if self.update_skill > 0 and self.update_stat == 0:
             image_pos_x = 50
             pos_y = 150
             length = 1100
@@ -104,37 +104,32 @@ class DnDCatLevels(UIWindow):
         self.skill_buttons = {}
         self.skill_info = {}
         self.new_proficiency = []
-        if self.update_skill > 0:
+        if self.update_skill > 0 and self.update_stat == 0:
             self.update_skill_info()
 
         if self.update_stat > 0 or self.update_skill > 0:
             self.done_button.disable()
-            print("SKILL ", self.update_skill)
-            print("STAT ", self.update_stat)
 
         self.set_blocking(True)
 
     def collect_leveling_need(self):
-        start_level_reached = False
+        start_level_number = int(self.the_cat.experience_level.split(" ")[1]) - 1
+        end_level_number = int(self.the_cat.experience_level.split(" ")[1]) 
+        if end_level_number < int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
+            end_level_number = int(game.clan.xp[self.the_cat.ID].split(" ")[1])
+
         for level in game.dnd_config["leveling"].keys():
-            # look for the level to start level counting
-            if not start_level_reached:
-                if level == game.clan.xp[self.the_cat.ID]:
-                    start_level_reached = True
-                else:
-                    continue
-            else:
-                if game.dnd_config["leveling"][level]:
-                    info = game.dnd_config["leveling"][level].split(":")
-                    lvl_type = info[0]
-                    amount = info[1]
-                    if lvl_type == "stat":
-                        self.update_stat += int(amount)
-                    if lvl_type == "skill":
-                        self.update_skill += int(amount)
-                # if the new current level is reached, stop looking for the update
-                if self.the_cat.experience_level == level:
-                    break
+            current_level_number = int(level.split(" ")[1])
+            if start_level_number <= current_level_number and game.dnd_config["leveling"][level]:
+                info = game.dnd_config["leveling"][level].split(":")
+                lvl_type = info[0]
+                amount = info[1]
+                if lvl_type == "stat":
+                    self.update_stat += int(amount)
+                if lvl_type == "skill":
+                    self.update_skill += int(amount)
+            if current_level_number == end_level_number:
+                break
 
     def kill_stats_buttons(self):
         if self.str_dec_button:
@@ -164,7 +159,7 @@ class DnDCatLevels(UIWindow):
 
     def update_stat_info(self):
         self.kill_stats_buttons()
-        stat = self.the_cat.dnd_stats
+        stat = self.the_cat.dnd_stats.stats
         text_pos_x = 360
         button_pos_x_decr = 650
         button_pos_x_incr = 700
@@ -182,7 +177,7 @@ class DnDCatLevels(UIWindow):
 
         if self.str_info:
             self.str_info.kill()
-        self.str_info = pygame_gui.elements.UITextBox("STRENGTH: " + str(stat.str + self.str_increase),
+        self.str_info = pygame_gui.elements.UITextBox("STRENGTH: " + str(stat[StatType.STRENGTH] + self.str_increase),
                                                      scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
@@ -202,7 +197,7 @@ class DnDCatLevels(UIWindow):
             self.dex_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.dex_info = pygame_gui.elements.UITextBox("DEXTERITY: " + str(stat.dex + self.dex_increase),
+        self.dex_info = pygame_gui.elements.UITextBox("DEXTERITY: " + str(stat[StatType.DEXTERITY] + self.dex_increase),
                                                      scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
@@ -222,7 +217,7 @@ class DnDCatLevels(UIWindow):
             self.con_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.con_info = pygame_gui.elements.UITextBox("CONSTITUTION: " + str(stat.con + self.con_increase),
+        self.con_info = pygame_gui.elements.UITextBox("CONSTITUTION: " + str(stat[StatType.CONSTITUTION] + self.con_increase),
                                                      scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
@@ -242,7 +237,7 @@ class DnDCatLevels(UIWindow):
             self.int_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.int_info = pygame_gui.elements.UITextBox("INTELLIGENCE: " + str(stat.int + self.int_increase),
+        self.int_info = pygame_gui.elements.UITextBox("INTELLIGENCE: " + str(stat[StatType.INTELLIGENCE] + self.int_increase),
                                                      scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
@@ -262,7 +257,7 @@ class DnDCatLevels(UIWindow):
             self.wis_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.wis_info = pygame_gui.elements.UITextBox("WISDOM: " + str(stat.wis + self.wis_increase),
+        self.wis_info = pygame_gui.elements.UITextBox("WISDOM: " + str(stat[StatType.WISDOM] + self.wis_increase),
                                                      scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
@@ -282,7 +277,7 @@ class DnDCatLevels(UIWindow):
             self.cha_info.kill()
         text_pos_y += step_increase
         button_pos_y += step_increase
-        self.cha_info = pygame_gui.elements.UITextBox("CHARISMA: " + str(stat.cha + self.cha_increase),
+        self.cha_info = pygame_gui.elements.UITextBox("CHARISMA: " + str(stat[StatType.CHARISMA] + self.cha_increase),
                                                      scale(pygame.Rect((text_pos_x, text_pos_y), (300, 80))),
                                                      object_id="#text_box_30_horizleft",
                                                      manager=MANAGER,
@@ -372,14 +367,14 @@ class DnDCatLevels(UIWindow):
 
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
             if event.ui_element == self.done_button:
-                stats = self.the_cat.dnd_stats.stats
+                stats = self.the_cat.dnd_stats.genetic_stats
                 self.the_cat.dnd_stats.genetic_stats[StatType.STRENGTH] = stats[StatType.STRENGTH] + self.str_increase
                 self.the_cat.dnd_stats.genetic_stats[StatType.DEXTERITY] = stats[StatType.DEXTERITY] + self.dex_increase
                 self.the_cat.dnd_stats.genetic_stats[StatType.CONSTITUTION] = stats[StatType.CONSTITUTION] + self.con_increase
                 self.the_cat.dnd_stats.genetic_stats[StatType.INTELLIGENCE] = stats[StatType.INTELLIGENCE] + self.int_increase
                 self.the_cat.dnd_stats.genetic_stats[StatType.WISDOM] = stats[StatType.WISDOM] + self.wis_increase
                 self.the_cat.dnd_stats.genetic_stats[StatType.CHARISMA] = stats[StatType.CHARISMA] + self.cha_increase
-                self.the_cat.dnd_stats.update_stats(self.the_cat.linage.linage_type)
+                self.the_cat.dnd_stats.update_stats()
                 self.the_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.the_cat.dnd_skills.update_skills(self.the_cat.dnd_stats)
                 game.switches['window_open'] = False
