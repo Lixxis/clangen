@@ -2962,6 +2962,7 @@ class Cat():
                 "favourite": self.favourite,
                 "dnd_stats": self.dnd_stats.get_stat_dict(),
                 "dnd_proficiency": self.dnd_skills.get_proficiency_list(),
+                "dnd_linage": self.dnd_linage.linage_type.value
             }
 
 

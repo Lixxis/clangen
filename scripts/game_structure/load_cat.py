@@ -142,6 +142,9 @@ def json_load():
             else:
                 new_cat.personality = Personality(trait=cat["trait"], kit_trait=new_cat.age in ["newborn", "kitten"])
 
+            if "linage" in cat:
+                new_cat.dnd_linage = Linage({cat["dnd_proficiency"]: 100})
+
             if "dnd_stats" in cat:
                 new_cat.dnd_stats = Stats(
                     cat["dnd_stats"]["str"],
