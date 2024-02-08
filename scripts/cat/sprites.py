@@ -18,7 +18,7 @@ class Sprites():
         self.images = {}
         self.sprites = {}
         self.dnd_sprites = {
-            "high elf" : {},
+            "elf" : {},
         }
 
         # Shared empty sprite for placeholders

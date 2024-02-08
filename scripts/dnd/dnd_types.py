@@ -2,9 +2,12 @@ from enum import Enum
 
 class LinageType(Enum):
     CAT = "cat"
-    HIGH_ELF = "high elf"
+    ELF = "elf"
     DWARF = "dwarf"
     ORC = "orc"
+
+class ElfSubLinageType(Enum):
+    HIGH_ELF = "high elf"
 
 class StatType(Enum):
     STRENGTH = "strength"

@@ -1987,7 +1987,7 @@ class ProfileScreen(Screens):
                 self.dnd_skill_text_box.kill()
             
             # DND - stats
-            dnd_stat_string = "<b>Basic stats:</b> <br>" 
+            dnd_stat_string = "<b>Basic stats:</b> (linage buff is bold) <br>" 
             dnd_stat_string += self.the_cat.dnd_stats.get_display_text()
             self.dnd_stats_text_box = UITextBoxTweaked(
                 dnd_stat_string,scale(pygame.Rect((200, 946), (580, 350))),

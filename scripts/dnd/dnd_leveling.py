@@ -373,12 +373,13 @@ class DnDCatLevels(UIWindow):
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
             if event.ui_element == self.done_button:
                 stats = self.the_cat.dnd_stats.stats
-                self.the_cat.dnd_stats.stats[StatType.STRENGTH] = stats[StatType.STRENGTH] + self.str_increase
-                self.the_cat.dnd_stats.stats[StatType.DEXTERITY] = stats[StatType.DEXTERITY] + self.dex_increase
-                self.the_cat.dnd_stats.stats[StatType.CONSTITUTION] = stats[StatType.CONSTITUTION] + self.con_increase
-                self.the_cat.dnd_stats.stats[StatType.INTELLIGENCE] = stats[StatType.INTELLIGENCE] + self.int_increase
-                self.the_cat.dnd_stats.stats[StatType.WISDOM] = stats[StatType.WISDOM] + self.wis_increase
-                self.the_cat.dnd_stats.stats[StatType.CHARISMA] = stats[StatType.CHARISMA] + self.cha_increase
+                self.the_cat.dnd_stats.genetic_stats[StatType.STRENGTH] = stats[StatType.STRENGTH] + self.str_increase
+                self.the_cat.dnd_stats.genetic_stats[StatType.DEXTERITY] = stats[StatType.DEXTERITY] + self.dex_increase
+                self.the_cat.dnd_stats.genetic_stats[StatType.CONSTITUTION] = stats[StatType.CONSTITUTION] + self.con_increase
+                self.the_cat.dnd_stats.genetic_stats[StatType.INTELLIGENCE] = stats[StatType.INTELLIGENCE] + self.int_increase
+                self.the_cat.dnd_stats.genetic_stats[StatType.WISDOM] = stats[StatType.WISDOM] + self.wis_increase
+                self.the_cat.dnd_stats.genetic_stats[StatType.CHARISMA] = stats[StatType.CHARISMA] + self.cha_increase
+                self.the_cat.dnd_stats.update_stats(self.the_cat.linage.linage_type)
                 self.the_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.the_cat.dnd_skills.update_skills(self.the_cat.dnd_stats)
                 game.switches['window_open'] = False

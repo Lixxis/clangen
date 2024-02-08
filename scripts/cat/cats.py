@@ -401,6 +401,7 @@ class Cat():
         self.dnd_stats.inheritance(p1_cat, p2_cat)
         self.dnd_skills = DnDSkills()
         self.dnd_skills.update_skills(self.dnd_stats)
+        self.dnd_stats.update_stats(self.dnd_linage.linage_type)
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID

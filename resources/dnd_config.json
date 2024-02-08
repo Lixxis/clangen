@@ -28,7 +28,7 @@
     },
     "linage_distribution": {
         "cat" : 40,
-        "high elf": 25,
+        "elf": 25,
         "dwarf": 15,
         "orc": 10
     }

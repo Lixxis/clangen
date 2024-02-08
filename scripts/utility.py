@@ -1235,8 +1235,8 @@ def generate_sprite(cat, life_state=None, scars_hidden=False, acc_hidden=False, 
     # generating the sprite
     try:
         spirit_dict = sprites.sprites
-        if cat.dnd_linage.linage_type.value == "high elf":
-            spirit_dict = sprites.dnd_sprites["high elf"]
+        # if cat.dnd_linage.linage_type.value == "elf":
+        #     spirit_dict = sprites.dnd_sprites["elf"]
         if cat.pelt.name not in ['Tortie', 'Calico']:
             new_sprite.blit(spirit_dict[cat.pelt.get_sprites_name() + cat.pelt.colour + cat_sprite], (0, 0))
         else:

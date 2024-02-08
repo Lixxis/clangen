@@ -3,6 +3,8 @@ import random
 from math import floor
 import logging
 
+from scripts.dnd.dnd_linages import Linage
+
 from .game_essentials import game
 from ..cat.history import History
 from ..cat.skills import CatSkills
@@ -152,9 +154,15 @@ def json_load():
                 new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
                 if "dnd_proficiency" in cat:
                     new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
+                if new_cat.dnd_linage == None:
+                    new_cat.dnd_linage = Linage()
+                new_cat.dnd_stats.update_stats(new_cat.dnd_linage.linage_type)
             else:
                 new_cat.dnd_stats = Stats()
                 new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
+                if new_cat.dnd_linage == None:
+                    new_cat.dnd_linage = Linage()
+                new_cat.dnd_stats.update_stats(new_cat.dnd_linage.linage_type)
 
                 if "dnd_proficiency" in cat:
                     new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])

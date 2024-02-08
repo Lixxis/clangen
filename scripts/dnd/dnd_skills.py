@@ -70,7 +70,7 @@ class DnDSkills:
                 {"skill": DnDSkillType.SURVIVAL, "chance": 20}
             ]
         },
-        LinageType.HIGH_ELF : {
+        LinageType.ELF : {
             "amount": 2,
             "prof":[
                 {"skill": DnDSkillType.SURVIVAL, "chance": 20}
