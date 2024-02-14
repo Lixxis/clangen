@@ -34,6 +34,8 @@ class DnDCatLevels(UIWindow):
         self.update_skill = 0
         self.update_stat = 0
         self.collect_leveling_need()
+        print("SKILL: ", self.update_skill)
+        print("STAT: ", self.update_stat)
         pos_y = 400
         length = 600
         done_button_x = 323
@@ -113,11 +115,12 @@ class DnDCatLevels(UIWindow):
         self.set_blocking(True)
 
     def collect_leveling_need(self):
-        start_level_number = int(self.the_cat.experience_level.split(" ")[1]) - 1
-        end_level_number = int(self.the_cat.experience_level.split(" ")[1]) 
+        start_level_number = int(self.the_cat.experience_level.split(" ")[1])
+        end_level_number = int(self.the_cat.experience_level.split(" ")[1])
         if end_level_number < int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
             end_level_number = int(game.clan.xp[self.the_cat.ID].split(" ")[1])
-
+        if start_level_number == end_level_number:
+            return
         for level in game.dnd_config["leveling"].keys():
             current_level_number = int(level.split(" ")[1])
             if start_level_number <= current_level_number and game.dnd_config["leveling"][level]:
