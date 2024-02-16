@@ -20,6 +20,9 @@
     "#debug_console": {
         "prototype": "#window_base_theme"
     },
+    "#cat_level_up": {
+        "prototype": "#window_base_theme"
+    },
     "#loading_window": {
         "colours": {
             "normal_border": "#00000000",

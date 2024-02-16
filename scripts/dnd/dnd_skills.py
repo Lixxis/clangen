@@ -1,6 +1,7 @@
 from scripts.cat.skills import SkillPath
 from scripts.dnd.dnd_stats import Stats
 from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType
+from scripts.game_structure.game_essentials import game
 
 
 class DnDSkills:
@@ -235,4 +236,4 @@ class DnDSkills:
                 self.skills[skill_type] = modifier
         # add the proficiency bonus
         for proficiency_type in self.proficiency:
-            self.skills[proficiency_type] += 1
+            self.skills[proficiency_type] += game.dnd_config["proficiency_bonus"]

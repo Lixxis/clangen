@@ -4213,7 +4213,7 @@
             }
         }
     },
-	"#choose_group_button": {
+    "#choose_group_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4230,7 +4230,7 @@
             }
         }
     },
-	"#show_dead_button": {
+    "#show_dead_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4247,7 +4247,7 @@
             }
         }
     },
-	"#show_living_button": {
+    "#show_living_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4264,7 +4264,7 @@
             }
         }
     },
-	"#view_cotc_button": {
+    "#view_cotc_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4281,7 +4281,7 @@
             }
         }
     },
-	"#view_dark_forest_button": {
+    "#view_dark_forest_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4298,7 +4298,7 @@
             }
         }
     },
-	"#view_starclan_button": {
+    "#view_starclan_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4315,7 +4315,7 @@
             }
         }
     },
-	"#view_unknown_residence_button": {
+    "#view_unknown_residence_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4332,7 +4332,7 @@
             }
         }
     },
-	"#view_your_clan_button": {
+    "#view_your_clan_button": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4451,7 +4451,7 @@
             }
         }
     },
-	"#dnd_dice": {
+    "#dnd_dice": {
         "prototype": "#image_button",
         "images": {
             "normal_image": {
@@ -4465,6 +4465,40 @@
             },
             "disabled_image": {
                 "path": "resources/images/dnd/dice_unavailable.png"
+            }
+        }
+    },
+    "#dnd_lvl_next": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/leveling_next.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/leveling_next_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/leveling_next.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/leveling_next.png"
+            }
+        }
+    },
+    "#dnd_lvl_prev": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/leveling_prev.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/leveling_prev_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/leveling_prev.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/leveling_prev.png"
             }
         }
     }
