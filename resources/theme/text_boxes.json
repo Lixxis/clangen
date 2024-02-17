@@ -251,6 +251,15 @@
             "line_spacing": "0.95"
         }
     },
+    "#text_box_30_horizcenter_spacing_95_light": {
+        "prototype": "#text_box_30_horizcenter",
+        "colours": {
+            "normal_text": "#EFE5CE"
+        },
+        "misc": {
+            "line_spacing": "0.95"
+        }
+    },
     "#text_box_30_horizcenter_vertcenter": {
         "prototype": "#text_box_30_horizcenter",
         "misc": {
