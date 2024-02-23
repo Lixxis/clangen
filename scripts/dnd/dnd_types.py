@@ -36,3 +36,15 @@ class DnDSkillType(Enum):
     SLEIGHT_OF_PAW = "sleight of paw"
     STEALTH = "stealth"
     SURVIVAL = "survival"
+
+class ClassType(Enum):
+    BRUTE = "Brute"
+    SILVER_TONGUE = "Silver tongue"
+    CHOSEN = "Chosen of the StarClan"
+    BLOOD_OLD = "Blood of the Old"
+    SKILLED_WARRIOR = "Skilled Warrior"
+    WISDOM = "Wisdom of the Paws"
+    PROTECTOR = "Protector of StarClan"
+    BLOOD_CHOSEN = "Blood of the Chosen One"
+    KNOWLEDGE = "Knowledge Seeker"
+    SHADOW = "Shadow Stalker"
