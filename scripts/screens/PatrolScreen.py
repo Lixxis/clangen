@@ -56,6 +56,7 @@ class PatrolScreen(Screens):
         self.cat_to_roll = None
         self.skill_buttons = {}
         self.skill_info = {}
+        self.not_proceed = False
 
     def handle_event(self, event):
         if game.switches["window_open"]:
@@ -63,12 +64,13 @@ class PatrolScreen(Screens):
         
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
             if self.patrol_stage == "choose_cats":
+                self.not_proceed = False
                 self.handle_choose_cats_events(event)
             elif self.patrol_stage == 'patrol_events':
                 self.handle_patrol_events_event(event)
-            elif self.patrol_stage == "rolling":
+            elif self.patrol_stage == "rolling" and not self.not_proceed:
                 self.handle_rolling_event(event)
-            elif self.patrol_stage == 'patrol_complete':
+            elif self.patrol_stage == 'patrol_complete' or self.not_proceed:
                 self.handle_patrol_complete_events(event)
 
             self.menu_button_pressed(event)
@@ -608,7 +610,8 @@ class PatrolScreen(Screens):
     def run_patrol_proceed(self, user_input):
         """Proceeds the patrol - to be run in the seperate thread. """
         if user_input in ["nopro", "notproceed"]:
-            self.patrol_obj.proceed_patrol("decline")
+            self.display_text, self.results_text, self.outcome_art = self.patrol_obj.proceed_patrol("decline")
+            self.not_proceed = True
             #self.display_text, self.results_text, self.outcome_art = self.patrol_obj.proceed_patrol("decline")
         elif user_input in ["antag", "antagonize"]:
             self.patrol_obj.proceed_patrol("antag")
@@ -1060,12 +1063,36 @@ class PatrolScreen(Screens):
             self.elements["dice"].disable()
 
     def run_patrol_rolling(self):
-        self.display_text, self.results_text, self.outcome_art = self.patrol_obj.roll_outcome(
-            self.cat_to_roll, self.skill_to_roll
-        )
+        if not self.not_proceed:
+            self.display_text, self.results_text, self.outcome_art = self.patrol_obj.roll_outcome(
+                self.cat_to_roll, self.skill_to_roll
+            )
 
     def open_patrol_rolling_screen(self):
         self.patrol_stage = "rolling"
+        if self.not_proceed:
+            self.patrol_stage = "patrol_complete"
+            self.cat_to_roll = self.selected_cat
+            self.selected_cat = None
+            for skill in self.skill_buttons.keys():
+                self.skill_buttons[skill].kill()
+            self.skill_buttons = {}
+            for skill in self.skill_info.keys():
+                self.skill_info[skill].kill()
+            self.skill_info = {}
+            if "selected_image" in self.elements:
+                self.elements["selected_image"].kill()
+            if "selected_name" in self.elements:
+                self.elements["selected_name"].kill()
+            if "skill_info" in self.elements:
+                self.elements["skill_info"].kill()
+            if "patrol_info" in self.elements:
+                self.elements["patrol_info"].kill()
+            self.elements['intro_image'].show()
+            if "dice" in self.elements:
+                self.elements["dice"].kill()
+            self.rolling_patrol_thread = self.loading_screen_start_work(self.run_patrol_rolling, "rolling")
+            return
         self.elements["proceed"].hide()
         self.elements["not_proceed"].hide()
         self.elements["antagonize"].hide()
