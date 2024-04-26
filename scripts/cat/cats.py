@@ -707,6 +707,7 @@ class Cat():
                     Cat.grief_strings[cat.ID] = []
                 
                 Cat.grief_strings[cat.ID].append((text, (self.ID, cat.ID), "negative"))
+
     def familial_grief(self, living_cat: Cat):
         """
         returns relevant grief strings for family members, if no relevant strings then returns None
@@ -825,7 +826,8 @@ class Cat():
         # If we have it sorted by rank, we also need to re-sort
         if game.sort_type == "rank" and resort:
             Cat.sort_cats()
-   
+
+    
     def rank_change_traits_skill(self, mentor):
         """Updates trait and skill upon ceremony"""  
 
@@ -854,13 +856,14 @@ class Cat():
             return
         
         self.personality.set_kit(self.is_baby()) #Update kit trait stuff
+        
 
     def describe_cat(self, short=False):
         """ Generates a string describing the cat's appearance and gender. Mainly used for generating
         the allegiances. If short is true, it will generate a very short one, with the minimal amount of information. """
         output = Pelt.describe_appearance(self, short)
         # Add "a" or "an"
-        if output[0].lower() in "aeiou":
+        if output[0].lower() in "aiou":
             output = f"an {output}"
         else:
             output = f"a {output}"
@@ -999,6 +1002,7 @@ class Cat():
             )
 
             print(f"WARNING: saving history of cat #{self.ID} didn't work")
+            
 
     def generate_lead_ceremony(self):
         """
@@ -1409,6 +1413,9 @@ class Cat():
 
     def relationship_interaction(self):
         """Randomly choose a cat of the Clan and have a interaction with them."""
+        # if the cat has no relationships, skip
+        #if not self.relationships or len(self.relationships) < 1:
+        #    return
         cats_to_choose = [iter_cat for iter_cat in Cat.all_cats.values() if iter_cat.ID != self.ID and \
                           not iter_cat.outside and not iter_cat.exiled and not iter_cat.dead]
         # if there are not cats to interact, stop
