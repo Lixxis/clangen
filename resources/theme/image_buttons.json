@@ -4502,6 +4502,618 @@
             }
         }
     },
+    "#dnd_skill_acrobatics":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_acrobatics.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_acrobatics.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_acrobatics.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_acrobatics.png"
+            }
+        }
+    },
+    "#dnd_skill_animal_handling":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_animal_handling.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_animal_handling.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_animal_handling.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_animal_handling.png"
+            }
+        }
+    },
+    "#dnd_skill_arcana":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_arcana.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_arcana.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_arcana.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_arcana.png"
+            }
+        }
+    },
+    "#dnd_skill_athletics":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_athletics.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_athletics.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_athletics.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_athletics.png"
+            }
+        }
+    },
+    "#dnd_skill_deception":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_deception.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_deception.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_deception.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_deception.png"
+            }
+        }
+    },
+    "#dnd_skill_history":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_history.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_history.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_history.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_history.png"
+            }
+        }
+    },
+    "#dnd_skill_insight":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_insight.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_insight.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_insight.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_insight.png"
+            }
+        }
+    },
+    "#dnd_skill_intimidation":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_intimidation.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_intimidation.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_intimidation.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_intimidation.png"
+            }
+        }
+    },
+    "#dnd_skill_investigation":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_investigation.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_investigation.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_investigation.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_investigation.png"
+            }
+        }
+    },
+    "#dnd_skill_medicine":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_medicine.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_medicine.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_medicine.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_medicine.png"
+            }
+        }
+    },
+    "#dnd_skill_nature":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_nature.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_nature.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_nature.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_nature.png"
+            }
+        }
+    },
+    "#dnd_skill_perception":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_perception.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_perception.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_perception.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_perception.png"
+            }
+        }
+    },
+    "#dnd_skill_performance":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_performance.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_performance.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_performance.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_performance.png"
+            }
+        }
+    },
+    "#dnd_skill_persuasion":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_persuasion.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_persuasion.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_persuasion.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_persuasion.png"
+            }
+        }
+    },
+    "#dnd_skill_religion":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_religion.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_religion.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_religion.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_religion.png"
+            }
+        }
+    },
+    "#dnd_skill_sleight_of_paw":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_sleight_of_paw.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_sleight_of_paw.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_sleight_of_paw.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_sleight_of_paw.png"
+            }
+        }
+    },
+    "#dnd_skill_stealth":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_stealth.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_stealth.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_base_stealth.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_stealth.png"
+            }
+        }
+    },
+    "#dnd_skill_survival":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_base_survival.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_survival.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_survival.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_base_survival.png"
+            }
+        }
+    },
+    "#dnd_skill_acrobatics_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_acrobatics.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_acrobatics.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_acrobatics.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_acrobatics.png"
+            }
+        }
+    },
+    "#dnd_skill_animal_handling_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_animal_handling.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_animal_handling.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_animal_handling.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_animal_handling.png"
+            }
+        }
+    },
+    "#dnd_skill_arcana_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_arcana.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_arcana.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_arcana.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_arcana.png"
+            }
+        }
+    },
+    "#dnd_skill_athletics_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_athletics.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_athletics.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_athletics.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_athletics.png"
+            }
+        }
+    },
+    "#dnd_skill_deception_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_deception.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_deception.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_deception.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_deception.png"
+            }
+        }
+    },
+    "#dnd_skill_history_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_history.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_history.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_history.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_history.png"
+            }
+        }
+    },
+    "#dnd_skill_insight_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_insight.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_insight.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_insight.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_insight.png"
+            }
+        }
+    },
+    "#dnd_skill_intimidation_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_intimidation.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_intimidation.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_intimidation.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_intimidation.png"
+            }
+        }
+    },
+    "#dnd_skill_investigation_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_investigation.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_investigation.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_investigation.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_investigation.png"
+            }
+        }
+    },
+    "#dnd_skill_medicine_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_medicine.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_medicine.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_medicine.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_medicine.png"
+            }
+        }
+    },
+    "#dnd_skill_nature_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_nature.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_nature.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_nature.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_nature.png"
+            }
+        }
+    },
+    "#dnd_skill_perception_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_perception.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_perception.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_perception.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_perception.png"
+            }
+        }
+    },
+    "#dnd_skill_performance_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_performance.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_performance.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_performance.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_performance.png"
+            }
+        }
+    },
+    "#dnd_skill_persuasion_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_persuasion.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_persuasion.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_persuasion.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_persuasion.png"
+            }
+        }
+    },
+    "#dnd_skill_religion_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_religion.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_religion.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_religion.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_religion.png"
+            }
+        }
+    },
+    "#dnd_skill_sleight_of_paw_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_sleight_of_paw.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_sleight_of_paw.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_sleight_of_paw.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_sleight_of_paw.png"
+            }
+        }
+    },
+    "#dnd_skill_stealth_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_stealth.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_stealth.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_stealth.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_stealth.png"
+            }
+        }
+    },
+    "#dnd_skill_survival_selected":{
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/dnd/skill_hover_survival.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/dnd/skill_hover_survival.png"
+            },
+            "selected_image": {
+                "path": "resources/images/dnd/skill_hover_survival.png"
+            },
+            "disabled_image": {
+                "path": "resources/images/dnd/skill_hover_survival.png"
+            }
+        }
+    },
     "#warrior_den_button": {
         "prototype": "#image_button",
         "images": {
