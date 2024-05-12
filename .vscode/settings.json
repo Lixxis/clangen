@@ -10,6 +10,7 @@
         "-p",
         "test_*.py"
     ],
+	"python.experiments.optOutFrom": ["pythonTestAdapter"],
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
     "cSpell.words": [
