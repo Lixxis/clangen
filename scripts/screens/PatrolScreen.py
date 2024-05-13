@@ -52,6 +52,9 @@ class PatrolScreen(Screens):
         self.proceed_patrol_thread = None
         self.rolling_patrol_thread = None
         self.outcome_art = None
+        self.rolled_number = None
+        self.modifier = None
+        self.needed_number = None
         self.skill_to_roll = None
         self.cat_to_roll = None
         self.skill_buttons = {}
@@ -651,8 +654,16 @@ class PatrolScreen(Screens):
         if self.outcome_art is not None and self.elements.get('intro_image') is not None:
             self.elements['intro_image'].set_image(self.outcome_art)
 
+
+        self.elements["roll_results"] = pygame_gui.elements.UITextBox("",
+                                                                        scale(pygame.Rect((1100, 1100), (344, 300))),
+                                                                        object_id=get_text_box_theme(
+                                                                            "#text_box_22_horizcenter_spacing_95"),
+                                                                        manager=MANAGER)
+        self.elements["roll_results"].set_text(f"Rolled: {self.rolled_number}\nModifier: {self.modifier}\nFinal: {self.rolled_number+self.modifier}")
+
         self.elements["patrol_results"] = pygame_gui.elements.UITextBox("",
-                                                                        scale(pygame.Rect((1100, 1000), (344, 300))),
+                                                                        scale(pygame.Rect((1100, 950), (344, 300))),
                                                                         object_id=get_text_box_theme(
                                                                             "#text_box_22_horizcenter_spacing_95"),
                                                                         manager=MANAGER)
@@ -994,7 +1005,7 @@ class PatrolScreen(Screens):
         self.clear_page()
         self.clear_cat_buttons()
         self.hide_menu_buttons()
-        #self.dnd_patrol_frame.hide()
+        self.dnd_patrol_frame.hide()
 
     def handle_rolling_event(self, event):
         if event.ui_element in self.skill_buttons.values():
@@ -1083,9 +1094,10 @@ class PatrolScreen(Screens):
 
     def run_patrol_rolling(self):
         if not self.not_proceed:
-            self.display_text, self.results_text, self.outcome_art = self.patrol_obj.roll_outcome(
+            self.display_text, self.results_text, self.outcome_art, self.rolled_number, self.modifier, self.needed_number = self.patrol_obj.roll_outcome(
                 self.cat_to_roll, self.skill_to_roll
             )
+            self.skill_to_roll = None
 
     def open_patrol_rolling_screen(self):
         self.patrol_stage = "rolling"

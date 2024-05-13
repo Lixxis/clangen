@@ -755,18 +755,19 @@ class Patrol():
         needed_number = int(self.patrol_event.chance_of_success / 4)
         if needed_number < 1:
             needed_number = 0
-        rolled_number = randint(0,20) # d20 roll
+        rolled_number = randint(1,20) # d20 roll
         print("ROLLED NUMBER: ", rolled_number , "; modifier: ", cat.dnd_skills.skills[skill])
-        rolled_number += cat.dnd_skills.skills[skill] # modifier added
-        print("FINISHED ROLLED NUMBER: ", rolled_number, ", needed number: ", needed_number)
+        modifier = cat.dnd_skills.skills[skill]
+        final_number = rolled_number + modifier # modifier added
+        print("FINISHED ROLLED NUMBER: ", final_number, ", needed number: ", needed_number)
 
         final_event = self.chosen_success
-        if needed_number > rolled_number:
+        if needed_number > final_number:
             print("NO success")
             final_event = self.chosen_failure
         else:
             print("SUCCESS!")
-        return final_event.execute_outcome(self)
+        return final_event.execute_outcome(self) + (rolled_number,) + (modifier,) + (needed_number,)
 
     def find_skills(self):
         skill_to_replace = []
