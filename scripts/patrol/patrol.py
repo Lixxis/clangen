@@ -767,7 +767,7 @@ class Patrol():
             final_event = self.chosen_failure
         else:
             print("SUCCESS!")
-        return final_event.execute_outcome(self) + (rolled_number,) + (modifier,) + (needed_number,)
+        return final_event.execute_outcome(self, cat) + (rolled_number,) + (modifier,) + (needed_number,)
 
     def find_skills(self):
         skill_to_replace = []

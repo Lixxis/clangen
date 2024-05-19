@@ -4,6 +4,7 @@ import pygame_gui
 
 from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
 from scripts.dnd.dnd_skills import DnDSkills
+from scripts.dnd.dnd_stats import Stats
 
 from .Screens import Screens
 from scripts.utility import get_text_box_theme, scale, shorten_text_to_fit
@@ -767,21 +768,23 @@ class PatrolScreen(Screens):
 
     def update_skills_tab(self):
         self.elements["skills_box"].show()
-        patrol_skills = []
         patrol_traits = []
+        patrol_proficiency = []
+        linage_proficiency = []
         if self.current_patrol is not []:
             for x in self.current_patrol:
-                if x.skills.primary and x.skills.primary.get_short_skill() not in patrol_skills:
-                    patrol_skills.append(x.skills.primary.get_short_skill())
-                
-                if x.skills.secondary and x.skills.secondary.get_short_skill() not in patrol_skills:
-                    patrol_skills.append(x.skills.secondary.get_short_skill())
-                
                 if x.personality.trait not in patrol_traits:
                     patrol_traits.append(x.personality.trait)
+                
+                patrol_proficiency.extend(x.dnd_skills.get_proficiency_list())
+                linage_proficiency.extend(
+                    stat_type.value for stat_type in Stats.linage_proficiency[x.dnd_linage.linage_type]
+                )
 
         self.elements["skills_box"].set_text(
-            f"Current Patrol Skills: {', '.join(patrol_skills)}\nCurrent Patrol Traits: {', '.join(patrol_traits)}"
+            f"Current Patrol Skill Proficiencies: {', '.join(list(set(patrol_proficiency)))}\n" +
+            f"Current Patrol Linage Proficiencies: {', '.join(list(set(linage_proficiency)))}\n" +
+            f"Current Patrol Traits: {', '.join(list(set(patrol_traits)))}"
         )
 
     def update_selected_cat(self):
@@ -1039,6 +1042,7 @@ class PatrolScreen(Screens):
             self.elements["selected_name"].kill()
             self.elements["skill_info"].kill()
             self.elements["patrol_info"].kill()
+            self.elements["cat_info"].kill()
             self.elements['intro_image'].show()
             self.elements["dice"].kill()
             self.dnd_patrol_frame.hide()
@@ -1087,6 +1091,20 @@ class PatrolScreen(Screens):
                 object_id="#text_box_22_horizleft",
                 manager=MANAGER)
 
+            dnd_info_string = ""
+            dnd_info_string += self.selected_cat.genderalign + "<br>"
+            dnd_info_string += str(self.selected_cat.moons) + " moons <br>"
+            dnd_info_string += str(self.selected_cat.experience) + " exp. "
+            dnd_info_string += "(" + self.selected_cat.experience_level + ") <br><br>"
+            dnd_info_string += self.selected_cat.dnd_linage.linage_type.value + "<br>"
+            if "cat_info" in self.elements:
+                self.elements["cat_info"].kill()
+            self.elements['cat_info'] = pygame_gui.elements.UITextBox(
+                dnd_info_string,
+                scale(pygame.Rect((70, 600), (480, 380))),
+                object_id="#text_box_22_horizcenter",
+                manager=MANAGER)
+
         if self.skill_to_roll != None and self.selected_cat != None:
             self.elements["dice"].enable()
         else:
@@ -1119,6 +1137,8 @@ class PatrolScreen(Screens):
                 self.elements["skill_info"].kill()
             if "patrol_info" in self.elements:
                 self.elements["patrol_info"].kill()
+            if "cat_info" in self.elements:
+                self.elements["cat_info"].kill()
             self.elements['event_bg'].show()
             self.elements['info_bg'].show()
             self.elements['image_frame'].show()
@@ -1136,6 +1156,8 @@ class PatrolScreen(Screens):
         self.elements["not_proceed"].hide()
         self.elements["antagonize"].hide()
         self.elements['patrol_info'].kill()
+        if "cat_info" in self.elements:
+            self.elements['cat_info'].kill()
 
         self.elements['event_bg'].hide()
         self.elements['info_bg'].hide()
@@ -1157,7 +1179,9 @@ class PatrolScreen(Screens):
                                        object_id="#text_box_30_horizleft_pad_10_10_spacing_95",
                                        manager=MANAGER)
         self.elements["temporary_text"].set_text(
-            f"<b>- Decide which cat should take the roll -</b>" +
+            self.display_text + "<br><br>" +
+            "----<br>" +
+            f"<b>Which cat should take the roll?</b><br>" +
             "Select a cat and the skill which will be used for the role. " +
             "A cat can be selected from the left bottom. " +
             "The skill can be selected right next to it."

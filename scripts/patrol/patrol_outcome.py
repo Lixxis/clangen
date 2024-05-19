@@ -170,12 +170,13 @@ class PatrolOutcome():
         
         return outcome_list
 
-    def execute_outcome(self, patrol:'Patrol') -> tuple:
+    def execute_outcome(self, patrol:'Patrol', cat_to_roll) -> tuple:
         """ 
         Excutes the outcome. Returns a tuple with the final outcome text, the results text, and any outcome art
         format: (Outcome text, results text, outcome art (might be None))
         """        
         results = []
+        patrol.cat_to_roll = cat_to_roll
         # the text has to be processed before - otherwise leader might be referenced with their warrior name
         processed_text = patrol.process_text(self.text, self.stat_cat)
         
@@ -343,7 +344,9 @@ class PatrolOutcome():
                     cat.experience = cat.experience + app_exp
                 else:
                     cat.experience = cat.experience + gained_exp
-                    
+                if cat.ID == patrol.cat_to_roll.ID:
+                    print(f"additional: {(patrol_exp / 2)}")
+                    cat.experience += (patrol_exp / 2)
         return ""
          
     def _handle_death(self, patrol:'Patrol') -> str:
