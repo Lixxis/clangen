@@ -1,26 +1,10 @@
-<strong>v0.11.2</strong>
-- Fix: ensure that the changelog is read as UTF-8
-- Fix: issue with manual feeding with tactic "low nutrition first"
-- Fix: edge case of a cat has the exiled status, but is not outside
-
-<strong>v0.11.1</strong>
-- Fix: The changelog. Yep, just the changelog. Yes, it happened again-
-
-<strong>v0.11.0</strong>
-- Feature: Freshkill pile & nutrition system
-- Feature: "Destroy accessory" button
-- Content: Lakeside Forest Background
-- Content: Murder for the new year
-- Content: expanded scars: "HINDLEG", "BACK", "QUILLSIDE", "SCRATCHSIDE", "TOE", "BEAKSIDE", "CATBITETWO", "SNAKETWO", "FOUR"
-    Expanded tortie: 'FRECKLED' white patches: 'BLAZEMASK', 'TEARS'
-- Content: Sibling and constrained patrols
-- Content: weights and mates
-- Content: expanded war events
-- Content: more patrols
-- QOL: Cat List UI Update
-- QOL: same sex setting update
-- QOL: update for freshkill switch
-- QOL: Patrol type decision enabled in classic
-- QOL: updated credits list
-- QOL:  change to poetry
-- Plus many more bug fixes, tweaks to events and patrols, and more! Aprils fools - we made an actual game update.
+<strong>v0.1</strong>
+- experience levels are changed to fit the level 1 to 20 of DnD
+- each cat gets dnd stats + skill + the possibility of proficiencies
+- the stats are initiated with the standard-array system
+- kits inherit stat number from their parent
+- there is a leveling system
+- patrols success depending on skill rolls
+- the cat who does the roll, gets additional xp
+- cats will have certain races / linages, each  has a certain stat bonus
+- kits inherit the race / linage from parents or grandparents
