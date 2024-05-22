@@ -1,3 +1,6 @@
+<strong>v0.1.1</strong>
+- attempt to fix changelog error
+
 <strong>v0.1.0</strong>
 - experience levels are changed to fit the level 1 to 20 of DnD
 - each cat gets dnd stats + skill + the possibility of proficiencies (some based on linage)
