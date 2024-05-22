@@ -4455,16 +4455,16 @@
         "prototype": "#image_button",
         "images": {
             "normal_image": {
-                "path": "resources/images/dnd/dice.png"
+                "path": "resources/images/dnd/dnd_dice.png"
             },
             "hovered_image": {
-                "path": "resources/images/dnd/dice_hover.png"
+                "path": "resources/images/dnd/dnd_dice_hover.png"
             },
             "selected_image": {
-                "path": "resources/images/dnd/dice.png"
+                "path": "resources/images/dnd/dnd_dice.png"
             },
             "disabled_image": {
-                "path": "resources/images/dnd/dice_unavailable.png"
+                "path": "resources/images/dnd/dnd_dice_unavailable.png"
             }
         }
     },
