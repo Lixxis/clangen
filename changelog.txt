@@ -3,7 +3,7 @@
 - each cat gets dnd stats + skill + the possibility of proficiencies (some based on linage)
 - the stats are initiated with the standard-array system
 - kits inherit stat number from their parent
-- a leveling system 
+- a leveling system
 - patrols success depending on skill rolls
 - the cat who does the roll, gets additional xp
 - cats will have certain races / linages, each  has a certain stat bonus
