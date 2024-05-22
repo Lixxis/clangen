@@ -72,7 +72,6 @@ class Screens():
         "moons_n_seasons": pygame_gui.elements.UIScrollingContainer(
             scale(pygame.Rect((50, 120), (306, 150))),
             visible=False,
-            allow_scroll_x=False,
             manager=MANAGER),
         "moons_n_seasons_arrow": UIImageButton(
             scale(pygame.Rect((349, 161), (44, 68))),
@@ -87,22 +86,19 @@ class Screens():
                     "resources/images/vertical_bar.png").convert_alpha(),
                 (380, 70)),
             visible=False,
-            starting_height=1,
             manager=MANAGER),
         "dens": UIImageButton(
             scale(pygame.Rect((50, 120), (142, 60))),
             "",
             visible=False,
             manager=MANAGER,
-            object_id="#dens_button",
-            starting_height=4),
+            object_id="#dens_button"),
         "med_cat_den": UIImageButton(
             scale(pygame.Rect((50, 200), (302, 56))),
             "",
             visible=False,
             manager=MANAGER,
-            object_id="#med_den_button",
-            starting_height=10),
+            object_id="#med_den_button"),
         "warrior_den": UIImageButton(
             scale(pygame.Rect((50, 280), (242, 56))),
             "",

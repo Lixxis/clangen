@@ -38,8 +38,7 @@ class SaveCheck(UIWindow):
         super().__init__(scale(pygame.Rect((500, 400), (600, 400))),
                          window_display_title='Save Check',
                          object_id='#save_check_window',
-                         resizable=False,
-                         always_on_top=True)
+                         resizable=False)
 
         self.clan_name = "UndefinedClan"
         if game.clan:
@@ -918,7 +917,6 @@ class ChangelogPopup(UIWindow):
 
         self.scrolling_container = pygame_gui.elements.UIScrollingContainer(
             scale(pygame.Rect((20, 130), (960, 650))),
-            allow_scroll_x=False,
             container=self,
             manager=MANAGER)
 

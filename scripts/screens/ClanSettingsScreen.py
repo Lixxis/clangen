@@ -192,7 +192,6 @@ class ClanSettingsScreen(Screens):
         self.checkboxes_text[
             "container_general"] = pygame_gui.elements.UIScrollingContainer(
             scale(pygame.Rect((0, 490), (1400, 600))),
-            allow_scroll_x=False,
             manager=MANAGER)
 
         n = 0
