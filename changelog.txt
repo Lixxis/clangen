@@ -1,9 +1,9 @@
-<strong>v0.1</strong>
+<strong>v0.1.0</strong>
 - experience levels are changed to fit the level 1 to 20 of DnD
-- each cat gets dnd stats + skill + the possibility of proficiencies
+- each cat gets dnd stats + skill + the possibility of proficiencies (some based on linage)
 - the stats are initiated with the standard-array system
 - kits inherit stat number from their parent
-- there is a leveling system
+- a leveling system
 - patrols success depending on skill rolls
 - the cat who does the roll, gets additional xp
 - cats will have certain races / linages, each  has a certain stat bonus
