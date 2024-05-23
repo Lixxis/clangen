@@ -1,3 +1,6 @@
+<strong>v0.1.2</strong>
+- disable changelog
+
 <strong>v0.1.1</strong>
 - attempt to fix changelog error
 
