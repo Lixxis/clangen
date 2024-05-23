@@ -442,6 +442,7 @@ class Cat():
         self.dnd_stats.inheritance(p1_cat, p2_cat)
         self.dnd_stats.update_stats(self.dnd_linage.linage_type)
         self.dnd_skills.update_skills(self.dnd_stats)
+        self.dnd_class = None
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID
@@ -3019,7 +3020,9 @@ class Cat():
                 "favourite": self.favourite,
                 "dnd_stats": self.dnd_stats.get_stat_dict(),
                 "dnd_proficiency": self.dnd_skills.get_proficiency_list(),
-                "dnd_linage": self.dnd_linage.linage_type.value
+                "dnd_linage": self.dnd_linage.linage_type.value,
+                "dnd_class": self.dnd_class.value if self.dnd_class else None,
+                "dnd_class_proficiency": self.dnd_skills.get_class_proficiency(),
             }
 
 

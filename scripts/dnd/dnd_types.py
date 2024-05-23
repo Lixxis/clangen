@@ -47,4 +47,5 @@ class ClassType(Enum):
     PROTECTOR = "Protector of StarClan"
     BLOOD_CHOSEN = "Blood of the Chosen One"
     KNOWLEDGE = "Knowledge Seeker"
+    SWORN = "Sworn One"
     SHADOW = "Shadow Stalker"

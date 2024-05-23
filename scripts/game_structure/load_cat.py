@@ -22,6 +22,7 @@ from scripts.cat_relations.inheritance import Inheritance
 
 from scripts.dnd.dnd_stats import Stats
 from scripts.dnd.dnd_skills import DnDSkills
+from scripts.dnd.dnd_types import ClassType
 
 logger = logging.getLogger(__name__)
 
@@ -163,6 +164,14 @@ def json_load():
             new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
             if "dnd_proficiency" in cat:
                 new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
+
+            if "dnd_class" in cat:
+                dnd_class = [c for c in ClassType if c.value == cat["dnd_class"]]
+                if dnd_class:
+                    new_cat.dnd_class = dnd_class[0]
+
+            if "dnd_class_proficiency" in cat:
+                new_cat.dnd_skills.load_class_proficiency(cat["dnd_class_proficiency"])
 
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = cat["former_mentor"] if "former_mentor" in cat else []

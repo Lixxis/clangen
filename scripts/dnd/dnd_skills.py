@@ -1,6 +1,6 @@
 from scripts.cat.skills import SkillPath
 from scripts.dnd.dnd_stats import Stats
-from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType
+from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType, ClassType
 from scripts.game_structure.game_essentials import game
 
 
@@ -157,6 +157,20 @@ class DnDSkills:
         },
     }
 
+    class_proficiency_dict = {
+        ClassType.BRUTE : [DnDSkillType.ATHLETICS, DnDSkillType.SURVIVAL, DnDSkillType.INTIMIDATION],
+        ClassType.SILVER_TONGUE : [DnDSkillType.PERFORMANCE, DnDSkillType.DECEPTION, DnDSkillType.PERSUASION],
+        ClassType.CHOSEN : [DnDSkillType.RELIGION, DnDSkillType.MEDICINE, DnDSkillType.INSIGHT],
+        ClassType.BLOOD_OLD : [DnDSkillType.NATURE, DnDSkillType.SURVIVAL, DnDSkillType.ANIMAL_HANDLING],
+        ClassType.SKILLED_WARRIOR : [DnDSkillType.ACROBATICS, DnDSkillType.ATHLETICS, DnDSkillType.INTIMIDATION],
+        ClassType.WISDOM : [DnDSkillType.ACROBATICS, DnDSkillType.RELIGION, DnDSkillType.INSIGHT],
+        ClassType.PROTECTOR : [DnDSkillType.ATHLETICS, DnDSkillType.RELIGION, DnDSkillType.HISTORY],
+        ClassType.BLOOD_CHOSEN : [DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.SLEIGHT_OF_PAW],
+        ClassType.KNOWLEDGE : [DnDSkillType.ARCANA, DnDSkillType.PERCEPTION, DnDSkillType.HISTORY],
+        ClassType.SWORN : [DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.PERSUASION],
+        ClassType.SHADOW : [DnDSkillType.STEALTH, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.INVESTIGATION],
+    }
+
     def __init__(self, stats = None):
         self.skills = {
             DnDSkillType.ACROBATICS: 0,
@@ -179,6 +193,8 @@ class DnDSkills:
             DnDSkillType.SURVIVAL: 0
         }
         self.proficiency = []
+        self.class_proficiency = []
+        self.used_class = {}
         if stats:
             self.update_skills(stats)
 
@@ -189,7 +205,7 @@ class DnDSkills:
             mod_str = "+"
             if modifier < 0:
                 mod_str = ""
-            if skill in self.proficiency and len(skills_to_bold) < 1:
+            if (skill in self.proficiency or skill in self.class_proficiency) and len(skills_to_bold) < 1:
                 dnd_skill_string += "<b>"
             elif skill in skills_to_bold:
                 dnd_skill_string += "<b>"
@@ -202,7 +218,7 @@ class DnDSkills:
             else:
                 dnd_skill_string += "<br>"
 
-            if skill in self.proficiency and len(skills_to_bold) < 1:
+            if (skill in self.proficiency or skill in self.class_proficiency) and len(skills_to_bold) < 1:
                 dnd_skill_string += "</b>"
             elif skill in skills_to_bold:
                 dnd_skill_string += "</b>"
@@ -211,22 +227,66 @@ class DnDSkills:
     def set_proficiency(self, skill_type: DnDSkillType):
         if skill_type not in self.proficiency:
             self.proficiency.append(skill_type)
-            self.skills[skill_type] += 1
+            self.skills[skill_type] += game.dnd_config["proficiency_bonus"]
 
     def remove_proficiency(self, skill_type: DnDSkillType):
         if skill_type in self.proficiency:
             self.proficiency.remove(skill_type)
-            self.skills[skill_type] -= 1
+            self.skills[skill_type] -= game.dnd_config["proficiency_bonus"]
+
+    def update_class_proficiency(self, dnd_class: ClassType, current_level):
+        if current_level not in self.used_class and current_level == "level 1":
+            self.used_class[current_level] = dnd_class
+            self.class_proficiency.append(self.class_proficiency_dict[dnd_class][0])
+            self.skills[self.class_proficiency_dict[dnd_class][0]] += 1
+        if current_level not in self.used_class and current_level == "level 8":
+            self.used_class[current_level] = dnd_class
+            self.class_proficiency.append(self.class_proficiency_dict[dnd_class][1])
+            self.skills[self.class_proficiency_dict[dnd_class][1]] += 1
+        if current_level not in self.used_class and current_level == "level 14":
+            self.used_class[current_level] = dnd_class
+            self.class_proficiency.append(self.classs_proficiency_dict[dnd_class][2])
+            self.skills[self.class_proficiency_dict[dnd_class][2]] += 1 
+
+    def remove_class_proficiency(self, level):
+        if level in self.used_class:
+            index = 0
+            if level == "level 8":
+                index = 1
+            elif level == "level 14":
+                index = 2
+            dnd_class = self.used_class[level]
+            self.skills[self.class_proficiency_dict[dnd_class][index]] -= game.dnd_config["proficiency_bonus"]
+            del self.used_class[level]
 
     def get_proficiency_list(self):
         return [skill.value for skill in self.proficiency]
+
+    def get_class_proficiency(self):
+        return_dict = {}
+        for key, value in self.used_class.items():
+            return_dict[key] = value.value
+        return return_dict
+
+    def load_class_proficiency(self, object):
+        for level, dnd_class_name in object.items():
+            dnd_class = [c for c in ClassType if c.value == dnd_class_name]
+            if dnd_class:
+                self.used_class[level] = dnd_class[0]
+                index = 0
+                if level == "level 8":
+                    index = 1
+                elif level == "level 14":
+                    index = 2
+                self.class_proficiency.append(self.class_proficiency_dict[dnd_class[0]][index])
+                self.skills[self.class_proficiency_dict[dnd_class[0]][index]] += game.dnd_config["proficiency_bonus"]
 
     def load_proficiency_list(self, list):
         for skill_value in list:
             keys = [key for key in DnDSkillType if key.value == skill_value]
             if keys:
                 self.proficiency.append(keys[0])
-                self.skills[keys[0]] += 1
+                self.skills[keys[0]] += game.dnd_config["proficiency_bonus"]
 
     def update_skills(self, cat_stats: Stats):
         # set all the skills according to the connected stats
@@ -236,4 +296,7 @@ class DnDSkills:
                 self.skills[skill_type] = modifier
         # add the proficiency bonus
         for proficiency_type in self.proficiency:
+            self.skills[proficiency_type] += game.dnd_config["proficiency_bonus"]
+        # add the proficiency bonus
+        for proficiency_type in self.class_proficiency:
             self.skills[proficiency_type] += game.dnd_config["proficiency_bonus"]

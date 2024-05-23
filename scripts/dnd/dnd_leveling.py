@@ -325,6 +325,7 @@ class DnDCatLevels(UIWindow):
                 new_stat_number = self.the_cat.dnd_stats.stats[stat_based_on] + self.increases[stat_based_on]
                 modifier = self.the_cat.dnd_stats.modifier[new_stat_number]
                 modifier += game.dnd_config["proficiency_bonus"] if skill in self.the_cat.dnd_skills.proficiency else 0
+                modifier += game.dnd_config["proficiency_bonus"] if skill in self.the_cat.dnd_skills.class_proficiency else 0
             if skill in self.new_proficiency:
                 modifier += game.dnd_config["proficiency_bonus"]
             addition = 46
@@ -374,6 +375,7 @@ class DnDCatLevels(UIWindow):
                 self.the_cat.dnd_stats.update_stats()
                 self.the_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.the_cat.dnd_skills.update_skills(self.the_cat.dnd_stats)
+                self.the_cat.dnd_skills.update_class_proficiency(self.the_cat.dnd_class, self.the_cat.experience_level)
                 game.switches['window_open'] = False
                 self.kill()
             elif event.ui_element in self.skill_buttons.values():

@@ -779,6 +779,10 @@ class ProfileScreen(Screens):
         # DnD Linage
         linage = the_cat.dnd_linage.linage_type.value
         output += f"\nlinage: {linage}"
+        
+		# DnD Class
+        dnd_class = the_cat.dnd_class.value
+        output += f"\nclass: {dnd_class}"
 
         if not the_cat.dead:
             # NEWLINE ----------
