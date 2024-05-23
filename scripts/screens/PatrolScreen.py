@@ -1097,6 +1097,7 @@ class PatrolScreen(Screens):
             dnd_info_string += str(self.selected_cat.experience) + " exp. "
             dnd_info_string += "(" + self.selected_cat.experience_level + ") <br><br>"
             dnd_info_string += self.selected_cat.dnd_linage.linage_type.value + "<br>"
+            dnd_info_string += self.selected_cat.dnd_class.value if self.selected_cat.dnd_class else "" +"<br>"
             if "cat_info" in self.elements:
                 self.elements["cat_info"].kill()
             self.elements['cat_info'] = pygame_gui.elements.UITextBox(
