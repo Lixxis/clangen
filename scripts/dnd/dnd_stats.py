@@ -167,10 +167,10 @@ class Stats:
             self.genetic_stats[inh_stats2] = stat2
         if parent2:
             inh_stats1 = random.choice(possible_inheritance)
-            stat1 = parent1.dnd_stats.genetic_stats[inh_stats1]
+            stat1 = parent2.dnd_stats.genetic_stats[inh_stats1]
             possible_inheritance.remove(inh_stats1)
             inh_stats2 = random.choice(possible_inheritance)
-            stat2 = parent1.dnd_stats.genetic_stats[inh_stats2]
+            stat2 = parent2.dnd_stats.genetic_stats[inh_stats2]
             if stat1 > game.dnd_config["max_inheritance"]:
                 stat1 = game.dnd_config["max_inheritance"]
             if stat2 > game.dnd_config["max_inheritance"]:

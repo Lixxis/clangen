@@ -174,8 +174,8 @@ class DnDCatLevels(UIWindow):
         end_level_number = int(self.the_cat.experience_level.split(" ")[1])
         if not self.the_cat.dnd_class and start_level_number >= int(game.dnd_config["choosing_class"].split(" ")[1]):
             self.level_class = True
-        if end_level_number < int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
-            end_level_number = int(game.clan.xp[self.the_cat.ID].split(" ")[1])
+        if start_level_number > int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
+            start_level_number = int(game.clan.xp[self.the_cat.ID].split(" ")[1])
         elif end_level_number == int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
             return
         for level in game.dnd_config["leveling"].keys():
@@ -388,7 +388,7 @@ class DnDCatLevels(UIWindow):
         text_pos_x = (self.width/2) + 55
         button_pos_x = text_pos_x - 12
 
-        text_pos_y = 565
+        text_pos_y = 575
         button_pos_y = text_pos_y + 17
         step_increase = 46
 
@@ -413,6 +413,8 @@ class DnDCatLevels(UIWindow):
                                             manager=MANAGER,
                                             container=self)
             if self.the_cat.dnd_class or (len(self.new_class) > 0 and dnd_class not in self.new_class) or not self.level_class:
+                self.class_buttons[dnd_class.value].disable()
+            if dnd_class == ClassType.BLOOD_CHOSEN:
                 self.class_buttons[dnd_class.value].disable()
 
             text_pos_y += step_increase

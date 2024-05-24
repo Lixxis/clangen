@@ -293,9 +293,13 @@ class DnDSkills:
             self.skills[skill_type] -= game.dnd_config["proficiency_bonus"]
 
     def update_class_proficiency(self, dnd_class: ClassType, current_level):
-        if not dnd_class:
+        if not dnd_class or not current_level:
             return
         level_nr = int(current_level.split(" ")[1])
+        if dnd_class == ClassType.BLOOD_CHOSEN and "level 0" not in self.used_class:
+            self.used_class["level 0"] = dnd_class
+            self.class_proficiency.append(self.class_proficiency_dict[dnd_class][0])
+            self.skills[self.class_proficiency_dict[dnd_class][0]] += 1
         if "level 2" not in self.used_class and level_nr >= 2:
             self.used_class["level 2"] = dnd_class
             self.class_proficiency.append(self.class_proficiency_dict[dnd_class][0])
@@ -308,17 +312,6 @@ class DnDSkills:
             self.used_class["level 14"] = dnd_class
             self.class_proficiency.append(self.class_proficiency_dict[dnd_class][2])
             self.skills[self.class_proficiency_dict[dnd_class][2]] += 1
-
-    def remove_class_proficiency(self, level):
-        if level in self.used_class:
-            index = 0
-            if level == "level 8":
-                index = 1
-            elif level == "level 14":
-                index = 2
-            dnd_class = self.used_class[level]
-            self.skills[self.class_proficiency_dict[dnd_class][index]] -= game.dnd_config["proficiency_bonus"]
-            del self.used_class[level]
 
     def get_proficiency_list(self):
         return [skill.value for skill in self.proficiency]

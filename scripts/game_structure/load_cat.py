@@ -205,6 +205,8 @@ def json_load():
             new_cat.apprentice = cat["current_apprentice"]
             new_cat.former_apprentices = cat["former_apprentices"]
             new_cat.df = cat["df"] if "df" in cat else False
+            
+            new_cat.dnd_skills.update_class_proficiency(new_cat.dnd_class, new_cat.experience_level)
 
             new_cat.outside = cat["outside"] if "outside" in cat else False
             new_cat.faded_offspring = cat["faded_offspring"] if "faded_offspring" in cat else []

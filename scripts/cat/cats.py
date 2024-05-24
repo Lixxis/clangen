@@ -7,7 +7,7 @@ import itertools
 import sys
 
 from scripts.dnd.dnd_linages import Linage
-from scripts.dnd.dnd_types import LinageType
+from scripts.dnd.dnd_types import LinageType, ClassType
 
 from .history import History
 from .skills import CatSkills
@@ -443,6 +443,25 @@ class Cat():
         self.dnd_stats.update_stats(self.dnd_linage.linage_type)
         self.dnd_skills.update_skills(self.dnd_stats)
         self.dnd_class = None
+        
+        # check for inheritance of BLOOD OF THE CHOSEN ONE
+        inheritance_chance = game.dnd_config["blood_of_the_chosen_one_inheritance"]
+        wild_chance = game.dnd_config["blood_of_the_chosen_one_wild"]
+        relevant_class = [
+            p1_cat.dnd_class if p1_cat else None,
+            p2_cat.dnd_class if p2_cat else None
+        ]
+        grand_parents = p1_cat.get_parents() if p1_cat else []
+        grand_parents.extend(p2_cat.get_parents() if p2_cat else [])
+        for gp in grand_parents:
+            fetch_cat = Cat.fetch_cat(gp)
+            if fetch_cat:
+                relevant_class.append(fetch_cat.dnd_class)
+        if (ClassType.BLOOD_CHOSEN in relevant_class and randint(1, inheritance_chance) == 1) or\
+            randint(1, wild_chance) == 1:
+            print("WUHU, a Blood of the Chosen One is created!")
+            self.dnd_class = ClassType.BLOOD_CHOSEN
+        self.dnd_skills.update_class_proficiency(self.dnd_class, self.experience_level)
 
     def __repr__(self):
         return "CAT OBJECT:" + self.ID

@@ -18,11 +18,11 @@
         "level 9": "stat:1",
         "level 10": "skill:1",
         "level 11": null,
-        "level 12": "stat:2",
-        "level 13": "skill:1",
+        "level 12": "stat:1",
+        "level 13": "skill:2",
         "level 14": null,
-        "level 15": "stat:1",
-        "level 16": "skill:2",
+        "level 15": "stat:2",
+        "level 16": "skill:1",
         "level 17": null,
         "level 18": "stat:2",
         "level 19": "skill:2",
@@ -33,5 +33,7 @@
         "elf": 25,
         "dwarf": 15,
         "orc": 10
-    }
+    },
+	"blood_of_the_chosen_one_inheritance": 10,
+	"blood_of_the_chosen_one_wild": 100
 }
