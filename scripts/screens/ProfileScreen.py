@@ -781,7 +781,7 @@ class ProfileScreen(Screens):
         output += f"\nlinage: {linage}"
         
 		# DnD Class
-        dnd_class = the_cat.dnd_class.value
+        dnd_class = the_cat.dnd_class.value if the_cat.dnd_class else "no class"
         output += f"\nclass: {dnd_class}"
 
         if not the_cat.dead:

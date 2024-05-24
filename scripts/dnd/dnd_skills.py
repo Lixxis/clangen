@@ -158,17 +158,75 @@ class DnDSkills:
     }
 
     class_proficiency_dict = {
-        ClassType.BRUTE : [DnDSkillType.ATHLETICS, DnDSkillType.SURVIVAL, DnDSkillType.INTIMIDATION],
-        ClassType.SILVER_TONGUE : [DnDSkillType.PERFORMANCE, DnDSkillType.DECEPTION, DnDSkillType.PERSUASION],
-        ClassType.CHOSEN : [DnDSkillType.RELIGION, DnDSkillType.MEDICINE, DnDSkillType.INSIGHT],
-        ClassType.BLOOD_OLD : [DnDSkillType.NATURE, DnDSkillType.SURVIVAL, DnDSkillType.ANIMAL_HANDLING],
-        ClassType.SKILLED_WARRIOR : [DnDSkillType.ACROBATICS, DnDSkillType.ATHLETICS, DnDSkillType.INTIMIDATION],
-        ClassType.WISDOM : [DnDSkillType.ACROBATICS, DnDSkillType.RELIGION, DnDSkillType.INSIGHT],
-        ClassType.PROTECTOR : [DnDSkillType.ATHLETICS, DnDSkillType.RELIGION, DnDSkillType.HISTORY],
-        ClassType.BLOOD_CHOSEN : [DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.SLEIGHT_OF_PAW],
-        ClassType.KNOWLEDGE : [DnDSkillType.ARCANA, DnDSkillType.PERCEPTION, DnDSkillType.HISTORY],
-        ClassType.SWORN : [DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.PERSUASION],
-        ClassType.SHADOW : [DnDSkillType.STEALTH, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.INVESTIGATION],
+        ClassType.BRUTE : 			[DnDSkillType.ATHLETICS, DnDSkillType.SURVIVAL, DnDSkillType.INTIMIDATION],
+        ClassType.SILVER_TONGUE : 	[DnDSkillType.PERFORMANCE, DnDSkillType.DECEPTION, DnDSkillType.PERSUASION],
+        ClassType.CHOSEN : 			[DnDSkillType.RELIGION, DnDSkillType.MEDICINE, DnDSkillType.INSIGHT],
+        ClassType.BLOOD_OLD : 		[DnDSkillType.NATURE, DnDSkillType.SURVIVAL, DnDSkillType.ANIMAL_HANDLING],
+        ClassType.SKILLED_WARRIOR :	[DnDSkillType.ACROBATICS, DnDSkillType.ATHLETICS, DnDSkillType.INTIMIDATION],
+        ClassType.WISDOM : 			[DnDSkillType.ACROBATICS, DnDSkillType.RELIGION, DnDSkillType.INSIGHT],
+        ClassType.PROTECTOR : 		[DnDSkillType.ATHLETICS, DnDSkillType.RELIGION, DnDSkillType.HISTORY],
+        ClassType.BLOOD_CHOSEN : 	[DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.SLEIGHT_OF_PAW],
+        ClassType.KNOWLEDGE : 		[DnDSkillType.ARCANA, DnDSkillType.PERCEPTION, DnDSkillType.HISTORY],
+        ClassType.SWORN : 			[DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.PERSUASION],
+        ClassType.SHADOW : 			[DnDSkillType.STEALTH, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.INVESTIGATION],
+    }
+
+    class_prof_description = {
+        ClassType.BRUTE :
+        f"<b>'Barbarian' - {ClassType.BRUTE.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.BRUTE][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.BRUTE][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.BRUTE][2].value}",
+        ClassType.SILVER_TONGUE :
+        f"<b>'Bard' - {ClassType.SILVER_TONGUE.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.SILVER_TONGUE][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.SILVER_TONGUE][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.SILVER_TONGUE][2].value}",
+        ClassType.CHOSEN :
+        f"<b>'Cleric' - {ClassType.CHOSEN.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.CHOSEN][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.CHOSEN][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.CHOSEN][2].value}",
+        ClassType.BLOOD_OLD :
+        f"<b>'Druid' - {ClassType.BLOOD_OLD.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.BLOOD_OLD][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.BLOOD_OLD][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.BLOOD_OLD][2].value}",
+        ClassType.SKILLED_WARRIOR :
+        f"<b>'Fighter' - {ClassType.SKILLED_WARRIOR.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.SKILLED_WARRIOR][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.SKILLED_WARRIOR][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.SKILLED_WARRIOR][2].value}",
+        ClassType.WISDOM :
+        f"<b>'Monk' - {ClassType.WISDOM.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.WISDOM][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.WISDOM][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.WISDOM][2].value}",
+        ClassType.PROTECTOR :
+        f"<b>'Paladin' - {ClassType.PROTECTOR.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.PROTECTOR][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.PROTECTOR][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.PROTECTOR][2].value}",
+        ClassType.BLOOD_CHOSEN :
+        f"<b>'Sorcerer' - {ClassType.BLOOD_CHOSEN.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.BLOOD_CHOSEN][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.BLOOD_CHOSEN][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.BLOOD_CHOSEN][2].value}",
+        ClassType.KNOWLEDGE :
+        f"<b>'Wizard' - {ClassType.KNOWLEDGE.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.KNOWLEDGE][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.KNOWLEDGE][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.KNOWLEDGE][2].value}",
+        ClassType.SWORN :
+        f"<b>'Warlock' - {ClassType.SWORN.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.SWORN][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.SWORN][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.SWORN][2].value}",
+        ClassType.SHADOW :
+        f"<b>'Rogue' - {ClassType.SHADOW.value}</b> <br>Bonuses: <br>" + 
+        f"- level 2 {class_proficiency_dict[ClassType.SHADOW][0].value} <br>" + 
+        f"- level 8 {class_proficiency_dict[ClassType.SHADOW][1].value} <br>" + 
+        f"- level 14 {class_proficiency_dict[ClassType.SHADOW][2].value}",
     }
 
     def __init__(self, stats = None):
@@ -235,18 +293,21 @@ class DnDSkills:
             self.skills[skill_type] -= game.dnd_config["proficiency_bonus"]
 
     def update_class_proficiency(self, dnd_class: ClassType, current_level):
-        if current_level not in self.used_class and current_level == "level 1":
-            self.used_class[current_level] = dnd_class
+        if not dnd_class:
+            return
+        level_nr = int(current_level.split(" ")[1])
+        if "level 2" not in self.used_class and level_nr >= 2:
+            self.used_class["level 2"] = dnd_class
             self.class_proficiency.append(self.class_proficiency_dict[dnd_class][0])
             self.skills[self.class_proficiency_dict[dnd_class][0]] += 1
-        if current_level not in self.used_class and current_level == "level 8":
-            self.used_class[current_level] = dnd_class
+        if "level 8" not in self.used_class and level_nr >= 8:
+            self.used_class["level 8"] = dnd_class
             self.class_proficiency.append(self.class_proficiency_dict[dnd_class][1])
             self.skills[self.class_proficiency_dict[dnd_class][1]] += 1
-        if current_level not in self.used_class and current_level == "level 14":
-            self.used_class[current_level] = dnd_class
-            self.class_proficiency.append(self.classs_proficiency_dict[dnd_class][2])
-            self.skills[self.class_proficiency_dict[dnd_class][2]] += 1 
+        if "level 14" not in self.used_class and level_nr >= 14:
+            self.used_class["level 14"] = dnd_class
+            self.class_proficiency.append(self.class_proficiency_dict[dnd_class][2])
+            self.skills[self.class_proficiency_dict[dnd_class][2]] += 1
 
     def remove_class_proficiency(self, level):
         if level in self.used_class:

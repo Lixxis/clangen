@@ -2,7 +2,7 @@ import pygame
 import pygame_gui
 
 from re import sub
-from scripts.dnd.dnd_types import StatType
+from scripts.dnd.dnd_types import StatType, ClassType
 from scripts.utility import scale
 from scripts.cat.cats import Cat
 from scripts.game_structure.game_essentials import game, MANAGER
@@ -36,6 +36,8 @@ class DnDCatLevels(UIWindow):
         self.the_cat = cat
         self.update_skill = 0
         self.update_stat = 0
+        self.level_class = False
+        self.new_class = []
         self.stat_list = [stat for stat in StatType]
         self.selected_stat_idx = 0
         self.selected_stat = self.stat_list[self.selected_stat_idx]
@@ -49,7 +51,7 @@ class DnDCatLevels(UIWindow):
         # automatic position done button at the bottom center
         done_button_width = 154
         done_button_length = 60
-        done_button_x = self.width / 2 - done_button_width / 2
+        done_button_x = self.width / 2 - done_button_width / 2 - 150
         done_button_y = self.length - done_button_length - done_button_length / 2
 
         super().__init__(scale(pygame.Rect((pos_x, pos_y), (self.width, self.length))),
@@ -57,10 +59,10 @@ class DnDCatLevels(UIWindow):
                          object_id='#cat_level_up',
                          resizable=False)
 
-        stat_pos_y = 290
+        stat_pos_y = 100
         stat_pos_x = (self.width/2) + 30
         stat_width = 380
-        stat_length = 580
+        stat_length = 478
         arrow_width = 44
         arrow_length = 68
         for stat in StatType:
@@ -128,15 +130,16 @@ class DnDCatLevels(UIWindow):
         cat_information += self.the_cat.age + "<br>"
         self.cat_text1 = pygame_gui.elements.UITextBox(
             f"{cat_information}",
-            scale(pygame.Rect((52, 420), (200, 200))),
+            scale(pygame.Rect((52, 420), (190, 200))),
             object_id="#text_box_30_horizcenter_spacing_95_light",
             manager=MANAGER,
             container=self
         )
         cat_information = self.the_cat.dnd_linage.linage_type.value + "<br>"
+        cat_information += self.the_cat.personality.trait + "<br>"
         self.cat_text2 = pygame_gui.elements.UITextBox(
             f"{cat_information}",
-            scale(pygame.Rect((52 + 200, 420), (200, 200))),
+            scale(pygame.Rect((52 + 190, 420), (200, 200))),
             object_id="#text_box_30_horizcenter_spacing_95_light",
             manager=MANAGER,
             container=self
@@ -157,7 +160,11 @@ class DnDCatLevels(UIWindow):
         self.new_proficiency = []
         self.update_skill_info()
 
-        if self.update_stat > 0 or self.update_skill > 0:
+        self.class_buttons = {}
+        self.class_info = {}
+        self.update_class()
+
+        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
             self.done_button.disable()
 
         self.set_blocking(True)
@@ -165,6 +172,8 @@ class DnDCatLevels(UIWindow):
     def collect_leveling_need(self):
         start_level_number = int(self.the_cat.experience_level.split(" ")[1])
         end_level_number = int(self.the_cat.experience_level.split(" ")[1])
+        if not self.the_cat.dnd_class and start_level_number >= int(game.dnd_config["choosing_class"].split(" ")[1]):
+            self.level_class = True
         if end_level_number < int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
             end_level_number = int(game.clan.xp[self.the_cat.ID].split(" ")[1])
         elif end_level_number == int(game.clan.xp[self.the_cat.ID].split(" ")[1]):
@@ -267,7 +276,7 @@ class DnDCatLevels(UIWindow):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0:
+        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) < 0 and self.level_class):
             self.done_button.disable()
         else:
             self.done_button.enable()
@@ -292,7 +301,7 @@ class DnDCatLevels(UIWindow):
         text_pos_x = (self.width/2) + 106
         button_pos_x = text_pos_x - 46
 
-        text_pos_y = 400
+        text_pos_y = 180
         button_pos_y = text_pos_y + 17
         step_increase = 50
 
@@ -357,7 +366,59 @@ class DnDCatLevels(UIWindow):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0:
+        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+            self.done_button.disable()
+        else:
+            self.done_button.enable()
+
+    def update_class(self):
+        for dnd_class in self.class_buttons.keys():
+            self.class_buttons[dnd_class].kill()
+        self.class_buttons = {}
+        for dnd_class in self.class_info.keys():
+            self.class_info[dnd_class].kill()
+        self.class_info = {}
+
+        for key in self.elements.keys():
+            if key == self.selected_stat or key == "cat_bg":
+                self.elements[key].show()
+            else:
+                self.elements[key].hide()
+
+        text_pos_x = (self.width/2) + 55
+        button_pos_x = text_pos_x - 12
+
+        text_pos_y = 565
+        button_pos_y = text_pos_y + 17
+        step_increase = 46
+
+        for dnd_class in ClassType:
+            text = dnd_class.value
+            object_id = "#dnd_prof_free"
+            if dnd_class == self.the_cat.dnd_class:
+                object_id = "#dnd_prof"
+                text = "<b><i>" + text + "</i></b>"
+            elif dnd_class in self.new_class:
+                object_id = "#dnd_prof_selected"
+
+            self.class_info[dnd_class.value] = pygame_gui.elements.UITextBox(
+                text,
+                scale(pygame.Rect((text_pos_x + 46, text_pos_y), (400, 80))),
+                object_id="#text_box_30_horizleft",
+                container=self,
+                manager=MANAGER)
+            self.class_buttons[dnd_class.value] = UIImageButton(scale(pygame.Rect((button_pos_x, button_pos_y), (44, 44))), "", 
+                                            object_id=object_id,
+                                            tool_tip_text=self.the_cat.dnd_skills.class_prof_description[dnd_class],
+                                            manager=MANAGER,
+                                            container=self)
+            if self.the_cat.dnd_class or (len(self.new_class) > 0 and dnd_class not in self.new_class) or not self.level_class:
+                self.class_buttons[dnd_class.value].disable()
+
+            text_pos_y += step_increase
+            button_pos_y += step_increase
+
+        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
             self.done_button.disable()
         else:
             self.done_button.enable()
@@ -375,7 +436,9 @@ class DnDCatLevels(UIWindow):
                 self.the_cat.dnd_stats.update_stats()
                 self.the_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.the_cat.dnd_skills.update_skills(self.the_cat.dnd_stats)
-                self.the_cat.dnd_skills.update_class_proficiency(self.the_cat.dnd_class, self.the_cat.experience_level)
+                if self.level_class:
+                    self.the_cat.dnd_class = self.new_class[0]
+                    self.the_cat.dnd_skills.update_class_proficiency(self.the_cat.dnd_class, self.the_cat.experience_level)
                 game.switches['window_open'] = False
                 self.kill()
             elif event.ui_element in self.skill_buttons.values():
@@ -391,6 +454,14 @@ class DnDCatLevels(UIWindow):
                             self.update_skill -= 1
                 self.current_skills = self.the_cat.dnd_skills.skill_based[self.selected_stat]
                 self.update_skill_info()
+            elif event.ui_element in self.class_buttons.values():
+                for dnd_class in ClassType:
+                    if event.ui_element == self.class_buttons[dnd_class.value]:
+                        if dnd_class in self.new_class:
+                            self.new_class.remove(dnd_class)
+                        else:
+                            self.new_class.append(dnd_class)
+                self.update_class()
             elif event.ui_element == self.next_button:
                 next_idx = self.selected_stat_idx + 1
                 if next_idx >= len(StatType):

@@ -4,6 +4,7 @@
     "max_inheritance": 17,
     "start_array": [8,10,12,13,14,15],
 	"proficiency_bonus": 1,
+	"choosing_class": "level 2",
     "leveling": {
         "level 0": null,
         "level 1": null,
