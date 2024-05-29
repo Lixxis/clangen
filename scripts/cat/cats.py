@@ -451,8 +451,8 @@ class Cat():
             p1_cat.dnd_class if p1_cat else None,
             p2_cat.dnd_class if p2_cat else None
         ]
-        grand_parents = p1_cat.get_parents() if p1_cat else []
-        grand_parents.extend(p2_cat.get_parents() if p2_cat else [])
+        grand_parents = list(p1_cat.get_parents()) if p1_cat else []
+        grand_parents.extend(list(p2_cat.get_parents()) if p2_cat else [])
         for gp in grand_parents:
             fetch_cat = Cat.fetch_cat(gp)
             if fetch_cat:
