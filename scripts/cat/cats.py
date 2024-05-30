@@ -396,6 +396,7 @@ class Cat():
         if self.ID not in ["0", None]:
             Cat.insert_cat(self)
 
+
         # DND - STUFF
         possible_linages = []
         if parent1:
