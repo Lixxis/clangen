@@ -402,21 +402,21 @@ class Cat():
             parent_cat = Cat.fetch_cat(parent1)
             if parent_cat:
                 possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * 2)
-            grand_parents = parent_cat.get_parents()
-            for grand_parent in grand_parents:
-                grand_parent_cat = Cat.fetch_cat(grand_parent)
-                if grand_parent_cat: 
-                    possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
+                grand_parents = parent_cat.get_parents()
+                for grand_parent in grand_parents:
+                    grand_parent_cat = Cat.fetch_cat(grand_parent)
+                    if grand_parent_cat: 
+                        possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
         
         if parent2 and parent1:
             parent_cat = Cat.fetch_cat(parent2)
             if parent_cat:
                 possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * 2)
-            grand_parents = parent_cat.get_parents()
-            for grand_parent in grand_parents:
-                grand_parent_cat = Cat.fetch_cat(grand_parent)
-                if grand_parent_cat:
-                    possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
+                grand_parents = parent_cat.get_parents()
+                for grand_parent in grand_parents:
+                    grand_parent_cat = Cat.fetch_cat(grand_parent)
+                    if grand_parent_cat:
+                        possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
         elif parent1: # single parent
             max_amount = 0
             linage_distribution = game.dnd_config["linage_distribution"]
