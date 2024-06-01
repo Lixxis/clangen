@@ -118,6 +118,8 @@ class Clan():
         self.game_mode = game_mode
         self.pregnancy_data = {}
         self.inheritance = {}
+        self.custom_pronouns = [
+        ]
         self.xp = {}
         
         # Init Settings
@@ -226,7 +228,12 @@ class Clan():
         game.save_cats()
         number_other_clans = randint(3, 5)
         for _ in range(number_other_clans):
-            self.all_clans.append(OtherClan())
+            other_clan_names = [str(i.name) for i in self.all_clans] + [game.clan.name]
+            other_clan_name = choice(names.names_dict["normal_prefixes"])
+            while other_clan_name in other_clan_names:
+                other_clan_name = choice(names.names_dict["normal_prefixes"])
+            other_clan = OtherClan(name=other_clan_name)
+            self.all_clans.append(other_clan)
         self.save_clan()
         game.save_clanlist(self.name)
         game.switches['clan_list'] = game.read_clans()
@@ -254,6 +261,9 @@ class Clan():
         """ Adds cat into the list of clan cats"""
         if cat.ID in Cat.all_cats and cat.ID not in self.clan_cats:
             self.clan_cats.append(cat.ID)
+    
+    def add_pronouns(self, pronouns): #pronouns is a dict
+        self.custom_pronouns.append(pronouns)
 
     def add_to_starclan(self, cat):  # Same as add_cat
         """
@@ -308,7 +318,7 @@ class Clan():
         """
         TODO: DOCS
         """
-        if cat.ID in Cat.all_cats and not cat.outside and cat.ID in Cat.outside_cats:
+        if cat.ID in Cat.all_cats and not cat.outside and not cat.dead and cat.ID in Cat.outside_cats:
             # The outside-value must be set to True before the cat can go to cotc
             Cat.outside_cats.pop(cat.ID)
             cat.clan = str(game.clan.name)
@@ -431,7 +441,8 @@ class Clan():
             "temperament": self.temperament,
             "version_name": SAVE_VERSION_NUMBER,
             "version_commit": get_version_info().version_number,
-            "source_build": get_version_info().is_source_build
+            "source_build": get_version_info().is_source_build,
+            "custom_pronouns": self.custom_pronouns
         }
 
         # LEADER DATA
@@ -458,7 +469,7 @@ class Clan():
             clan_data["med_cat"] = None
         clan_data["med_cat_number"] = self.med_cat_number
         clan_data["med_cat_predecessors"] = self.med_cat_predecessors
-
+        
         # LIST OF CLAN CATS
         clan_data['clan_cats'] = ",".join([str(i) for i in self.clan_cats])
 
@@ -748,6 +759,10 @@ class Clan():
         game.clan.deputy_predecessors = clan_data["deputy_predecessors"]
         game.clan.med_cat_predecessors = clan_data["med_cat_predecessors"]
         game.clan.med_cat_number = clan_data["med_cat_number"]
+        # Allows for the custom pronouns to show up in the add pronoun list after the game has closed and reopened.
+        if "custom_pronouns" in clan_data.keys():
+            if clan_data["custom_pronouns"]:
+                game.clan.custom_pronouns = clan_data["custom_pronouns"]
 
         # Instructor Info
         if clan_data["instructor"] in Cat.all_cats:
