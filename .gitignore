@@ -177,5 +177,3 @@ cache/
 download.tmp
 version.ini
 *.xml
-
-/resources/dnd_brainstorming/**

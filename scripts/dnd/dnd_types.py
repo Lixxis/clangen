@@ -49,3 +49,13 @@ class ClassType(Enum):
     KNOWLEDGE = "Knowledge Seeker"
     SWORN = "Sworn One"
     SHADOW = "Shadow Stalker"
+
+class DnDEventRole(Enum):
+    CLIENT = "client"
+    PARTICIPANT = "participant"
+    ALLY = "ally"
+    ENEMY = "enemy"
+    ANTAGONIST = "antagonist"
+    KILL_TARGET = "kill target"
+    SEARCH_TARGET = "search target"
+    PRIOR_TARGET = "prior target"

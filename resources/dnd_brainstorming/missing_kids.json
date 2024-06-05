@@ -1,0 +1,84 @@
+{
+	"missin_start":{
+		"start_event": true,
+		"constraints": {},
+		"introtexts": [
+			"",
+			"",
+			"",
+			"",
+			"",
+			""
+		],
+		"start_cooldown": [],
+		"decide_cooldown": [1,3],
+		"new_cat": [],
+		"roles": {
+			"client": ["n_c:0", "save:0"],
+			"searchTarget": ["n_c:1"]
+		},
+		"checks":{
+			"default":{
+				"pass": 10,
+				"success":{
+					"gen": {
+						"next_id": "id1", 
+						"repeate": 3, 
+						"text": "huhu, this will be shown"
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "id1", 
+						"repeate": 3, 
+						"text": "huhu, this will be shown"
+					}
+				}
+			},
+			"arcana": {
+				"pass": 10,
+				"success":{
+					"gen": {
+						"next_id": "id2",
+						"repeate": null,
+						"text": [
+							""
+						],
+						"new_cat": [],
+						"relationships": [],
+						"exp": [20,18,15,13,10],
+						"outsider_rep": 1
+					},
+					"15": {
+						"next_id": "id2",
+						"repeate": null,
+						"text": "huhu, this will be shown"
+					},
+					"20": {
+						"next_id": "id3",
+						"repeate": null,
+						"text": "huhu, this will be shown"
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "id1", 
+						"repeate": 3, 
+						"text": "huhu, this will be shown"
+					},
+					"1": {
+						"next_id": "id4", 
+						"repeate": 3,
+						"text": "huhu, this will be shown",
+						"dead_cats": ["r_c"],
+						"history_text": {
+							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
+							"reg_death": "This cat died to keep c_n safe from a large dog.",
+							"lead_death": "died to keep c_n safe from a large dog"
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,129 @@
+{
+	"id1":{
+		"start_event": false,
+		"tags": ["sidequest"],
+		"constraint": {
+			"clan_cats": [],
+			"biome": ["any"],
+			"season": ["any"],
+			"dead_cat_amount": 0
+		},
+		"introtext": [
+			"",
+			"",
+			"",
+			"",
+			"",
+			""
+		],
+		"start_cooldown": [10,20],
+		"decide_cooldown": [10,20],
+		"change": {},
+		"new_cat": [],
+		"roles": {
+			"client": ["n_c:0", "save:0"],
+			"searchTarget": ["n_c:1"]
+		},
+		"checks":{
+			"default":{
+				"pass": 10,
+				"success":{
+					"gen": {
+						"next_id": "id1", 
+						"repeate": 3, 
+						"text": "huhu, this will be shown"
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "id1", 
+						"repeate": 3, 
+						"text": "huhu, this will be shown"
+					}
+				}
+			},
+			"arcana": {
+				"pass": 10,
+				"success":{
+					"gen": {
+						"next_id": "id2",
+						"repeate": null,
+						"text": [
+							""
+						],
+						"new_cat": [],
+						"relationships": [],
+						"exp": [20,18,15,13,10],
+						"outsider_rep": 1
+					},
+					"15": {
+						"next_id": "id2",
+						"repeate": null,
+						"text": "huhu, this will be shown"
+					},
+					"20": {
+						"next_id": "id3",
+						"repeate": null,
+						"text": "huhu, this will be shown"
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "id1", 
+						"repeate": 3, 
+						"text": "huhu, this will be shown"
+					},
+					"1": {
+						"next_id": "id4", 
+						"repeate": 3,
+						"exp": 0,
+						"text": "huhu, this will be shown",
+						"dead_cats": ["r_c"],
+						"history_text": {
+							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
+							"reg_death": "This cat died to keep c_n safe from a large dog.",
+							"lead_death": "died to keep c_n safe from a large dog"
+						}
+					}
+				}
+			}
+		}
+	},
+	"id2":{
+		"trigger_event": false,
+		"constraint": {},
+		"roles": {},
+		"introtext": "",
+		"challenge":{
+			"type": "bypass",
+			"target": null,
+			"skill":{},
+			"outcome":{
+				"sucsess": {
+					"exp": 5,
+					"follow_ids" : ["id5"]
+				},
+				"failure": {
+					"exp": 5,
+					"follow_ids" : ["id5"]
+				}
+			}
+		},
+		"start_cooldown": [10,20],
+		"decide_cooldown": null
+	},
+	"id3":{},
+	"id4":{},
+	"id5":{},
+	"comments": [
+		"trigger_event are starting events for a story",
+		"when there is a story slot left all trigger_events are gathered to see one is fitting",
+		"constraint what is needed that this event can continue / the check can be made",
+		"roles defines which roles are needed for that event - schwer zu entscheiden",
+		"roles - for trigger_events it defines all roles in the story (oder auch nicht)",
+		"introtext - self explaining",
+		"challenge - need an own class 4 sub categories - fight enemy (currently only skill check), find Item, find NPC, skill test, bypass",
+		"decide_cooldown wird definiert wann das nächste Event getriggert wird - herunterzählen fängt erst ann wenn start_cooldown fertig ist",
+		"start_cooldown wird herunter gezählt, bis auf 0 ist, dann erschein das Event"
+	]
+}

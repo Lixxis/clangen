@@ -1,0 +1,40 @@
+{
+	"NPC": ["cat_id"],
+	"1":{
+		"current_event": "id",
+		"start_countdown": 10,
+		"decide_countdown": null,
+		"repeate_countdown": null,
+		"roles":{
+			"client": ["cat_id"],
+			"participant": ["participant_0"],
+			"ally": ["ally_0"],
+			"enemy": ["enemy_0"],
+			"antagonist": ["anta_0"],
+			"killTarget": ["kill_0"],
+			"searchTarget": ["search_0"],
+			"priorTarget": ["prior_0"]
+		}
+	},
+	"2":{
+		"current_event": "id",
+		"start_countdown": 10,
+		"decide_countdown": 5,
+		"repeate_countdown": 0,
+		"roles":{
+			"Ally": ["id"],
+			"Enemy": [],
+			"Antagonist": [],
+			"KillTarget": [],
+			"SearchTarget": [],
+			"PriorTarget": []
+		}
+	},
+	"comment": [
+		"decide_countdown wird definiert wann das nächste Event getriggert wird - herunterzählen fängt erst ann wenn start_countdown fertig ist",
+		"start_countdown wird herunter gezählt, bis auf 0 ist, dann erschein das Event",
+		"Targets können welchseln, alle alten werden in PriorTarget gesteckt, damit sie nicht nochmal vorkommen",
+		"NPC - alle Katzen Id dürfen nur 1 mal in der ganzen World Info vorkommen",
+		"In config einstellen wie viele Stories gleichzeitig laufen können"
+	]
+}
