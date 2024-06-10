@@ -41,6 +41,10 @@ from scripts.utility import (
     leader_ceremony_text_adjust,
 )
 
+from scripts.dnd.dnd_types import LinageType, ClassType
+from scripts.dnd.dnd_skills import DnDSkills
+from scripts.dnd.dnd_linages import Linage
+from scripts.dnd.dnd_stats import Stats
 
 class Cat:
     """The cat class."""
@@ -188,9 +192,7 @@ class Cat:
 
         self.history = None
 
-        if (
-            faded
-        ):  # This must be at the top. It's a smaller list of things to init, which is only for faded cats
+        if faded:  # This must be at the top. It's a smaller list of things to init, which is only for faded cats
             self.init_faded(ID, status, prefix, suffix, moons, **kwargs)
             return
 
@@ -240,6 +242,10 @@ class Cat:
         self.permanent_condition = {}
         self.df = False
         self.experience_level = None
+        self.dnd_class = None
+        self.dnd_linage = None
+        self.dnd_stats = None
+        self.dnd_skills = None
 
         # Various behavior toggles
         self.no_kits = False
@@ -464,37 +470,37 @@ class Cat:
         # Personality
         self.personality = Personality(kit_trait=self.is_baby())
 
-            # experience and current patrol status
-            if self.age in ['young', 'newborn']:
-                self.experience = 0
-            elif self.age in ['adolescent']:
-                m = self.moons
-                self.experience = 0
-                while m > Cat.age_moons['adolescent'][0]:
-                    ran = game.config["graduation"]["base_app_timeskip_ex"]
-                    exp = choice(
-                        list(range(ran[0][0], ran[0][1] + 1)) + list(range(ran[1][0], ran[1][1] + 1)))
-                    self.experience += exp + 3
-                    m -= 1
-            elif self.age in ['young adult', 'adult']:
-                self.experience = randint(Cat.experience_levels_range["level 2"][0],
-                                          Cat.experience_levels_range["level 6"][1])
-            elif self.age in ['senior adult']:
-                self.experience = randint(Cat.experience_levels_range["level 4"][0],
-                                          Cat.experience_levels_range["level 8"][1])
-            elif self.age in ['senior']:
-                self.experience = randint(Cat.experience_levels_range["level 6"][0],
-                                          Cat.experience_levels_range["level 10"][1])
-            else:
-                self.experience = 0
-                    
-            if not skill_dict:
-                self.skills = CatSkills.generate_new_catskills(self.status, self.moons)
+        # experience and current patrol status
+        if self.age in ['young', 'newborn']:
+            self.experience = 0
+        elif self.age in ['adolescent']:
+            m = self.moons
+            self.experience = 0
+            while m > Cat.age_moons['adolescent'][0]:
+                ran = game.config["graduation"]["base_app_timeskip_ex"]
+                exp = choice(
+                    list(range(ran[0][0], ran[0][1] + 1)) + list(range(ran[1][0], ran[1][1] + 1)))
+                self.experience += exp + 3
+                m -= 1
+        elif self.age in ['young adult', 'adult']:
+            self.experience = randint(Cat.experience_levels_range["level 2"][0],
+                                      Cat.experience_levels_range["level 6"][1])
+        elif self.age in ['senior adult']:
+            self.experience = randint(Cat.experience_levels_range["level 4"][0],
+                                      Cat.experience_levels_range["level 8"][1])
+        elif self.age in ['senior']:
+            self.experience = randint(Cat.experience_levels_range["level 6"][0],
+                                      Cat.experience_levels_range["level 10"][1])
+        else:
+            self.experience = 0
+                
+        if not skill_dict:
+            self.skills = CatSkills.generate_new_catskills(self.status, self.moons)
 
         # DND - STUFF
         possible_linages = []
-        if parent1:
-            parent_cat = Cat.fetch_cat(parent1)
+        if self.parent1:
+            parent_cat = Cat.fetch_cat(self.parent1)
             if parent_cat:
                 possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * 2)
                 grand_parents = parent_cat.get_parents()
@@ -503,8 +509,8 @@ class Cat:
                     if grand_parent_cat: 
                         possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
         
-        if parent2 and parent1:
-            parent_cat = Cat.fetch_cat(parent2)
+        if self.parent2 and self.parent1:
+            parent_cat = Cat.fetch_cat(self.parent2)
             if parent_cat:
                 possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * 2)
                 grand_parents = parent_cat.get_parents()
@@ -512,7 +518,7 @@ class Cat:
                     grand_parent_cat = Cat.fetch_cat(grand_parent)
                     if grand_parent_cat:
                         possible_linages.append(grand_parent_cat.dnd_linage.linage_type.value)
-        elif parent1: # single parent
+        elif self.parent1: # single parent
             max_amount = 0
             linage_distribution = game.dnd_config["linage_distribution"]
             possible_linages = []
@@ -521,7 +527,7 @@ class Cat:
                     if linage_distribution[linage.value] > max_amount:
                         max_amount = linage_distribution[linage.value]
                     possible_linages.extend([linage.value] * linage_distribution[linage.value])
-            parent_cat = Cat.fetch_cat(parent1)
+            parent_cat = Cat.fetch_cat(self.parent1)
             if parent_cat:
                 possible_linages.extend([parent_cat.dnd_linage.linage_type.value] * int(max_amount * 1.5))
 
@@ -532,8 +538,8 @@ class Cat:
         self.dnd_linage = Linage(possible_linages)
         self.dnd_stats = Stats()
         self.dnd_skills = DnDSkills()
-        p1_cat = Cat.fetch_cat(parent1)
-        p2_cat = Cat.fetch_cat(parent2)
+        p1_cat = Cat.fetch_cat(self.parent1)
+        p2_cat = Cat.fetch_cat(self.parent2)
         self.dnd_stats.inheritance(p1_cat, p2_cat)
         self.dnd_stats.update_stats(self.dnd_linage.linage_type)
         self.dnd_skills.update_skills(self.dnd_stats)
