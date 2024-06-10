@@ -1,15 +1,28 @@
 {
-	"missin_start":{
+	"missing_start":{
 		"start_event": true,
 		"constraints": {},
-		"introtexts": [
-			"",
-			"",
-			"",
-			"",
-			"",
-			""
-		],
+		"conversation": {
+			"start": {
+				"text":["","","","",""],
+				"answers": [
+					["next_id", "hah, you really think?"],
+					["next_id2", "I believe you"]
+				]
+			},
+			"next_id2": {
+				"text":["","","","",""],
+				"answers": [
+					["arcana"]
+				]
+			},
+			"next_id": {
+				"text":["","","","",""],
+				"answers": [
+					["arcana", "history", "acrobatics"]
+				]
+			}
+		},
 		"start_cooldown": [],
 		"decide_cooldown": [1,3],
 		"new_cat": [],
