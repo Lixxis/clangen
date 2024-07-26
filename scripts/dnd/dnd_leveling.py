@@ -6,7 +6,7 @@ from scripts.dnd.dnd_types import StatType, ClassType
 from scripts.utility import scale
 from scripts.cat.cats import Cat
 from scripts.game_structure.game_essentials import game, MANAGER
-from scripts.game_structure.image_button import UIImageButton, UITextBoxTweaked
+from scripts.game_structure.ui_elements import UIImageButton
 from pygame_gui.elements import UIWindow
 
 
