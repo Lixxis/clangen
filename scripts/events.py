@@ -10,6 +10,7 @@ import random
 # pylint: enable=line-too-long
 import re
 import traceback
+import logging
 from collections import Counter
 
 import ujson
@@ -47,6 +48,7 @@ from scripts.utility import (
     history_text_adjust,
     unpack_rel_block
 )
+from scripts.dnd.dnd_story import DnDStory
 
 
 class Events:
@@ -293,6 +295,9 @@ class Events:
 
         # Clear all the loaded event dicts.
         GenerateEvents.clear_loaded_events()
+
+        # DnD stuff
+        Events.handle_story()
 
         # autosave
         if game.clan.clan_settings.get("autosave") and game.clan.age % 5 == 0:
@@ -2658,5 +2663,20 @@ class Events:
                     0, Single_Event(f"{game.clan.name}Clan has no deputy!")
                 )
 
+    @staticmethod
+    def handle_story():
+        """
+        Handle the moon skipping for the current stories.
+        """
+        for key in game.clan.stories.keys():
+            if key == "NPC":
+                continue
+            story = game.clan.stories[key]
+            if story:
+                story.skip_moon()
+            else:
+                possible_starts = DnDStory.get_start_events()
+                # print("DnD - filter the chosen events if there are still some left, decide if an start event will be possible.")
+        pass
 
 events_class = Events()

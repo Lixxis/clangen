@@ -3,15 +3,16 @@
 import random
 from random import choice, randint, choices
 from typing import List, Dict, Union, TYPE_CHECKING
+from os.path import exists as path_exists
 import re
 import pygame
-from os.path import exists as path_exists
+import ujson
 
 if TYPE_CHECKING:
+    from scripts.dnd.dnd_event import DnDEvent
     from scripts.patrol.patrol import Patrol
 
 from scripts.cat.history import History
-from scripts.clan import HERBS
 from scripts.utility import (
     change_clan_relations,
     change_clan_reputation,
@@ -24,7 +25,10 @@ from scripts.cat.pelts import Pelt
 from scripts.cat_relations.relationship import Relationship
 from scripts.clan_resources.freshkill import ADDITIONAL_PREY, PREY_REQUIREMENT, HUNTER_EXP_BONUS, HUNTER_BONUS, \
     FRESHKILL_ACTIVE
-from scripts.dnd.dnd_event import DnDEvent
+
+HERBS = None
+with open("resources/dicts/herbs.json", "r", encoding="utf-8") as read_file:
+    HERBS = ujson.loads(read_file.read())
 
 class DnDEventOutcome:
     def __init__(
@@ -67,7 +71,7 @@ class DnDEventOutcome:
         self.outcome_art = outcome_art
         self.outcome_art_clean = outcome_art_clean
 
-    def execute_outcome(self, event: 'DnDEvent') -> None:
+    def execute_outcome(self, event: "DnDEvent") -> None:
         """ 
         Excutes the outcome. Returns a tuple with the final outcome text, the results text, and any outcome art
         format: (Outcome text, results text, outcome art (might be None))

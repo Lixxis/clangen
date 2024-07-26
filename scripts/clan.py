@@ -20,6 +20,8 @@ from scripts.cat.cats import Cat, cat_class
 from scripts.cat.history import History
 from scripts.cat.names import names
 from scripts.cat.sprites import sprites
+from scripts.dnd.dnd_story import DnDStory
+from scripts.dnd.dnd_types import transform_roles_json_to_dict
 from scripts.clan_resources.freshkill import FreshkillPile, Nutrition
 from scripts.events_module.generate_events import OngoingEvent
 from scripts.game_structure.game_essentials import game
@@ -132,6 +134,7 @@ class Clan:
         self.inheritance = {}
         self.custom_pronouns = []
         self.xp = {}
+        self.stories = {}
 
         # Init Settings
         self.clan_settings = {}
@@ -535,6 +538,7 @@ class Clan:
         self.save_disaster(game.clan)
         self.save_pregnancy(game.clan)
         self.save_xp(game.clan)
+        self.save_stories(game.clan)
 
         self.save_clan_settings()
         if game.clan.game_mode in ["expanded", "cruel season"]:
@@ -904,6 +908,7 @@ class Clan:
         self.load_herbs(game.clan)
         self.load_disaster(game.clan)
         self.load_xp(game.clan)
+        self.load_stories(game.clan)
         if game.clan.game_mode != "classic":
             self.load_freshkill_pile(game.clan)
         game.switches["error_message"] = ""
@@ -1196,6 +1201,64 @@ class Clan:
         if clan.game_mode == "classic" or not clan.xp:
             return
         game.safe_save(f"{get_save_dir()}/{game.clan.name}/xp.json", clan.xp)
+
+    def load_stories(self, clan):
+        """
+        Load the stories of a clan.
+        """
+        if not game.clan.name:
+            return
+        file_path = get_save_dir() + f"/{game.clan.name}/stories.json"
+        try:
+            if os.path.exists(file_path):
+                with open(
+                    file_path, "r", encoding="utf-8"
+                ) as read_file:  # pylint: disable=redefined-outer-name
+                    stories = ujson.load(read_file)
+                for key in stories.keys():
+                    if str(key) == "NPC":
+                        clan.stories[str(key)] = stories[str(key)]
+                    else:
+                        story = stories[str(key)]
+                        if story:
+                            story = DnDStory(
+                                story_id = key,
+                                current_event_id = story["current_event_id"],
+                                start_countdown = story["start_countdown"],
+                                decide_countdown = story["decide_countdown"],
+                                repeat_countdown = story["repeat_countdown"],
+                                roles=transform_roles_json_to_dict(story["roles"])
+                            )
+                        clan.stories[str(key)] = story
+            else:
+                clan.stories = {"NPC": []}
+                for number in range(game.dnd_config["max_story_amount"]):
+                    clan.stories[str(number)] = None
+        except Exception as e:
+            print("EXCEPTION!")
+            print(e)
+            clan.stories = {"NPC": []}
+            for number in range(game.dnd_config["max_story_amount"]):
+                clan.stories[str(number)] = None
+        print(clan.stories["0"])
+
+    def save_stories(self, clan):
+        """
+        Saves the current story states.
+        """
+        story_save = {}
+        for key in clan.stories.keys():
+            if key == "NPC":
+                story_save["NPC"] = clan.stories["NPC"]
+            else:
+                if clan.stories[key]:
+                    story_save[key] = clan.stories[key].to_json()
+                else:
+                    story_save[key] = None
+        game.safe_save(
+            f"{get_save_dir()}/{game.clan.name}/stories.json",
+            story_save,
+        )
 
     ## Properties
 

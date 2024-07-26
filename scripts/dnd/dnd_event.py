@@ -1,15 +1,10 @@
-from os.path import exists as path_exists
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional
 from random import randint
 import logging
-import os
-import ujson
 
 from scripts.dnd.dnd_types import DnDSkillType, DnDEventRole
 from scripts.dnd.dnd_event_outcome import DnDEventOutcome
 from scripts.cat.cats import Cat
-
-from scripts.game_structure.game_essentials import game
 
 # implement conversation like cat selection
 class DnDConversation:
@@ -159,10 +154,6 @@ class DnDEvent:
             return
         self.current_conversation = self.conversations[self.current_conv_id]
 
-    def add_cats_to_role(self, dnd_story: 'DnDStory') -> None:
-        """Adds cats ids to the given dnd story based on the stated roles."""
-        print("STILL WIP")
-
     @staticmethod
     def generate_from_info(info: Dict[str, dict]) -> Dict[str,'DnDEvent']:
         """Factory method generates a list of DnDConversation objects based on the Dict."""
@@ -189,59 +180,6 @@ class DnDEvent:
         return event_dict
 
 
-class DnDStory:
-    
-    base_path = os.path.join(
-        "resources",
-        "dicts",
-        "dnd_stories"
-    )
-
-    EVENTS_DICT = {}
-    for smaller_stories in os.listdir(base_path):
-        file_path = os.path.join(base_path, smaller_stories)
-        with open(file_path, 'r') as read_file:
-            file_content = ujson.load(read_file)
-            EVENTS_DICT.update(DnDEvent.generate_from_info(file_content))
-            
-    del base_path
-
-    def __init__(
-            self,
-            story_id,
-            current_event_id,
-            start_cooldown: List[int] | int = None,
-            decide_cooldown: List[int] | int = None,
-            repeat_cooldown: List[int] | int = None,
-            roles: Dict[DnDEventRole, List[str]] = None,
-        ) -> None:
-        self.story_id = story_id
-        self.current_event_id = current_event_id
-        self.start_cooldown = randint(start_cooldown[0],start_cooldown[1]) if isinstance(start_cooldown, list) else start_cooldown
-        self.decide_cooldown = randint(decide_cooldown[0],decide_cooldown[1]) if isinstance(decide_cooldown, list) else decide_cooldown
-        self.repeat_cooldown = randint(repeat_cooldown[0],repeat_cooldown[1]) if isinstance(repeat_cooldown, list) else repeat_cooldown
-        self.roles = roles
-    
-    def add_role(self, role: DnDEventRole, cat_id: str):
-        """Add a cat id to a role for this ongoing story."""
-        if role in self.roles.keys():
-            self.roles[role].append(cat_id)
-        else:
-            self.roles[role] = [cat_id]
-
-    def skip_moon(self):
-        """Reduce every"""
-        if self.start_cooldown != None and self.start_cooldown > 0:
-            self.start_cooldown -= 1
-        else:
-            print("trigger event")
-
-        if self.decide_cooldown != None and self.decide_cooldown > 0:
-            self.decide_cooldown -= 1
-        else:
-            print("decide the event")
-
-    def get_start_events(self,) -> List[DnDEvent]:
         """Returns a list of all events which can be a trigger for a story to unfold."""
         trigger_events = []
 

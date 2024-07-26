@@ -4,7 +4,7 @@
 		"current_event": "id",
 		"start_countdown": 10,
 		"decide_countdown": null,
-		"repeate_countdown": null,
+		"repeat_countdown": null,
 		"roles":{
 			"client": ["cat_id"],
 			"participant": ["participant_0"],

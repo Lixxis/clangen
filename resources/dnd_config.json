@@ -4,6 +4,7 @@
     "max_inheritance": 17,
     "start_array": [8,10,12,13,14,15],
 	"proficiency_bonus": 1,
+	"max_story_amount": 5,
 	"choosing_class": "level 2",
     "leveling": {
         "level 0": null,
@@ -28,12 +29,35 @@
         "level 19": "skill:2",
         "level 20": "stat:1"
     },
+	"blood_of_the_chosen_one_inheritance": 10,
+	"blood_of_the_chosen_one_wild": 100,
     "linage_distribution": {
         "cat" : 40,
         "elf": 25,
         "dwarf": 15,
         "orc": 10
     },
-	"blood_of_the_chosen_one_inheritance": 10,
-	"blood_of_the_chosen_one_wild": 100
+	"sub_linage":{
+		"cat": {
+			"tabaxi": 1,
+			"leonin": 1
+		},
+		"elf": {
+			"high elf": 1,
+			"wood elf": 1,
+			"dark elf (drow)": 1,
+			"sea elf": 1,
+			"astral elf": 1,
+			"eladrin": 1
+		},
+		"dwarf":{
+			"hill dwarf": 1,
+			"mountain dwarf": 1,
+			"duergar": 1
+		},
+		"orc": {
+			"hill orc": 1,
+			"mountain orc": 1
+		}
+	}
 }
