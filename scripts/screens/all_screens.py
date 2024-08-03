@@ -7,6 +7,7 @@ from .ChooseMentorScreen import ChooseMentorScreen
 from .ClanScreen import ClanScreen
 from .ClanSettingsScreen import ClanSettingsScreen
 from .ClearingScreen import ClearingScreen
+from .DnDLevelScreen import DnDLevelScreen
 from .EventsScreen import EventsScreen
 from .FamilyTreeScreen import FamilyTreeScreen
 from .LeaderDenScreen import LeaderDenScreen
@@ -89,3 +90,4 @@ view_children_screen = FamilyTreeScreen('see kits screen')
 mediation_screen = MediationScreen("mediation screen")
 change_gender_screen = ChangeGenderScreen("change gender screen")
 
+dnd_level_screen = DnDLevelScreen("dnd level screen")

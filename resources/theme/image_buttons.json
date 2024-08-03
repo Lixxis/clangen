@@ -2156,6 +2156,20 @@
             }
         }
     },
+    "#level_up_button": {
+        "prototype": "#image_button",
+        "images": {
+            "normal_image": {
+                "path": "resources/images/buttons/level_up.png"
+            },
+            "hovered_image": {
+                "path": "resources/images/buttons/level_up_hover.png"
+            },
+            "selected_image": {
+                "path": "resources/images/buttons/level_up_hover.png"
+            }
+        }
+    },
     "#update_button": {
         "prototype": "#image_button",
         "images": {

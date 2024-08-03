@@ -75,6 +75,14 @@ class Screens():
             object_id="#clan_settings_button",
             starting_height=5
         ),
+        "level_up": UIImageButton(
+            scale(pygame.Rect((1380, 190), (170, 60))),
+            "",
+            visible=False,
+            manager=MANAGER,
+            object_id="#level_up_button",
+            starting_height=5
+        ),
         "name_background": pygame_gui.elements.UIImage(
             scale(pygame.Rect((610, 50), (380, 70))),
             pygame.transform.scale(
@@ -324,6 +332,8 @@ class Screens():
             self.change_screen('allegiances screen')
         elif event.ui_element == self.menu_buttons["clan_settings"]:
             self.change_screen('clan settings screen')
+        elif event.ui_element == self.menu_buttons["level_up"]:
+            self.change_screen('dnd level screen')
         elif event.ui_element == self.menu_buttons["moons_n_seasons_arrow"]:
             if game.settings['mns open']:
                 game.settings['mns open'] = False

@@ -24,8 +24,9 @@ def get_leveled_cat():
 
 def update_levels(leveled_cats):
     "Updates the levels of the given cats in the overall game xp documentation."
-    for cat in leveled_cats:
-        game.clan.xp[cat.ID] = cat.experience_level
+    return
+    #for cat in leveled_cats:
+    #    game.clan.xp[cat.ID] = cat.experience_level
 
 class DnDCatLevels(UIWindow):
     """This window allows the user to specify the cat's gender"""
@@ -164,8 +165,8 @@ class DnDCatLevels(UIWindow):
         self.class_info = {}
         self.update_class()
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
-            self.done_button.disable()
+        #if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+        #    self.done_button.disable()
 
         self.set_blocking(True)
 
@@ -276,10 +277,11 @@ class DnDCatLevels(UIWindow):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) < 0 and self.level_class):
-            self.done_button.disable()
-        else:
-            self.done_button.enable()
+        self.done_button.enable()
+        #if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) < 0 and self.level_class):
+        #    self.done_button.disable()
+        #else:
+        #    self.done_button.enable()
 
     def update_skill_info(self):
         for skill in self.skill_buttons.keys():
@@ -366,10 +368,11 @@ class DnDCatLevels(UIWindow):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
-            self.done_button.disable()
-        else:
-            self.done_button.enable()
+        self.done_button.enable()
+        #if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+        #    self.done_button.disable()
+        #else:
+        #    self.done_button.enable()
 
     def update_class(self):
         for dnd_class in self.class_buttons.keys():
@@ -420,10 +423,11 @@ class DnDCatLevels(UIWindow):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
-            self.done_button.disable()
-        else:
-            self.done_button.enable()
+        self.done_button.enable()
+        #if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+        #    self.done_button.disable()
+        #else:
+        #    self.done_button.enable()
 
     def process_event(self, event):
         super().process_event(event)
@@ -438,7 +442,7 @@ class DnDCatLevels(UIWindow):
                 self.the_cat.dnd_stats.update_stats()
                 self.the_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.the_cat.dnd_skills.update_skills(self.the_cat.dnd_stats)
-                if self.level_class:
+                if self.level_class and len(self.new_class)> 0:
                     self.the_cat.dnd_class = self.new_class[0]
                     self.the_cat.dnd_skills.update_class_proficiency(self.the_cat.dnd_class, self.the_cat.experience_level)
                 game.switches['window_open'] = False
