@@ -3,7 +3,7 @@ from random import choice, sample
 import pygame
 import pygame_gui
 
-from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+from scripts.dnd.dnd_leveling import DnDLevelsReminder, get_leveled_cat
 from scripts.dnd.dnd_skills import DnDSkills
 from scripts.dnd.dnd_stats import Stats
 
@@ -246,10 +246,10 @@ class PatrolScreen(Screens):
         if event.ui_element == self.elements['patrol_again']:
             self.open_choose_cats_screen()
             leveled_cats = get_leveled_cat()
-            if leveled_cats:
-                for cat in leveled_cats:
-                    DnDCatLevels(cat)
-                update_levels(leveled_cats)
+            if (leveled_cats and not game.clan.level_reminder) or game.clan.levelable_cats < len(leveled_cats):
+                game.clan.level_reminder = True
+                game.clan.levelable_cats = len(leveled_cats)
+                DnDLevelsReminder()
         elif event.ui_element == self.elements["clan_return"]:
             self.change_screen('camp screen')
 
@@ -259,10 +259,10 @@ class PatrolScreen(Screens):
         self.show_menu_buttons()
         self.open_choose_cats_screen()
         leveled_cats = get_leveled_cat()
-        if leveled_cats:
-            for cat in leveled_cats:
-                DnDCatLevels(cat)
-            update_levels(leveled_cats)
+        if (leveled_cats and not game.clan.level_reminder) or game.clan.levelable_cats < len(leveled_cats):
+            game.clan.level_reminder = True
+            game.clan.levelable_cats = len(leveled_cats)
+            DnDLevelsReminder()
 
     def update_button(self):
         """" Updates button availabilities. """

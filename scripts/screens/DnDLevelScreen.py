@@ -106,19 +106,11 @@ class DnDLevelScreen(Screens):
             manager=MANAGER,
         )
         self.done_button = UIImageButton(
-            scale(pygame.Rect((755, 1285), (154, 60))), "",
+            scale(pygame.Rect((1100, 800), (154, 60))), "",
             object_id="#done_button",
             manager=MANAGER,
         )
         self.done_button.disable()
-
-        self.stop_focus_button = UIImageButton(
-            scale(pygame.Rect((1510, 310), (44, 44))),
-            "",
-            object_id="#exit_window_button",
-            manager=MANAGER,
-        )
-        self.stop_focus_button.hide()
 
         self.elements["level_profile"] = pygame_gui.elements.UIImage(
                 scale(pygame.Rect((80, 150), (384, 478))),
@@ -130,6 +122,13 @@ class DnDLevelScreen(Screens):
                 manager=MANAGER,
             )
 
+        self.stop_focus_button = UIImageButton(
+            scale(pygame.Rect((80 + 384 + 4, 150 + 2), (44, 44))),
+            "",
+            object_id="#exit_window_button",
+            manager=MANAGER,
+        )
+        self.stop_focus_button.hide()
         
         arrow_width = 44
         arrow_length = 68
@@ -167,11 +166,6 @@ class DnDLevelScreen(Screens):
         self.update_skill_info()
         self.update_class()
         self.update_stat_info()
-
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) < 0 and self.level_class):
-            self.done_button.disable()
-        else:
-            self.done_button.enable()
 
     def update_focus_cat(self):
         if not self.focus_cat_object:
@@ -298,7 +292,7 @@ class DnDLevelScreen(Screens):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+        if not self.focus_cat_object or self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
             self.done_button.disable()
         else:
             self.done_button.enable()
@@ -384,7 +378,7 @@ class DnDLevelScreen(Screens):
 
         text_pos_y = self.skill_pos_y
         button_pos_y = text_pos_y + 17
-        step_increase = 46
+        step_increase = 55
 
         for dnd_class in ClassType:
             text = dnd_class.value
@@ -414,7 +408,7 @@ class DnDLevelScreen(Screens):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+        if not self.focus_cat_object or self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
             self.done_button.disable()
         else:
             self.done_button.enable()
@@ -506,7 +500,7 @@ class DnDLevelScreen(Screens):
             text_pos_y += step_increase
             button_pos_y += step_increase
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) < 0 and self.level_class):
+        if not self.focus_cat_object or self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) < 0 and self.level_class):
             self.done_button.disable()
         else:
             self.done_button.enable()
@@ -621,6 +615,7 @@ class DnDLevelScreen(Screens):
                     self.focus_cat_object.dnd_class = self.new_class[0]
                     self.focus_cat_object.dnd_skills.update_class_proficiency(self.focus_cat_object.dnd_class, self.focus_cat_object.experience_level)
                 update_levels([self.focus_cat_object])
+                self.focus_cat_object = None
                 self.clear_cat_infos()
                 self.reset_skill()
                 self.update_leveling_cats()
@@ -692,7 +687,7 @@ class DnDLevelScreen(Screens):
                 self.update_stat_info()
                 self.update_skill_info()
 
-        if self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
+        if not self.focus_cat_object or self.update_stat > 0 or self.update_skill > 0 or (len(self.new_class) <= 0 and self.level_class):
             self.done_button.disable()
         else:
             self.done_button.enable()

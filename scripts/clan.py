@@ -907,6 +907,9 @@ class Clan:
         self.load_pregnancy(game.clan)
         self.load_herbs(game.clan)
         self.load_disaster(game.clan)
+        # dnd part
+        game.clan.level_reminder = False
+        game.clan.levelable_cats = 0
         self.load_xp(game.clan)
         self.load_stories(game.clan)
         if game.clan.game_mode != "classic":

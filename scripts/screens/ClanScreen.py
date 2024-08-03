@@ -2,7 +2,7 @@ import random
 import traceback
 from copy import deepcopy
 
-from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+from scripts.dnd.dnd_leveling import DnDLevelsReminder, get_leveled_cat
 
 import pygame
 import pygame_gui
@@ -215,10 +215,10 @@ class ClanScreen(Screens):
 
         self.update_buttons_and_text()
         leveled_cats = get_leveled_cat()
-        if leveled_cats:
-            for cat in leveled_cats:
-                DnDCatLevels(cat)
-            update_levels(leveled_cats)
+        if (leveled_cats and not game.clan.level_reminder) or game.clan.levelable_cats < len(leveled_cats):
+            game.clan.level_reminder = True
+            game.clan.levelable_cats = len(leveled_cats)
+            DnDLevelsReminder()
 
     def exit_screen(self):
         # removes the cat sprites.

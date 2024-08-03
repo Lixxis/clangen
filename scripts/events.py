@@ -48,6 +48,7 @@ from scripts.utility import (
     unpack_rel_block
 )
 from scripts.dnd.dnd_story import DnDStory
+from scripts.dnd.dnd_leveling import get_leveled_cat
 
 
 class Events:
@@ -70,6 +71,8 @@ class Events:
         """
         Handles the moon skipping of the whole Clan.
         """
+        game.clan.level_reminder = False
+        game.clan.levelable_cats = len(get_leveled_cat())
         game.cur_events_list = []
         game.herb_events_list = []
         game.freshkill_events_list = []

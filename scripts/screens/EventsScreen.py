@@ -1,7 +1,7 @@
 import pygame
 import pygame_gui
 
-from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
+from scripts.dnd.dnd_leveling import DnDLevelsReminder, get_leveled_cat
 
 from scripts.cat.cats import Cat
 from scripts.event_class import Single_Event
@@ -313,10 +313,10 @@ class EventsScreen(Screens):
         self.update_events_display()
 
         leveled_cats = get_leveled_cat()
-        if leveled_cats:
-            for cat in leveled_cats:
-                DnDCatLevels(cat)
-            update_levels(leveled_cats)
+        if (leveled_cats and not game.clan.level_reminder) or game.clan.levelable_cats < len(leveled_cats):
+            game.clan.level_reminder = True
+            game.clan.levelable_cats = len(leveled_cats)
+            DnDLevelsReminder()
 
     def exit_screen(self):
         self.open_involved_cat_button = None
@@ -665,10 +665,10 @@ class EventsScreen(Screens):
                 self.scroll_height[self.event_display_type]
             )
         leveled_cats = get_leveled_cat()
-        if leveled_cats:
-            for cat in leveled_cats:
-                DnDCatLevels(cat)
-            update_levels(leveled_cats)
+        if (leveled_cats and not game.clan.level_reminder) or game.clan.levelable_cats < len(leveled_cats):
+            game.clan.level_reminder = True
+            game.clan.levelable_cats = len(leveled_cats)
+            DnDLevelsReminder()
 
 
     def make_event_scrolling_container(self):

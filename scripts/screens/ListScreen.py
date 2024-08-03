@@ -3,8 +3,6 @@ from math import ceil
 import pygame
 import pygame_gui
 
-from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
-
 from scripts.cat.cats import Cat
 from scripts.game_structure.game_essentials import game, MANAGER, screen
 from scripts.game_structure.ui_elements import (
