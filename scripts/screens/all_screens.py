@@ -25,6 +25,7 @@ from .SpriteInspectScreen import SpriteInspectScreen
 from .StartScreen import StartScreen
 from .SwitchClanScreen import SwitchClanScreen
 from .WarriorDenScreen import WarriorDenScreen
+from .WorldScreen import WorldScreen
 
 # ---------------------------------------------------------------------------- #
 #                                  UI RULES                                    #
@@ -91,3 +92,4 @@ mediation_screen = MediationScreen("mediation screen")
 change_gender_screen = ChangeGenderScreen("change gender screen")
 
 dnd_level_screen = DnDLevelScreen("dnd level screen")
+world_screen = WorldScreen("world screen")

@@ -21,7 +21,7 @@ class Screens():
     # menu buttons are used very often, so they are generated here.
     menu_buttons = {
         "events_screen": UIImageButton(
-            scale(pygame.Rect((492, 120), (164, 60))),
+            scale(pygame.Rect((434, 120), (164, 60))),
             "",
             visible=False,
             manager=MANAGER,
@@ -29,22 +29,30 @@ class Screens():
             starting_height=5
         ),
         "camp_screen": UIImageButton(
-            scale(pygame.Rect((656, 120), (116, 60))),
+            scale(pygame.Rect((598, 120), (116, 60))),
             "",
             visible=False,
             manager=MANAGER,
             object_id="#camp_menu_button",
             starting_height=5
         ),
+        "world_screen": UIImageButton(
+            scale(pygame.Rect((714, 120), (116, 60))),
+            "",
+            visible=False,
+            manager=MANAGER,
+            object_id="#world_menu_button",
+            starting_height=5
+        ),
         "catlist_screen": UIImageButton(
-            scale(pygame.Rect((772, 120), (176, 60))),
+            scale(pygame.Rect((830, 120), (176, 60))),
             "",
             visible=False,
             object_id="#catlist_menu_button",
             starting_height=5
         ),
         "patrol_screen": UIImageButton(
-            scale(pygame.Rect((948, 120), (160, 60))),
+            scale(pygame.Rect((1006, 120), (160, 60))),
             "",
             visible=False,
             manager=MANAGER,
@@ -322,6 +330,8 @@ class Screens():
             self.change_screen('events screen')
         elif event.ui_element == self.menu_buttons["camp_screen"]:
             self.change_screen('camp screen')
+        elif event.ui_element == self.menu_buttons["world_screen"]:
+            self.change_screen('world screen')
         elif event.ui_element == self.menu_buttons["catlist_screen"]:
             self.change_screen('list screen')
         elif event.ui_element == self.menu_buttons["patrol_screen"]:

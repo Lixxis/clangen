@@ -1232,18 +1232,18 @@ class Clan:
                                 repeat_countdown = story["repeat_countdown"],
                                 roles=transform_roles_json_to_dict(story["roles"])
                             )
-                        clan.stories[str(key)] = story
+                        game.clan.stories[str(key)] = story
             else:
-                clan.stories = {"NPC": []}
+                game.clan.stories = {"NPC": []}
                 for number in range(game.dnd_config["max_story_amount"]):
-                    clan.stories[str(number)] = None
+                    game.clan.stories[str(number)] = None
         except Exception as e:
             print("EXCEPTION!")
             print(e)
-            clan.stories = {"NPC": []}
+            game.clan.stories = {"NPC": []}
             for number in range(game.dnd_config["max_story_amount"]):
-                clan.stories[str(number)] = None
-        print(clan.stories["0"])
+                game.clan.stories[str(number)] = None
+        print(game.clan.stories["0"])
 
     def save_stories(self, clan):
         """
