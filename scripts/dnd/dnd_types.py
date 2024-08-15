@@ -100,24 +100,11 @@ class DnDEventRole(Enum):
     SEARCH_TARGET = "search target"
     PRIOR_TARGET = "prior target"
 
-def transform_roles_json_to_dict(json_data: Dict[str,List[str]]) -> Dict[DnDEventRole, List[str]]:
-    """
-    Transform the information of a loaded story with the data into a dictionary, which can be used in a DnDStory.
-    """
-    transformed_dict = {}
-    for key in json_data.keys():
-        fitting_role = [role for role in DnDEventRole if role.value == key]
-        if fitting_role:
-            transformed_dict[fitting_role[0]] = json_data[key]
-        else:
-            logging.error(f"DnD Error! loaded role '{key}' does not fit any DnDEventRole type.")
-    return transformed_dict
-
 def transform_roles_dict_to_json(dictionary: Dict[DnDEventRole, List[str]]) -> Dict[str,List[str]]:
     """
     Transform the dictionary to another form to be able to save it as such.
     """
     transformed_dict = {}
     for key in dictionary.keys():
-        transformed_dict[key.value] = dictionary[key]
+        transformed_dict[key] = dictionary[key]
     return transformed_dict

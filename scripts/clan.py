@@ -21,7 +21,6 @@ from scripts.cat.history import History
 from scripts.cat.names import names
 from scripts.cat.sprites import sprites
 from scripts.dnd.dnd_story import DnDStory
-from scripts.dnd.dnd_types import transform_roles_json_to_dict
 from scripts.clan_resources.freshkill import FreshkillPile, Nutrition
 from scripts.events_module.generate_events import OngoingEvent
 from scripts.game_structure.game_essentials import game
@@ -135,6 +134,8 @@ class Clan:
         self.custom_pronouns = []
         self.xp = {}
         self.stories = {}
+        # key is the ID of the cat, array of "element" define what information is missing
+        self.dnd_unknown_cats = {}
 
         # Init Settings
         self.clan_settings = {}
@@ -539,6 +540,7 @@ class Clan:
         self.save_pregnancy(game.clan)
         self.save_xp(game.clan)
         self.save_stories(game.clan)
+        self.save_dnd_unknown_cats(game.clan)
 
         self.save_clan_settings()
         if game.clan.game_mode in ["expanded", "cruel season"]:
@@ -912,6 +914,7 @@ class Clan:
         game.clan.levelable_cats = 0
         self.load_xp(game.clan)
         self.load_stories(game.clan)
+        self.load_dnd_unknown_cats(game.clan)
         if game.clan.game_mode != "classic":
             self.load_freshkill_pile(game.clan)
         game.switches["error_message"] = ""
@@ -1218,21 +1221,7 @@ class Clan:
                     file_path, "r", encoding="utf-8"
                 ) as read_file:  # pylint: disable=redefined-outer-name
                     stories = ujson.load(read_file)
-                for key in stories.keys():
-                    if str(key) == "NPC":
-                        clan.stories[str(key)] = stories[str(key)]
-                    else:
-                        story = stories[str(key)]
-                        if story:
-                            story = DnDStory(
-                                story_id = key,
-                                current_event_id = story["current_event_id"],
-                                start_countdown = story["start_countdown"],
-                                decide_countdown = story["decide_countdown"],
-                                repeat_countdown = story["repeat_countdown"],
-                                roles=transform_roles_json_to_dict(story["roles"])
-                            )
-                        game.clan.stories[str(key)] = story
+                game.clan.stories = DnDStory.generate_from_info(stories)
             else:
                 game.clan.stories = {"NPC": []}
                 for number in range(game.dnd_config["max_story_amount"]):
@@ -1243,7 +1232,6 @@ class Clan:
             game.clan.stories = {"NPC": []}
             for number in range(game.dnd_config["max_story_amount"]):
                 game.clan.stories[str(number)] = None
-        print(game.clan.stories["0"])
 
     def save_stories(self, clan):
         """
@@ -1262,6 +1250,32 @@ class Clan:
             f"{get_save_dir()}/{game.clan.name}/stories.json",
             story_save,
         )
+
+    def load_dnd_unknown_cats(self, clan):
+        if not game.clan.name:
+            return
+
+        file_path = get_save_dir() + f"/{game.clan.name}/unknown_cats.json"
+        try:
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as read_file:  # pylint: disable=redefined-outer-name
+                    clan.dnd_unknown_cats = ujson.load(read_file)
+                    for cat_id, cat in Cat.all_cats.items():
+                        if cat.faded and cat_id in clan.dnd_unknown_cats.keys():
+                            del clan.dnd_unknown_cats[cat_id]
+            else:
+                clan.dnd_unknown_cats = {}
+        except:
+            print("Error DnD - loading the unknown cats is not possible")
+
+
+    def save_dnd_unknown_cats(self, clan):
+        """Saves the cats the clan does not know of."""           
+        game.safe_save(
+            f"{get_save_dir()}/{game.clan.name}/unknown_cats.json",
+            clan.dnd_unknown_cats,
+        )
+
 
     ## Properties
 

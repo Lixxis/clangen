@@ -1,22 +1,22 @@
 {
 	"missing_start":{
 		"start_event": true,
-		"conversation": {
+		"conversations": {
 			"start": {
 				"text":["A cat is approaching the patrol. {PRONOUN/n_c:0/subject} mention, that {PRONOUN/n_c:0/poss} kid is missing."],
 				"answers": [
 					["next_id", "Clam the cat down and ask for more information."],
-					["next_id2", "Immediately start to search for the kid."],
+					["next_id2", "Immediately start to search for the kid. (no turn back)"],
 					["next_id3", "Decline the cat. (story will not continue)"],
-					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/subject} away."]
+					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/subject} away. (no turn back)"]
 				]
 			},
 			"next_id": {
 				"text":["It took some time to calm {PRONOUN/n_c:0/subject} down but the patrol managed to get more information, which might help to track the kid down."],
 				"answers": [
-					["next_id_1", "Start a search with the additional information."],
+					["next_id_1", "Start a search with the additional information. (no turn back)"],
 					["next_id3", "Decline the cat. (story will not continue)"],
-					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/subject} away."]
+					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/subject} away. (no turn back)"]
 				]
 			},
 			"next_id2": {
@@ -49,7 +49,7 @@
 		],
 		"roles": {
 			"client": ["n_c:0"],
-			"searchTarget": ["n_c:1"]
+			"search target": ["n_c:1"]
 		},
 		"checks":{
 			"default":{
@@ -69,10 +69,9 @@
 				"pass": 10,
 				"success":{
 					"gen": {
-						"next_id": "id2",
-						"repeate": null,
+						"next_id": "default_s",
 						"text": [
-							""
+							"The patrol managed to find the kid."
 						],
 						"new_cat": [],
 						"relationships": [],
@@ -80,21 +79,24 @@
 						"outsider_rep": 1
 					},
 					"20": {
-						"next_id": "id3",
-						"repeate": null,
-						"text": "huhu, this will be shown"
+						"next_id": "default_s",
+						"text":  [
+							"The patrol managed to find the kid in fast speed!"
+						]
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "id1", 
-						"repeate": 3, 
-						"text": "huhu, this will be shown"
+						"next_id": "default_f",
+						"text": [
+							"Everyone is blind."
+						]
 					},
 					"1": {
-						"next_id": "id4", 
-						"repeate": 3,
-						"text": "huhu, this will be shown",
+						"next_id": "default_f",
+						"text": [
+							"Everyone is blind and get hurt."
+						],
 						"dead_cats": ["r_c"],
 						"history_text": {
 							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
@@ -108,10 +110,9 @@
 				"pass": 10,
 				"success":{
 					"gen": {
-						"next_id": "id2",
-						"repeate": null,
+						"next_id": "default_s",
 						"text": [
-							""
+							"FOUND!"
 						],
 						"new_cat": [],
 						"relationships": [],
@@ -119,21 +120,24 @@
 						"outsider_rep": 1
 					},
 					"20": {
-						"next_id": "id3",
-						"repeate": null,
-						"text": "huhu, this will be shown"
+						"next_id": "default_s",
+						"text":  [
+							"FOUND only by a hair"
+						]
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "id1", 
-						"repeate": 3, 
-						"text": "huhu, this will be shown"
+						"next_id": "default_f",
+						"text":  [
+							"Failed to read the paw prints"
+						]
 					},
 					"1": {
-						"next_id": "id4", 
-						"repeate": 3,
-						"text": "huhu, this will be shown",
+						"next_id": "id4",
+						"text":  [
+							"Failed to read the paw prints and got scared!"
+						],
 						"dead_cats": ["r_c"],
 						"history_text": {
 							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
@@ -148,7 +152,6 @@
 				"success":{
 					"gen": {
 						"next_id": "id2",
-						"repeate": null,
 						"text": [
 							""
 						],
@@ -159,20 +162,23 @@
 					},
 					"20": {
 						"next_id": "id3",
-						"repeate": null,
-						"text": "huhu, this will be shown"
+						"text":  [
+							""
+						]
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "id1", 
-						"repeate": 3, 
-						"text": "huhu, this will be shown"
+						"next_id": "id1",
+						"text":  [
+							""
+						]
 					},
 					"1": {
-						"next_id": "id4", 
-						"repeate": 3,
-						"text": "huhu, this will be shown",
+						"next_id": "id4",
+						"text":  [
+							""
+						],
 						"dead_cats": ["r_c"],
 						"history_text": {
 							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
@@ -185,9 +191,9 @@
 		}
 	},
 	"default_s":{
-		"conversation": {
+		"conversations": {
 			"start": {
-				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/n_c:0/subject/CAP} thank the patrol for the help anyways."],
+				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/client:0/subject/CAP} thank the patrol for the help anyways."],
 				"answers": [
 					["next_id", "Thats great! May the Starclan light their path and the loners and the patrol parts their way. (Story will end)"],
 					["next_id2", "Thats great, and it would even better if they join c_n!"]
@@ -198,7 +204,7 @@
 				"answers": []
 			},
 			"next_id2": {
-				"text":["client:0 {VERB/client:0/seem/seems} to be surprised by the offer of the patrol. {PRONOUN/n_c:0/subject/CAP} never thought about it."],
+				"text":["client:0 {VERB/client:0/seem/seems} to be surprised by the offer of the patrol. {PRONOUN/client:0/subject/CAP} never thought about it."],
 				"answers": [
 					["persuasion"]
 				]
@@ -261,7 +267,7 @@
 		}
 	},
 	"default_f":{
-		"conversation": {
+		"conversations": {
 			"start": {
 				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/n_c:0/subject} thank the patrol for the help anyways."],
 				"answers": [

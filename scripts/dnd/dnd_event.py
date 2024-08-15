@@ -15,8 +15,8 @@ class DnDConversation:
     
     def get_text(self, amount_of_cats) -> str:
         "Returns the text of this conversation based on the amount of cats in the patrol."
-        if len(self.text) >= amount_of_cats:
-            return self.text[amount_of_cats]
+        if len(self.text) >= amount_of_cats-1:
+            return self.text[amount_of_cats-1]
         elif len(self.text) > 0:
             return self.text[0]
         return f"There is no conversation text found for conversation with the id {self.id}!"
@@ -49,9 +49,6 @@ class DnDConversation:
         """Factory method generates a list of DnDConversation objects based on the dicts."""
         conversation_dict = {}
 
-        if not isinstance(info, list):
-            return conversation_dict
-
         for key, _d in info.items():
             conversation_dict[key] = DnDConversation(
                 id = _d.get("id"),
@@ -73,20 +70,64 @@ class DnDCheck:
         self.success_outcome = success_outcome
         self.fail_outcome = fail_outcome
 
-    def roll_skill(self, cat: Cat) -> bool:
+    def roll_skill(self, cat: Cat) -> tuple:
         rolled_number = randint(1,20) # d20 roll
-        print("ROLLED NUMBER: ", rolled_number , "; modifier: ", cat.dnd_skills.skills[self.skill_type])
-        modifier = cat.dnd_skills.skills[self.skill_type]
-        final_number = rolled_number + modifier # modifier added
+        modifier = 0
+        print("ROLLED NUMBER: ", rolled_number)
+        if self.skill_type:
+            print("; modifier: ", cat.dnd_skills.skills[self.skill_type])
+            modifier = cat.dnd_skills.skills[self.skill_type]
+        final_number = rolled_number + modifier
         print("FINISHED ROLLED NUMBER: ", final_number, ", needed number: ", self.pass_number)
 
-        final_event = self.chosen_success
-        if self.pass_number > final_number:
+        final_outcome = None
+        outcome_key = None
+        success = self.pass_number > final_number
+        outcome_number = final_number if rolled_number not in [1,20] else rolled_number
+        critical = outcome_number == rolled_number
+        if success:
             print("NO success")
-            final_event = self.chosen_failure
+            outcome_key = "gen"
+            if str(outcome_number) in self.success_outcome:
+                outcome_key = str(outcome_number)
+            final_outcome = self.success_outcome[outcome_key]
         else:
             print("SUCCESS!")
-        return final_event.execute_outcome(self, cat) + (rolled_number,) + (modifier,) + (self.pass_number,)
+            outcome_key = "gen"
+            if str(outcome_number) in self.success_outcome:
+                outcome_key = str(outcome_number)
+            final_outcome = self.success_outcome[outcome_key]
+
+        print("outcome_key", outcome_key)
+
+        return success, critical, final_outcome, final_outcome
+
+    @staticmethod
+    def generate_from_info(info: Dict[str, dict]) -> Dict[str, 'DnDCheck']:
+        """Factory method generates a list of DnDCheck objects based on the dicts."""
+        check_dict = {}
+        for key, _d in info.items():
+            skill = _d.get("id")
+            skill = [skill for skill in DnDSkillType if skill.name == skill]
+            if len(skill) > 0:
+                skill = skill[0]
+            else:
+                skill = None
+            success_outcome = {}
+            if _d.get("success"):
+                for outcome_key, outcome_value in _d.get("success").items():
+                    success_outcome[outcome_key] = DnDEventOutcome.generate_from_info([outcome_value])[0]
+            fail_outcome = {}
+            if _d.get("fail"):
+                for outcome_key, outcome_value in _d.get("fail").items():
+                    success_outcome[outcome_key] = DnDEventOutcome.generate_from_info([outcome_value])[0]
+            check_dict[key] = DnDCheck(
+                skill_type = skill,
+                pass_number = _d.get("pass"),
+                success_outcome=success_outcome,
+                fail_outcome=fail_outcome
+            )
+        return check_dict
 
 class DnDEvent:
     def __init__(
@@ -100,7 +141,7 @@ class DnDEvent:
             start_cooldown: List[int] = None,
             decide_cooldown: List[int] = None,
             change: Dict[str, str] = None,
-            new_cat: List[str] = None,
+            new_cats: List[str] = None,
             roles: Dict[DnDEventRole, List[str]] = None,
             checks: Dict[str, DnDCheck] = None
         ) -> None:
@@ -108,83 +149,66 @@ class DnDEvent:
         self.start_event = start_event
         self.constraints = constraints
         self.conversations = conversations if conversations else {}
-        self.current_conv_id = current_conversation_id
+        self.current_conversation_id = current_conversation_id
         self.tags = tags if tags else []
         self.start_cooldown = start_cooldown if start_cooldown else []
         self.decide_cooldown = decide_cooldown if decide_cooldown else []
         self.change = change if change else {}
-        self.new_cat = new_cat if new_cat else []
+        self.new_cats = new_cats if new_cats else []
         self.roles = roles if roles else {}
         self.checks = checks if checks else {}
 
         self.current_conversation = None
-        self.get_current_conversation()
+        self.set_current_conversation()
 
     def _check_constraints(self) -> bool:
         return True
 
-    def continue_conversation(self, chosen_answer) -> None:
+    def continue_conversation(self, chosen_answer_id) -> None:
         """Handles to switch to the new conversation."""
-        if not chosen_answer:
+        if not chosen_answer_id:
             logging.error(f"DnD Error! - nothing was chosen as answer")
             return
-        if not self.current_conv_id:
+        if not self.current_conversation_id:
             logging.error(f"DnD Error! - the next id is missing")
             return
-        if self.current_conv_id not in self.conversations.keys():
-            logging.error(f"DnD ERROR! - the conversation with the key {self.current_conv_id} is missing in event {self.event_id}")
+        if self.current_conversation_id not in self.conversations.keys():
+            logging.error(f"DnD ERROR! - the conversation with the key {self.current_conversation_id} is missing in event {self.event_id}")
             return
-        upcoming_id = self.conversations[self.current_conv_id].get_next_id(chosen_answer)
-        if not upcoming_id:
-            logging.error(f"DnD Error! - the next id is not set for the answer '{chosen_answer}'")
+        if chosen_answer_id not in self.conversations.keys():
+            logging.error(f"DnD ERROR! - the conversation with the key {chosen_answer_id} is missing in event {self.event_id}")
             return
-        if upcoming_id not in self.conversations.keys():
-            logging.error(f"DnD ERROR! - the conversation with the key {upcoming_id} is missing in event {self.event_id}")
-            return
-        self.current_conv_id = upcoming_id
-        self.current_conversation = self.get_current_conversation()
 
-    def get_current_conversation(self) -> None:
+        self.current_conversation_id = chosen_answer_id
+        self.set_current_conversation()
+
+    def set_current_conversation(self) -> None:
         """Set the text and answers for the current conversation in values."""
-        if not self.current_conv_id:
+        if not self.current_conversation_id:
             logging.error(f"DnD Error! - the next id is missing")
             return
-        if self.current_conv_id not in self.conversations:
-            logging.error(f"DnD ERROR! - the conversation with the key {self.current_conv_id} is missing in event {self.event_id}")
+        if self.current_conversation_id not in self.conversations:
+            logging.error(f"DnD ERROR! - the conversation with the key {self.current_conversation_id} is missing in event {self.event_id}")
             return
-        self.current_conversation = self.conversations[self.current_conv_id]
+        self.current_conversation = self.conversations[self.current_conversation_id]
 
     @staticmethod
     def generate_from_info(info: Dict[str, dict]) -> Dict[str,'DnDEvent']:
         """Factory method generates a list of DnDConversation objects based on the Dict."""
         event_dict = {}
 
-        if not isinstance(info, list):
-            return event_dict
-
         for key, value in info.items():
-            event_dict[key] = DnDConversation(
+            event_dict[key] = DnDEvent(
                 event_id = key,
                 start_event = value.get("start_event"),
                 constraints = value.get("constraints"),
                 conversations = DnDConversation.generate_from_info(value.get("conversations")),
-                current_conversation = value.get("current_conversation"),
                 tags = value.get("tags"),
                 start_cooldown = value.get("start_cooldown"),
                 decide_cooldown = value.get("decide_cooldown"),
                 change = value.get("change"),
-                new_cat = value.get("new_cat"),
+                new_cats = value.get("new_cat"),
                 roles = value.get("roles"),
-                checks = value.get("checks"),
+                checks = DnDCheck.generate_from_info(value.get("checks")),
             )
         return event_dict
-
-
-        """Returns a list of all events which can be a trigger for a story to unfold."""
-        trigger_events = []
-
-        for key, value in self.EVENTS_DICT.items():
-            if value.start_event:
-                trigger_events.append(value)
-
-        return trigger_events

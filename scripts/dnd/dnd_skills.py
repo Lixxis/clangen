@@ -265,7 +265,7 @@ class DnDSkills:
                 mod_str = ""
             if (skill in self.proficiency or skill in self.class_proficiency) and len(skills_to_bold) < 1:
                 dnd_skill_string += "<b>"
-            elif skill in skills_to_bold:
+            elif skill in skills_to_bold or skill.value in skills_to_bold:
                 dnd_skill_string += "<b>"
             dnd_skill_string += f"{skill.value} (" + mod_str + str(modifier) + ") "
 
@@ -278,7 +278,7 @@ class DnDSkills:
 
             if (skill in self.proficiency or skill in self.class_proficiency) and len(skills_to_bold) < 1:
                 dnd_skill_string += "</b>"
-            elif skill in skills_to_bold:
+            elif skill in skills_to_bold or skill.value in skills_to_bold:
                 dnd_skill_string += "</b>"
         return dnd_skill_string
 

@@ -835,27 +835,31 @@ class ProfileScreen(Screens):
         # NEWLINE ----------
         output += "\n"
 
-        # EYE COLOR
-        output += "eyes: " + str(the_cat.describe_eyes())
-        # NEWLINE ----------
-        output += "\n"
-
-        # PELT TYPE
-        output += "pelt: " + the_cat.pelt.name.lower()
-        # NEWLINE ----------
-        output += "\n"
-
-        # PELT LENGTH
-        output += "fur length: " + the_cat.pelt.length
-        # NEWLINE ----------
-
-        # ACCESSORY
-        if the_cat.pelt.accessory:
-            output += "\n"
-            output += "accessory: " + str(
-                ACC_DISPLAY[the_cat.pelt.accessory]["default"]
-            )
+        if (self.the_cat.ID in game.clan.dnd_unknown_cats.keys() and "look" not in game.clan.dnd_unknown_cats[self.the_cat.ID]) or\
+            self.the_cat.ID not in game.clan.dnd_unknown_cats.keys():
+            # EYE COLOR
+            output += "eyes: " + str(the_cat.describe_eyes())
             # NEWLINE ----------
+            output += "\n"
+
+            # PELT TYPE
+            output += "pelt: " + the_cat.pelt.name.lower()
+            # NEWLINE ----------
+            output += "\n"
+
+            # PELT LENGTH
+            output += "fur length: " + the_cat.pelt.length
+            # NEWLINE ----------
+
+            # ACCESSORY
+            if the_cat.pelt.accessory:
+                output += "\n"
+                output += "accessory: " + str(
+                    ACC_DISPLAY[the_cat.pelt.accessory]["default"]
+                )
+                # NEWLINE ----------
+        else:
+            output += "appearance unknown"
 
         # PARENTS
         all_parents = [Cat.fetch_cat(i) for i in the_cat.get_parents()]
@@ -879,30 +883,32 @@ class ProfileScreen(Screens):
         
         # MOONS
         output += "\n"
-        if the_cat.dead:
-            output += str(the_cat.moons)
-            if the_cat.moons == 1:
-                output += " moon (in life)\n"
-            elif the_cat.moons != 1:
-                output += " moons (in life)\n"
+        if (self.the_cat.ID in game.clan.dnd_unknown_cats.keys() and "age" not in game.clan.dnd_unknown_cats[self.the_cat.ID]) or\
+            self.the_cat.ID not in game.clan.dnd_unknown_cats.keys():
+            if the_cat.dead:
+                output += str(the_cat.moons)
+                if the_cat.moons == 1:
+                    output += " moon (in life)\n"
+                elif the_cat.moons != 1:
+                    output += " moons (in life)\n"
 
-            output += str(the_cat.dead_for)
-            if the_cat.dead_for == 1:
-                output += " moon (in death)"
-            elif the_cat.dead_for != 1:
-                output += " moons (in death)"
+                output += str(the_cat.dead_for)
+                if the_cat.dead_for == 1:
+                    output += " moon (in death)"
+                elif the_cat.dead_for != 1:
+                    output += " moons (in death)"
+            else:
+                output += str(the_cat.moons)
+                if the_cat.moons == 1:
+                    output += " moon"
+                elif the_cat.moons != 1:
+                    output += " moons"
         else:
-            output += str(the_cat.moons)
-            if the_cat.moons == 1:
-                output += " moon"
-            elif the_cat.moons != 1:
-                output += " moons"
+            output += "age unknown"
 
         # MATE
         if len(the_cat.mate) > 0:
             output += "\n"
-            
-            
             mate_names = []
             # Grab the names of only the first two, since that's all we will display
             for _m in the_cat.mate[:2]:
@@ -939,7 +945,7 @@ class ProfileScreen(Screens):
         linage = the_cat.dnd_linage.linage_type.value
         output += f"\nlinage: {linage}"
         
-		# DnD Class
+        # DnD Class
         dnd_class = the_cat.dnd_class.value if the_cat.dnd_class else "no class"
         output += f"\nclass: {dnd_class}"
 

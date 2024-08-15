@@ -2,7 +2,7 @@
 # -*- coding: ascii -*-
 import random
 from random import choice, randint, choices
-from typing import List, Dict, Union, TYPE_CHECKING
+from typing import List, Dict, Union, Optional, TYPE_CHECKING
 from os.path import exists as path_exists
 import re
 import pygame
@@ -49,7 +49,8 @@ class DnDEventOutcome:
             relationship_effects: List[dict] = None,
             relationship_constraints: List[str] = None,
             outcome_art: Union[str, None] = None,
-            outcome_art_clean: Union[str, None] = None
+            outcome_art_clean: Union[str, None] = None,
+            next_id: Optional[str] = None
         ) -> None:
         self.text = text if text is not None else []
         self.exp = exp if exp is not None else []
@@ -70,6 +71,7 @@ class DnDEventOutcome:
         self.relationship_constraints = relationship_constraints if relationship_constraints is not None else []
         self.outcome_art = outcome_art
         self.outcome_art_clean = outcome_art_clean
+        self.next_id = next_id
 
     def execute_outcome(self, event: "DnDEvent") -> None:
         """ 
@@ -972,27 +974,20 @@ class DnDEventOutcome:
             final_death_history = final_death_history.replace("o_c_n", f"{str(patrol.other_clan.name)}Clan")
         
         History.add_death(cat, death_text=final_death_history)
-  
 
     @staticmethod
     def generate_from_info(info: List[dict]) -> List['DnDEventOutcome']:
         """Factory method generates a list of DnDEventOutcome objects based on the dicts."""
         conversation_list = []
 
-        if not isinstance(info, list):
-            return conversation_list
-
         for _d in info:
             conversation_list.append(
                 DnDEventOutcome(
                     text=_d.get("text"),
                     exp=_d.get("exp"),
-                    stat_skill=_d.get("stat_skill"),
-                    stat_trait=_d.get("stat_trait"),
-                    can_have_stat=_d.get("can_have_stat"),
                     dead_cats=_d.get("dead_cats"),
-                    injury=_d.get("injury"),
                     lost_cats=_d.get("lost_cats"),
+                    injury=_d.get("injury"),
                     history_leader_death=_d["history_text"].get("lead_death") if \
                                         isinstance(_d.get("history_text"), dict) else None,
                     history_reg_death=_d["history_text"].get("reg_death") if  
@@ -1007,7 +1002,8 @@ class DnDEventOutcome:
                     relationship_effects=_d.get("relationships"),
                     relationship_constraints=_d.get("relationship_constraints"),
                     outcome_art=_d.get("art"),
-                    outcome_art_clean=_d.get("art_clean")
+                    outcome_art_clean=_d.get("art_clean"),
+                    next_id=_d.get("next_id")
                 )
             )
         return conversation_list
