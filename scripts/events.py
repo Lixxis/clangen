@@ -48,7 +48,7 @@ from scripts.utility import (
     unpack_rel_block
 )
 from scripts.dnd.dnd_story import DnDStory
-from scripts.dnd.dnd_leveling import get_leveled_cat
+from scripts.screens.DnDLevelScreen import get_leveled_cat
 
 
 class Events:
@@ -2672,15 +2672,35 @@ class Events:
         """
         Handle the moon skipping for the current stories.
         """
+        possible_starts = DnDStory.get_start_events()
+        constraint_less_starts = [start_event for start_event in possible_starts if not start_event.constraints]
+        to_delete = []
+        if len(game.clan.stories) < game.dnd_config["max_story_amount"]:
+            for number in range(game.dnd_config["max_story_amount"]):
+                if str(number) not in game.clan.stories.keys():
+                    game.clan.stories[str(number)] = None
+
         for key in game.clan.stories.keys():
             if key == "NPC":
                 continue
             story = game.clan.stories[key]
             if story:
-                story.skip_moon()
+                if story.current_event_id != "end":
+                    story.skip_moon()
+                else:
+                    to_delete.append(key)
             else:
-                possible_starts = DnDStory.get_start_events()
+                if random.randint(1, game.dnd_config["general_story_chance"]) == 1 and constraint_less_starts:
+                    event_to_use = random.choice(constraint_less_starts)
+                    game.clan.stories[key] = DnDStory(
+                        story_id=key,
+                        current_event_id=event_to_use.event_id,
+                        start_countdown=event_to_use.start_cooldown,
+                        decide_countdown=event_to_use.decide_cooldown
+                    )
+                    print("A STORY STARTED!")
                 # print("DnD - filter the chosen events if there are still some left, decide if an start event will be possible.")
-        pass
+        for id_to_delete in to_delete:
+            game.clan.stories[id_to_delete] = None
 
 events_class = Events()

@@ -1,6 +1,8 @@
-import logging
+from random import choice
 from enum import Enum
-from typing import List, Dict
+from typing import List, Dict, Any
+
+from scripts.game_structure.game_essentials import game
 
 class LinageType(Enum):
     CAT = "cat"
@@ -108,3 +110,28 @@ def transform_roles_dict_to_json(dictionary: Dict[DnDEventRole, List[str]]) -> D
     for key in dictionary.keys():
         transformed_dict[key] = dictionary[key]
     return transformed_dict
+
+def create_cat_dict(Cat, wandering_cats, new_cats = []) -> Dict[str, Any]:
+    """Create the dictionary which is used for the pronoun replacement."""
+    cat_dict = {}
+    if str(game.clan.current_story_id) not in game.clan.stories.keys():
+        return cat_dict
+    current_story = game.clan.stories[str(game.clan.current_story_id)]
+    for role_key, cat_id_list in current_story.roles.items():
+        fitting_role = [role.value for role in DnDEventRole if role.value == role_key]
+        if fitting_role:
+            fitting_role = fitting_role[0]
+        for idx in range(len(cat_id_list)):
+            cat_id = cat_id_list[idx]
+            cat = Cat.fetch_cat(cat_id)
+            if cat:
+                abbr = fitting_role.replace(" ", "_")
+                cat_dict[f"{abbr}:{idx}"] = (str(cat.name), choice(cat.pronouns))
+            else:
+                print(f"ERROR DnD: cat with the id {cat_id}, could not be found.")
+    for idx in range(len(new_cats)):
+        cat_dict[f"n_c:{idx}"] = (str(new_cats[idx].name), choice(new_cats[idx].pronouns))
+    for index in range(len(wandering_cats)):
+        cat = wandering_cats[index]
+        cat_dict[f"c:{index}"] = (str(cat.name), choice(cat.pronouns))
+    return cat_dict

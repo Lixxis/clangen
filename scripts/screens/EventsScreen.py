@@ -1,7 +1,8 @@
 import pygame
 import pygame_gui
 
-from scripts.dnd.dnd_leveling import DnDLevelsReminder, get_leveled_cat
+from scripts.dnd.dnd_leveling import DnDLevelsReminder
+from scripts.screens.DnDLevelScreen import get_leveled_cat
 
 from scripts.cat.cats import Cat
 from scripts.event_class import Single_Event

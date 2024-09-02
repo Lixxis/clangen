@@ -2,7 +2,8 @@ import random
 import traceback
 from copy import deepcopy
 
-from scripts.dnd.dnd_leveling import DnDLevelsReminder, get_leveled_cat
+from scripts.dnd.dnd_leveling import DnDLevelsReminder
+from scripts.screens.DnDLevelScreen import get_leveled_cat
 
 import pygame
 import pygame_gui

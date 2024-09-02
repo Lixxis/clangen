@@ -3,7 +3,8 @@ from random import choice, sample
 import pygame
 import pygame_gui
 
-from scripts.dnd.dnd_leveling import DnDLevelsReminder, get_leveled_cat
+from scripts.dnd.dnd_leveling import DnDLevelsReminder
+from scripts.screens.DnDLevelScreen import get_leveled_cat
 from scripts.dnd.dnd_skills import DnDSkills
 from scripts.dnd.dnd_stats import Stats
 

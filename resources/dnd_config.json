@@ -59,5 +59,13 @@
 			"hill orc": 1,
 			"mountain orc": 1
 		}
-	}
+	},
+	"general_story_chance": 50,
+	"conditional_story_chance": 10,
+	"default_succeed_number": 10,
+	"default_exp_factors": [2, 1.5, 1, 0.75, 0.5],
+	"app_exp_debuff": 0.7,
+	"notes": [
+		"default_exp_factors - the base value is the needed number to succeed the role, this number will then be multiplied by the factors. The more cats the less exp each cat should get."
+	]
 }

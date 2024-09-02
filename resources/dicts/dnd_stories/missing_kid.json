@@ -3,20 +3,20 @@
 		"start_event": true,
 		"conversations": {
 			"start": {
-				"text":["A cat is approaching the patrol. {PRONOUN/n_c:0/subject} mention, that {PRONOUN/n_c:0/poss} kid is missing."],
+				"text":["A cat is approaching the patrol. {PRONOUN/n_c:0/subject/CAP} mention, that {PRONOUN/n_c:0/poss} kid is missing."],
 				"answers": [
 					["next_id", "Clam the cat down and ask for more information."],
-					["next_id2", "Immediately start to search for the kid. (no turn back)"],
+					["next_id2", "Immediately start to search for the kid."],
 					["next_id3", "Decline the cat. (story will not continue)"],
-					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/subject} away. (no turn back)"]
+					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/object} away."]
 				]
 			},
 			"next_id": {
-				"text":["It took some time to calm {PRONOUN/n_c:0/subject} down but the patrol managed to get more information, which might help to track the kid down."],
+				"text":["It took some time to calm {PRONOUN/n_c:0/object} down but the patrol managed to get more information, which might help to track the kid down."],
 				"answers": [
-					["next_id_1", "Start a search with the additional information. (no turn back)"],
+					["next_id_1", "Start a search with the additional information."],
 					["next_id3", "Decline the cat. (story will not continue)"],
-					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/subject} away. (no turn back)"]
+					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/object} away."]
 				]
 			},
 			"next_id2": {
@@ -26,11 +26,11 @@
 				]
 			},
 			"next_id3": {
-				"text":["c0 {VERB/n_c:0/shake/shakes} {PRONOUN/n_c:0/poss} head. Sadly the patrol can not help {PRONOUN/n_c:0/object}."],
+				"text":["c:0 {VERB/n_c:0/shake/shakes} {PRONOUN/n_c:0/poss} head. Sadly the patrol can not help {PRONOUN/n_c:0/object}."],
 				"answers": []
 			},
 			"next_id4": {
-				"text":["c0 hisses at the approaching cat. {PRONOUN/c0/subject} don't want to hear any of {PRONOUN/n_c:0/poss} problem!"],
+				"text":["c:0 hisses at the approaching cat. {PRONOUN/c:0/subject} don't want to hear any of {PRONOUN/n_c:0/poss} problem!"],
 				"answers": [
 					["intimidation"]
 				]
@@ -56,12 +56,16 @@
 				"pass": 15,
 				"success":{
 					"gen": {
-						"next_id": "default_s"
+						"next_id": "end"
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "default_f"
+						"next_id": "end"
+					},
+					"1": {
+						"next_id": "end",
+						"dead_cats": ["n_c:1"]
 					}
 				}
 			},
@@ -73,8 +77,6 @@
 						"text": [
 							"The patrol managed to find the kid."
 						],
-						"new_cat": [],
-						"relationships": [],
 						"exp": [20,18,15,13,10],
 						"outsider_rep": 1
 					},
@@ -82,7 +84,9 @@
 						"next_id": "default_s",
 						"text":  [
 							"The patrol managed to find the kid in fast speed!"
-						]
+						],
+						"exp": [20,18,15,13,10],
+						"outsider_rep": 1
 					}
 				},
 				"fail": {
@@ -90,7 +94,8 @@
 						"next_id": "default_f",
 						"text": [
 							"Everyone is blind."
-						]
+						],
+						"exp": [20,18,15,13,10]
 					},
 					"1": {
 						"next_id": "default_f",
@@ -98,6 +103,7 @@
 							"Everyone is blind and get hurt."
 						],
 						"dead_cats": ["r_c"],
+						"exp": [20,18,15,13,10],
 						"history_text": {
 							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
 							"reg_death": "This cat died to keep c_n safe from a large dog.",
@@ -107,23 +113,23 @@
 				}
 			},
 			"survival": {
-				"pass": 10,
 				"success":{
 					"gen": {
-						"next_id": "default_s",
+						"next_id": "finding_s",
 						"text": [
 							"FOUND!"
 						],
-						"new_cat": [],
-						"relationships": [],
-						"exp": [20,18,15,13,10],
-						"outsider_rep": 1
+						"roles": {
+							"prior target": ["search target:0"]
+						}
 					},
 					"20": {
-						"next_id": "default_s",
+						"next_id": "finding_s",
 						"text":  [
 							"FOUND only by a hair"
-						]
+						],
+						"outsider_rep": 1,
+						"exp": [20,18,15,13,10]
 					}
 				},
 				"fail": {
@@ -131,7 +137,8 @@
 						"next_id": "default_f",
 						"text":  [
 							"Failed to read the paw prints"
-						]
+						],
+						"exp": [20,18,15,13,10]
 					},
 					"1": {
 						"next_id": "id4",
@@ -139,6 +146,7 @@
 							"Failed to read the paw prints and got scared!"
 						],
 						"dead_cats": ["r_c"],
+						"exp": [20,18,15,13,10],
 						"history_text": {
 							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
 							"reg_death": "This cat died to keep c_n safe from a large dog.",
@@ -162,6 +170,7 @@
 					},
 					"20": {
 						"next_id": "id3",
+						"exp": [20,18,15,13,10],
 						"text":  [
 							""
 						]
@@ -170,12 +179,14 @@
 				"fail": {
 					"gen": {
 						"next_id": "id1",
+						"exp": [20,18,15,13,10],
 						"text":  [
 							""
 						]
 					},
 					"1": {
 						"next_id": "id4",
+						"exp": [20,18,15,13,10],
 						"text":  [
 							""
 						],
@@ -185,6 +196,47 @@
 							"reg_death": "This cat died to keep c_n safe from a large dog.",
 							"lead_death": "died to keep c_n safe from a large dog"
 						}
+					}
+				}
+			}
+		}
+	},
+	"finding_s":{
+		"conversations": {
+			"start": {
+				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/client:0/subject/CAP} thank the patrol for the help anyways."],
+				"answers": [
+					["next_id", "Thats great! May the Starclan light their path and the loners and the patrol parts their way. (Story will end)"],
+					["next_id2", "Thats great, and it would even better if they join c_n!"]
+				]
+			},
+			"next_id": {
+				"text":["client:0 nods and also wishes them luck and leaves together with prior_target:0."],
+				"answers": []
+			},
+			"next_id2": {
+				"text":["client:0 {VERB/client:0/seem/seems} to be surprised by the offer of the patrol. {PRONOUN/client:0/subject/CAP} never thought about it."],
+				"answers": [
+					["persuasion"]
+				]
+			}
+		},
+		"checks":{
+			"persuasion": {
+				"pass": 10,
+				"success":{
+					"gen": {
+						"next_id": "end",
+						"text": ["Even client:0 was surprised by the offer, {PRONOUN/client:0/subject} gladly accept the invite into the Clan and joins c_n with prior_target:0."],
+						"exp": [20,18,15,13,10],
+						"joining_cats": ["client:0", "prior_target:0"]
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "end",
+						"exp": [20,18,15,13,10],
+						"text": "client:0 could not be convinced. {PRONOUN/client:0/subject/CAP} {VERB/client:0/shake/shakes} {PRONOUN/client:0/poss} head and leave the patrol together with prior_target:0."
 					}
 				}
 			}
@@ -233,16 +285,19 @@
 								"amount": 5
 							}
 						],
-						"exp": [20,18,15,13,10]
+						"exp": [20,18,15,13,10],
+						"new_members": []
 					}
 				},
 				"fail": {
 					"gen": {
 						"next_id": null,
-						"text": "client:0 could not be convinced. {PRONOUN/client:0/subject/CAP} {VERB/client:0/shake/shakes} {PRONOUN/n_c:0/poss} head and leave the patrol together with search_target:0."
+						"exp": [20,18,15,13,10],
+						"text": "client:0 could not be convinced. {PRONOUN/client:0/subject/CAP} {VERB/client:0/shake/shakes} {PRONOUN/client:0/poss} head and leave the patrol together with search_target:0."
 					},
 					"1": {
 						"next_id": null,
+						"exp": [20,18,15,13,10],
 						"text": "client:0 {VERB/client:0/look/looks} really upset and hisses at the patrol, for their insensitive question right after {PRONOUN/client:0/subject} are reunited with their kid!",
 						"outsider_rep": -1,
 						"relationships": [
@@ -292,6 +347,7 @@
 				"success":{
 					"gen": {
 						"next_id": null,
+						"exp": [20,18,15,13,10],
 						"text": ["TODO"],
 						"relationships": [
 							{
@@ -315,12 +371,14 @@
 				"fail": {
 					"gen": {
 						"next_id": null,
+						"exp": [20,18,15,13,10],
 						"text": "TODO"
 					},
 					"1": {
 						"next_id": null,
 						"text": "TODO",
 						"outsider_rep": -1,
+						"exp": [20,18,15,13,10],
 						"relationships": [
 							{
 								"cats_from": ["client:0", "search_target:0"],

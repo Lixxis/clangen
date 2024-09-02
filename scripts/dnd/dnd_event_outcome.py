@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: ascii -*-
 import random
-from random import choice, randint, choices
+from random import choice, randint, choices, sample
 from typing import List, Dict, Union, Optional, TYPE_CHECKING
 from os.path import exists as path_exists
 import re
@@ -16,12 +16,15 @@ from scripts.cat.history import History
 from scripts.utility import (
     change_clan_relations,
     change_clan_reputation,
-    change_relationship_values, create_new_cat,
+    change_relationship_values,
+    create_new_cat
 )
+from scripts.dnd.dnd_types import DnDEventRole
 from scripts.game_structure.game_essentials import game
 from scripts.cat.skills import SkillPath
 from scripts.cat.cats import Cat, ILLNESSES, INJURIES, PERMANENT, BACKSTORIES
 from scripts.cat.pelts import Pelt
+from scripts.cat.names import Name
 from scripts.cat_relations.relationship import Relationship
 from scripts.clan_resources.freshkill import ADDITIONAL_PREY, PREY_REQUIREMENT, HUNTER_EXP_BONUS, HUNTER_BONUS, \
     FRESHKILL_ACTIVE
@@ -50,18 +53,20 @@ class DnDEventOutcome:
             relationship_constraints: List[str] = None,
             outcome_art: Union[str, None] = None,
             outcome_art_clean: Union[str, None] = None,
-            next_id: Optional[str] = None
+            next_id: Optional[str] = None,
+            roles: Optional[Dict] = None,
+            joining_cats: Optional[list] = None,
         ) -> None:
         self.text = text if text is not None else []
-        self.exp = exp if exp is not None else []
+        self.exp = exp if exp is not None else game.dnd_config["default_exp_factors"]
         self.dead_cats = dead_cats if dead_cats is not None else []
         self.lost_cats = lost_cats if lost_cats is not None else []
         self.injury = injury if injury is not None else []
         self.history_reg_death = history_reg_death if history_reg_death is not None else \
-                                 "m_c died on patrol."
+                                 "m_c died on an adventure."
         self.history_leader_death = history_leader_death if history_leader_death is not None else \
-                                    "died on patrol."
-        self.history_scar = history_scar if history_scar is not None else "m_c was scarred on patrol."
+                                    "died on an adventure."
+        self.history_scar = history_scar if history_scar is not None else "m_c was scarred on an adventure."
         self.new_cat = new_cat if new_cat is not None else []
         self.herbs = herbs if herbs is not None else []
         self.prey = prey if prey is not None else []
@@ -72,8 +77,10 @@ class DnDEventOutcome:
         self.outcome_art = outcome_art
         self.outcome_art_clean = outcome_art_clean
         self.next_id = next_id
+        self.roles = roles
+        self.joining_cats = joining_cats if joining_cats is not None else []
 
-    def execute_outcome(self, event: "DnDEvent") -> None:
+    def execute_outcome(self, event: "DnDEvent", pass_number: int) -> None:
         """ 
         Excutes the outcome. Returns a tuple with the final outcome text, the results text, and any outcome art
         format: (Outcome text, results text, outcome art (might be None))
@@ -81,9 +88,6 @@ class DnDEventOutcome:
         results = []
         # This must be done before text processing so that the new cat's pronouns are generated first
         results.append(self._handle_new_cats(event))
-
-        # the text has to be processed before - otherwise leader might be referenced with their warrior name
-        processed_text = event.process_text(self.text, self.stat_cat)
         
         # This order is important. 
         results.append(self._handle_death(event))
@@ -94,15 +98,16 @@ class DnDEventOutcome:
         results.append(self._handle_other_clan_relations(event))
         results.append(self._handle_prey(event))
         results.append(self._handle_herbs(event))
-        results.append(self._handle_exp(event))
+        results.append(self._handle_exp(event, pass_number))
         results.append(self._handle_mentor_app(event))
+        results.append(self._handle_joining_cats(event))
         
         # Filter out empty results strings
         results = [x for x in results if x]
         
         print("PATROL END -----------------------------------------------------")
         
-        return (processed_text, " ".join(results), self.get_outcome_art())
+        return results
 
     def get_outcome_art(self):
         """Return outcome art, if not None. Return's None if there is no outcome art, or if outcome art can't be found.  """
@@ -118,40 +123,35 @@ class DnDEventOutcome:
             
         return pygame.image.load(f"{root_dir}{file_name}.png")
 
-    def _handle_exp(self, event:'DnDEvent') -> str:
+    def _handle_exp(self, event:'DnDEvent', pass_number: int) -> str:
         """Handle giving exp """
         
         if game.clan.game_mode == 'classic':
             gm_modifier = 1
         elif game.clan.game_mode == 'expanded':
-            gm_modifier = 3
+            gm_modifier = 0.75
         elif game.clan.game_mode == 'cruel season':
-            gm_modifier = 6
+            gm_modifier = 0.5
         else:
             gm_modifier = 1
 
-
-        base_exp = 0
-        if "master" in [x.experience_level for x in event.patrol_cats]:
+        if "master" in [x.experience_level for x in event.wandering_cats]:
             max_boost = 10
         else:
             max_boost = 0
-        patrol_exp = 2 * self.exp
-        gained_exp = (patrol_exp + base_exp + max_boost)
-        gained_exp = max(gained_exp * (1 - 0.1 * len(event.patrol_cats)) / gm_modifier, 1)
 
-        # Apprentice exp, does not depend on success
-        if game.clan.game_mode != "classic":
-            app_exp = max(random.randint(1, 7) * (1 - 0.1 * len(event.patrol_cats)), 1)
-        else:
-            app_exp = 0
+        if self.exp == game.dnd_config["default_exp_factors"]:
+            self.exp = [pass_number * factor for factor in game.dnd_config["default_exp_factors"]]
 
-        if gained_exp or app_exp:
-            for cat in event.patrol_cats:
-                if cat.status in ["apprentice", "medicine cat apprentice"]:
-                    cat.experience = cat.experience + app_exp
-                else:
-                    cat.experience = cat.experience + gained_exp
+        patrol_exp = self.exp[len(event.wandering_cats)-1]
+        gained_exp = (patrol_exp + max_boost) * gm_modifier
+        app_exp = gained_exp * game.dnd_config["app_exp_debuff"]
+
+        for cat in event.wandering_cats:
+            if cat.status in ["apprentice", "medicine cat apprentice"]:
+                cat.experience = cat.experience + app_exp
+            else:
+                cat.experience = cat.experience + gained_exp
         return ""
 
     def _handle_death(self, event:'DnDEvent') -> str:
@@ -163,7 +163,7 @@ class DnDEventOutcome:
         #body_tags = ("body", "no_body")
         #leader_lives = ("all_lives", "some_lives")
         
-        cats_to_kill = self.gather_cat_objects(self.dead_cats, event)
+        cats_to_kill = self.gather_cat_objects(Cat, self.dead_cats, event)
         if not cats_to_kill:
             print(f"Something was indicated in dead_cats, but no cats were indicated: {self.dead_cats}")
             return ""
@@ -204,7 +204,7 @@ class DnDEventOutcome:
         if not self.lost_cats:
             return ""
         
-        cats_to_lose = self.gather_cat_objects(self.lost_cats, event)
+        cats_to_lose = self.gather_cat_objects(Cat, self.lost_cats, event)
         if not cats_to_lose:
             print(f"Something was indicated in lost_cats, but no cats were indicated: {self.lost_cats}")
             return ""
@@ -239,7 +239,7 @@ class DnDEventOutcome:
         }
         
         for block in self.injury:
-            cats = self.gather_cat_objects(block.get("cats", ()), event)
+            cats = self.gather_cat_objects(Cat, block.get("cats", ()), event)
             injury = block.get("injuries", ())
             scars = block.get("scars", ())
             
@@ -312,9 +312,9 @@ class DnDEventOutcome:
             amount = block.get("amount")
             values = [x for x in block.get("values", ()) if x in possible_values]
             
-            # Gather acual cat objects:
-            cats_from_ob = self.gather_cat_objects(cats_from, event)
-            cats_to_ob = self.gather_cat_objects(cats_to, event)
+            # Gather actual cat objects:
+            cats_from_ob = self.gather_cat_objects(Cat, cats_from, event)
+            cats_to_ob = self.gather_cat_objects(Cat, cats_to, event)
             
             # Remove any "None" that might have snuck in
             if None in cats_from_ob:
@@ -451,7 +451,7 @@ class DnDEventOutcome:
             print(f"{self.herbs} - gave no herbs to give")
             return ""
         
-        patrol_size_modifier = int(len(event.patrol_cats) * .5)
+        patrol_size_modifier = int(len(event.wandering_cats) * .5)
         for _herb in specfic_herbs:
             if large_bonus:
                 amount_gotten = 4
@@ -517,7 +517,7 @@ class DnDEventOutcome:
         
         total_amount = 0
         highest_hunter_tier = 0
-        for cat in event.patrol_cats:
+        for cat in event.wandering_cats:
             total_amount += basic_amount
             if cat.skills.primary.path == SkillPath.HUNTER and cat.skills.primary.tier > 0: 
                 level = cat.experience_level
@@ -584,7 +584,57 @@ class DnDEventOutcome:
                 
                 
         return " ".join(results)
-            
+
+    def _handle_joining_cats(self, event:'DnDEvent') -> str:
+        """Handles that cats are joining the clan."""
+        results = []
+        if self.joining_cats:
+            cats_to_join = self.gather_cat_objects(
+                abbr_list = self.joining_cats,
+                event=event
+            )
+            for invited_cat in cats_to_join:
+                invited_cat.outside = False
+                if invited_cat.status.lower() in [
+                        "kittypet",
+                        "loner",
+                        "rogue",
+                        "former clancat",
+                        "exiled",
+                    ]:
+                    if "guided" in invited_cat.backstory and invited_cat.status != "exiled":
+                        invited_cat.backstory = "outsider1"
+                    if invited_cat.backstory in BACKSTORIES["backstory_categories"]["healer_backstories"]:
+                        invited_cat.status = "medicine cat"
+                    elif invited_cat.age in ["newborn", "kitten"]:
+                        invited_cat.status = invited_cat.age
+                        if not invited_cat.name.suffix:
+                            invited_cat.name = Name(
+                                invited_cat.status,
+                                invited_cat.name.prefix,
+                                invited_cat.name.suffix,
+                                invited_cat.pelt.colour,
+                                invited_cat.pelt.name,
+                                invited_cat.pelt.tortiepattern,
+                                game.clan.biome,
+                            )
+                            invited_cat.name.give_suffix(
+                                pelt=None,
+                                biome=game.clan.biome,
+                                tortiepattern=None,
+                            )
+                            invited_cat.specsuffix_hidden = False
+
+                    elif invited_cat.age == "senior":
+                        invited_cat.status = "elder"
+                    elif invited_cat.age == "adolescent":
+                        invited_cat.status = "apprentice"
+                        invited_cat.update_mentor()
+                    else:
+                        invited_cat.status = "warrior"
+                results.append(f"{invited_cat.name} joined the Clan.")
+        return " ".join(results)
+
     def __create_new_cat_block(self, i:int, attribute_list: List[str], event:'DnDEvent') -> List[Cat]: 
         """Creates a single new_cat block """
         
@@ -614,12 +664,12 @@ class DnDEventOutcome:
             break
         
         # GATHER MATES
-        in_patrol_cats = {
+        in_wandering_cats = {
             "p_l": event.patrol_leader,
             "r_c": event.patrol_random_cat,
         }
         if self.stat_cat:
-            in_patrol_cats["s_c"] = self.stat_cat
+            in_wandering_cats["s_c"] = self.stat_cat
         give_mates = []
         for tag in attribute_list:
             match = re.match(r"mate:([_,0-9a-zA-Z]+)", tag)
@@ -630,12 +680,12 @@ class DnDEventOutcome:
             
             # TODO: make this less ugly
             for index in mate_indexes:
-                if index in in_patrol_cats:
-                    if in_patrol_cats[index] in ("apprentice", "medicine cat apprentice"):
+                if index in in_wandering_cats:
+                    if in_wandering_cats[index] in ("apprentice", "medicine cat apprentice"):
                         print("Can't give apprentices mates")
                         continue
                     
-                    give_mates.append(in_patrol_cats[index])
+                    give_mates.append(in_wandering_cats[index])
                         
                 try:
                     index = int(index)
@@ -658,12 +708,12 @@ class DnDEventOutcome:
             
             # TODO: make this less ugly
             for index in romance_indexes:
-                if index in in_patrol_cats:
-                    if in_patrol_cats[index] in ("apprentice", "medicine cat apprentice"):
+                if index in in_wandering_cats:
+                    if in_wandering_cats[index] in ("apprentice", "medicine cat apprentice"):
                         print("Can't romance apprentices")
                         continue
                     
-                    give_romance.append(in_patrol_cats[index])
+                    give_romance.append(in_wandering_cats[index])
                         
                 try:
                     index = int(index)
@@ -875,8 +925,8 @@ class DnDEventOutcome:
                  
     def _handle_mentor_app(self, event:'DnDEvent') -> str:
         """Handles mentor inflence on apprentices """
-        for cat in event.patrol_cats:
-            if Cat.fetch_cat(cat.mentor) in event.patrol_cats:
+        for cat in event.wandering_cats:
+            if Cat.fetch_cat(cat.mentor) in event.wandering_cats:
                 affect_personality = cat.personality.mentor_influence(Cat.fetch_cat(cat.mentor))
                 affect_skills = cat.skills.mentor_influence(Cat.fetch_cat(cat.mentor))
                 if affect_personality:
@@ -1003,7 +1053,68 @@ class DnDEventOutcome:
                     relationship_constraints=_d.get("relationship_constraints"),
                     outcome_art=_d.get("art"),
                     outcome_art_clean=_d.get("art_clean"),
-                    next_id=_d.get("next_id")
+                    next_id=_d.get("next_id"),
+                    roles=_d.get("roles"),
+                    joining_cats=_d.get("joining_cats")
                 )
             )
         return conversation_list
+
+    def gather_cat_objects(
+            self,
+            abbr_list: List[str],
+            event,
+            stat_cat=None,
+            extra_cat=None
+    ) -> list:
+        """
+        gathers cat objects from list of abbreviations used within an event format block
+        :param Cat Cat: Cat class
+        :param list[str] abbr_list: The list of abbreviations, supports "m_c", "r_c", "p_l", "s_c", "app1", "app2", "clan",
+        "some_clan", "patrol", "multi", "n_c{index}"
+        :param event: the controlling class of the event (e.g. Patrol, HandleShortEvents), default None
+        :param Cat stat_cat: if passing the Patrol class, must include stat_cat separately
+        :param Cat extra_cat: if not passing an event class, include the single affected cat object here. If you are not
+        passing a full event class, then be aware that you can only include "m_c" as a cat abbreviation in your rel block.
+        The other cat abbreviations will not work.
+        :return: list of cat objects
+        """
+        out_set = set()
+
+        for abbr in abbr_list:
+            if ":" in abbr:
+                cat_info = abbr.split(":")
+                cat_role_location = cat_info[0]
+                cat_index = int(cat_info[1])
+                cat = None
+                if cat_role_location == "n_c":
+                    cat = event.new_cats[cat_index][0]
+                else:
+                    cat_role_location = cat_role_location.replace("_", " ")
+                    old_fitting_role = [role for role in DnDEventRole if role.value == cat_role_location]
+                    if len(old_fitting_role) > 0:
+                        story = game.clan.stories[str(game.clan.current_story_id)]
+                        if old_fitting_role[0].value in story.roles.keys():
+                            cat_id = story.roles[old_fitting_role[0].value][cat_index]
+                            cat = Cat.fetch_cat(cat_id)
+                        else:
+                            print("ERROR: ", story.roles)
+                if cat:
+                    out_set.add(cat)
+            elif abbr == "clan":
+                out_set.update([x for x in Cat.all_cats_list if not (x.dead or x.outside or x.exiled)])
+            elif abbr == "some_clan":  # 1 / 8 of clan cats are affected
+                clan_cats = [x for x in Cat.all_cats_list if not (x.dead or x.outside or x.exiled)]
+                out_set.update(sample(clan_cats, randint(1, round(len(clan_cats) / 8))))
+            elif abbr == "patrol":
+                out_set.update(event.wandering_cats)
+            elif abbr == "multi":
+                cat_num = randint(1, max(1, len(event.wandering_cats) - 1))
+                out_set.update(sample(event.wandering_cats, cat_num))
+            elif re.match(r"n_c:[0-9]+", abbr):
+                index = re.match(r"n_c:([0-9]+)", abbr).group(1)
+                index = int(index)
+                if index < len(event.new_cats):
+                    out_set.update(event.new_cats[index])
+
+        return list(out_set)

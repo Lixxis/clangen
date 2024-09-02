@@ -136,6 +136,8 @@ class Clan:
         self.stories = {}
         # key is the ID of the cat, array of "element" define what information is missing
         self.dnd_unknown_cats = {}
+        self.levelable_cats = 0
+        self.level_reminder = False
 
         # Init Settings
         self.clan_settings = {}
@@ -253,6 +255,12 @@ class Clan:
             if Cat.all_cats.get(cat_id).status == "apprentice":
                 Cat.all_cats.get(cat_id).status_change("apprentice")
             Cat.all_cats.get(cat_id).thoughts()
+            if not Cat.all_cats.get(cat_id).faded and not Cat.all_cats.get(cat_id).dead:
+                game.clan.xp[cat_id] = "level 0"
+        
+        game.clan.stories = {"NPC": []}
+        for number in range(game.dnd_config["max_story_amount"]):
+            del game.clan.stories[str(number)]
 
         game.save_cats()
         number_other_clans = randint(3, 5)
@@ -915,6 +923,7 @@ class Clan:
         self.load_xp(game.clan)
         self.load_stories(game.clan)
         self.load_dnd_unknown_cats(game.clan)
+        game.clan.current_story_id = None
         if game.clan.game_mode != "classic":
             self.load_freshkill_pile(game.clan)
         game.switches["error_message"] = ""
@@ -1222,6 +1231,10 @@ class Clan:
                 ) as read_file:  # pylint: disable=redefined-outer-name
                     stories = ujson.load(read_file)
                 game.clan.stories = DnDStory.generate_from_info(stories)
+                if len(game.clan.stories) < 1:
+                    game.clan.stories = {"NPC": []}
+                    for number in range(game.dnd_config["max_story_amount"]):
+                        game.clan.stories[str(number)] = None
             else:
                 game.clan.stories = {"NPC": []}
                 for number in range(game.dnd_config["max_story_amount"]):

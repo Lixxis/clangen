@@ -21,7 +21,7 @@ def get_leveled_cat():
     "Returns if a cat had a level up or not."
     leveled_cat = []
     for cat_id, cat in Cat.all_cats.items():
-        if cat.dead:
+        if cat.dead or cat.outside:
             continue
         if cat_id in game.clan.xp and cat.experience_level != game.clan.xp[cat_id]:
             leveled_cat.append(cat)
