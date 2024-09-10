@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from random import choice
+from random import choice, randint
 from typing import Dict, Any
 
 from scripts.cat.cats import Cat
@@ -68,7 +68,11 @@ class StoryScreen(Screens):
                 self.update_cat_images_buttons()
                 self.update_buttons()
             elif event.ui_element == self.elements["continue"]:
+                print(str(game.clan.current_story_id))
                 active_story = game.clan.stories[str(game.clan.current_story_id)]
+                print("current_story: ", game.clan.current_story_id)
+                for cat in self.wandering_cat_buttons:
+                    self.wandering_cat_buttons[cat].disable()
                 self.handle_story(active_story)
             elif event.ui_element == self.elements["add_cat"] or event.ui_element == self.elements["remove_cat"]:
                 if self.selected_cat in self.wandering_cats:
@@ -80,6 +84,7 @@ class StoryScreen(Screens):
                 answer_id = [answer_id for answer_id in self.answer_buttons.keys() if event.ui_element == self.answer_buttons[answer_id]][0]
                 self.handle_conversation(answer_id)
             elif event.ui_element == self.elements["dice"]:
+                print("current_event: ", self.current_event.event_id)
                 self.cat_to_roll = self.selected_cat # self.selected_cat
                 self.update_selected_cat()
                 self.clear_cat_buttons()
@@ -96,6 +101,7 @@ class StoryScreen(Screens):
                 self.clear_wandering_cat_buttons()
             elif self.make_roll and event.ui_element in self.skill_buttons.values():
                 for skill in self.current_conversation.answers[0]:
+                    print("skill_roll: ", skill)
                     if event.ui_element == self.skill_buttons[skill]:
                         self.skill_to_roll = skill
                         self.skill_buttons[skill].select()
@@ -303,7 +309,8 @@ class StoryScreen(Screens):
 
         text = "This will be replaced with the text of the current event"
         self.current_event, self.current_conversation = active_story.continue_story(cat_dict)
-        cat_dict = create_cat_dict(Cat, self.wandering_cats, current_story.new_cats)
+        self.current_event.random_cat = self.wandering_cats[randint(0,len(self.wandering_cats)-1)]
+        cat_dict = create_cat_dict(Cat, self.wandering_cats, current_story.new_cats, self.current_event.random_cat)
         self.current_event.wandering_cats = self.wandering_cats
 
         # process the text
@@ -321,6 +328,7 @@ class StoryScreen(Screens):
         if answer_id not in self.current_event.conversations:
             print(f"ERROR DnD: answer {answer_id} was given, which is not defined in the event {self.current_event.event_id}!")
             return
+        print("conversation: ", self.current_conversation.id)
 
         self.clear_answer_buttons()
         current_story = game.clan.stories[str(game.clan.current_story_id)]

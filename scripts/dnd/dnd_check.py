@@ -16,7 +16,7 @@ class DnDCheck:
             duplicate: str | None = None
         ) -> None:
         self.skill_type = skill_type
-        self.pass_number = pass_number if pass_number else game.dnd_config["default_succeed_number"]
+        self.pass_number = pass_number if pass_number else game.dnd_config["default_pass_number"]
         self.success_outcome = success_outcome
         self.fail_outcome = fail_outcome
         self.duplicate = duplicate
@@ -24,35 +24,33 @@ class DnDCheck:
     def roll_skill(self, cat: Optional[Cat] = None) -> tuple:
         rolled_number = randint(1, 20) # d20 roll
         modifier = 0
-        print("ROLLED NUMBER: ", rolled_number)
+        print("DICE - rolled number: ", rolled_number)
         if self.skill_type and cat:
             print("; modifier: ", cat.dnd_skills.skills[self.skill_type])
             modifier = cat.dnd_skills.skills[self.skill_type]
         final_number = rolled_number + modifier
-        print("FINISHED ROLLED NUMBER: ", final_number, ", needed number: ", self.pass_number)
+        print("DICE - finished rolled number: ", final_number, ", needed number: ", self.pass_number)
 
         final_outcome = None
         outcome_key = None
-        print(self.pass_number)
-        print(final_number)
         success = final_number >= self.pass_number
-        success = True
+        #success = True
         outcome_number = final_number if rolled_number not in [1,20] else rolled_number
         critical = outcome_number == rolled_number
         if success:
-            print("SUCCESS!")
+            print("DICE - SUCCESS!")
             outcome_key = "gen"
             if str(outcome_number) in self.success_outcome.keys():
                 outcome_key = str(outcome_number)
             final_outcome = self.success_outcome[outcome_key]
         else:
-            print("NO success")
+            print("DICE - NO success!")
             outcome_key = "gen"
             if str(outcome_number) in self.fail_outcome.keys():
                 outcome_key = str(outcome_number)
             final_outcome = self.fail_outcome[outcome_key]
 
-        print("outcome_key", outcome_key)
+        print("DICE - outcome_key", outcome_key)
 
         return success, critical, final_outcome, final_outcome
 

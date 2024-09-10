@@ -1,5 +1,5 @@
 {
-	"missing_start":{
+	"mk_start":{
 		"start_event": true,
 		"conversations": {
 			"start": {
@@ -7,7 +7,7 @@
 				"answers": [
 					["next_id", "Clam the cat down and ask for more information."],
 					["next_id2", "Immediately start to search for the kid."],
-					["next_id3", "Decline the cat. (story will not continue)"],
+					["next_id3", "Decline the cat."],
 					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/object} away."]
 				]
 			},
@@ -15,7 +15,7 @@
 				"text":["It took some time to calm {PRONOUN/n_c:0/object} down but the patrol managed to get more information, which might help to track the kid down."],
 				"answers": [
 					["next_id_1", "Start a search with the additional information."],
-					["next_id3", "Decline the cat. (story will not continue)"],
+					["next_id3", "Decline the cat."],
 					["next_id4", "Hiss at the cat and try to scare {PRONOUN/n_c:0/object} away."]
 				]
 			},
@@ -26,7 +26,7 @@
 				]
 			},
 			"next_id3": {
-				"text":["c:0 {VERB/n_c:0/shake/shakes} {PRONOUN/n_c:0/poss} head. Sadly the patrol can not help {PRONOUN/n_c:0/object}."],
+				"text":["c:0 {VERB/c:0/shake/shakes} {PRONOUN/n_c:0/poss} head. Sadly the patrol can not help {PRONOUN/n_c:0/object}."],
 				"answers": []
 			},
 			"next_id4": {
@@ -56,49 +56,49 @@
 				"pass": 15,
 				"success":{
 					"gen": {
-						"next_id": "end"
+						"next_id": "mk_default_s"
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "end"
+						"next_id": "mk_default_f"
 					},
 					"1": {
-						"next_id": "end",
+						"next_id": "mk_default_f_fatal",
 						"dead_cats": ["n_c:1"]
 					}
 				}
 			},
 			"investigation": {
-				"pass": 10,
 				"success":{
 					"gen": {
-						"next_id": "default_s",
+						"next_id": "mk_patrol_success_finding",
 						"text": [
 							"The patrol managed to find the kid."
 						],
-						"exp": [20,18,15,13,10],
-						"outsider_rep": 1
+						"outsider_rep": 1,
+						"roles": {
+							"prior target": ["search target:0"]
+						}
 					},
 					"20": {
-						"next_id": "default_s",
+						"next_id": "mk_patrol_success_finding",
 						"text":  [
 							"The patrol managed to find the kid in fast speed!"
 						],
-						"exp": [20,18,15,13,10],
 						"outsider_rep": 1
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "default_f",
+						"next_id": "mk_patrol_failed_finding",
 						"text": [
 							"Everyone is blind."
 						],
 						"exp": [20,18,15,13,10]
 					},
 					"1": {
-						"next_id": "default_f",
+						"next_id": "mk_patrol_failed_finding",
 						"text": [
 							"Everyone is blind and get hurt."
 						],
@@ -113,9 +113,10 @@
 				}
 			},
 			"survival": {
+				"pass": 15,
 				"success":{
 					"gen": {
-						"next_id": "finding_s",
+						"next_id": "mk_patrol_success_finding",
 						"text": [
 							"FOUND!"
 						],
@@ -124,29 +125,29 @@
 						}
 					},
 					"20": {
-						"next_id": "finding_s",
+						"next_id": "mk_patrol_success_finding",
 						"text":  [
 							"FOUND only by a hair"
 						],
 						"outsider_rep": 1,
-						"exp": [20,18,15,13,10]
+						"roles": {
+							"prior target": ["search target:0"]
+						}
 					}
 				},
 				"fail": {
 					"gen": {
-						"next_id": "default_f",
+						"next_id": "mk_patrol_failed_finding",
 						"text":  [
 							"Failed to read the paw prints"
-						],
-						"exp": [20,18,15,13,10]
+						]
 					},
 					"1": {
-						"next_id": "id4",
+						"next_id": "mk_patrol_failed_finding",
 						"text":  [
 							"Failed to read the paw prints and got scared!"
 						],
 						"dead_cats": ["r_c"],
-						"exp": [20,18,15,13,10],
 						"history_text": {
 							"scar": "This cat is scarred from bravely defending the Clan against a dog.",
 							"reg_death": "This cat died to keep c_n safe from a large dog.",
@@ -170,7 +171,6 @@
 					},
 					"20": {
 						"next_id": "id3",
-						"exp": [20,18,15,13,10],
 						"text":  [
 							""
 						]
@@ -201,48 +201,7 @@
 			}
 		}
 	},
-	"finding_s":{
-		"conversations": {
-			"start": {
-				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/client:0/subject/CAP} thank the patrol for the help anyways."],
-				"answers": [
-					["next_id", "Thats great! May the Starclan light their path and the loners and the patrol parts their way. (Story will end)"],
-					["next_id2", "Thats great, and it would even better if they join c_n!"]
-				]
-			},
-			"next_id": {
-				"text":["client:0 nods and also wishes them luck and leaves together with prior_target:0."],
-				"answers": []
-			},
-			"next_id2": {
-				"text":["client:0 {VERB/client:0/seem/seems} to be surprised by the offer of the patrol. {PRONOUN/client:0/subject/CAP} never thought about it."],
-				"answers": [
-					["persuasion"]
-				]
-			}
-		},
-		"checks":{
-			"persuasion": {
-				"pass": 10,
-				"success":{
-					"gen": {
-						"next_id": "end",
-						"text": ["Even client:0 was surprised by the offer, {PRONOUN/client:0/subject} gladly accept the invite into the Clan and joins c_n with prior_target:0."],
-						"exp": [20,18,15,13,10],
-						"joining_cats": ["client:0", "prior_target:0"]
-					}
-				},
-				"fail": {
-					"gen": {
-						"next_id": "end",
-						"exp": [20,18,15,13,10],
-						"text": "client:0 could not be convinced. {PRONOUN/client:0/subject/CAP} {VERB/client:0/shake/shakes} {PRONOUN/client:0/poss} head and leave the patrol together with prior_target:0."
-					}
-				}
-			}
-		}
-	},
-	"default_s":{
+	"mk_default_s":{
 		"conversations": {
 			"start": {
 				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/client:0/subject/CAP} thank the patrol for the help anyways."],
@@ -262,9 +221,23 @@
 				]
 			}
 		},
+		"decide_cooldown": [3,6],
 		"checks":{
+			"default":{
+				"success":{
+					"gen":{
+						"next_id": null,
+						"text": ["client:0 moved on and didn't run into the clan cats again."]
+					}
+				},
+				"fail": {
+					"gen":{
+						"next_id": null,
+						"text": ["client:0 moved on and didn't run into the clan cats again."]
+					}
+				}
+			},
 			"persuasion": {
-				"pass": 10,
 				"success":{
 					"gen": {
 						"next_id": null,
@@ -321,13 +294,63 @@
 			}
 		}
 	},
-	"default_f":{
+	"mk_default_f":{
 		"conversations": {
 			"start": {
-				"text":["client:0 managed to find the kid {PRONOUN/client:0/self} and let the patrol know. {PRONOUN/n_c:0/subject} thank the patrol for the help anyways."],
+				"text":["client:0 seems sad, {PRONOUN/client:0/subject} couldn't find search_target:0 yet."],
 				"answers": [
-					["next_id", "The patrol . (Story will end)"],
-					["next_id2", "Thats great, and it would even better if they join the c_n!"]
+					["next_id", "Leave the cat alone."],
+					["next_id2", "Approach {PRONOUN/client:0/object} and try to help them to find search_target:0 !"]
+				]
+			},
+			"next_id": {
+				"text":["You leave the cat be. It is not your business."],
+				"answers": []
+			},
+			"next_id2": {
+				"text":["c:0 start to talk to the cat and after gathering some information the search starts."],
+				"answers": [
+					["investigation"]
+				]
+			}
+		},
+		"decide_cooldown": [1,3],
+		"checks":{
+			"default":{
+				"pass": 15,
+				"success":{
+					"gen": {
+						"next_id": "mk_default_s",
+						"text": ["client:0 managed to find the kid {PRONOUN/client:0/self}."],
+						"roles": {
+							"prior target": ["search target:0"]
+						}
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": null,
+						"text": ["client:0 didn't managed to find the kid {PRONOUN/client:0/self}."]
+					},
+					"1": {
+						"next_id": "mk_default_f_fatal",
+						"dead_cats": ["n_c:1"],
+						"text": ["client:0 didn't managed to find the kid {PRONOUN/client:0/self}."],
+						"roles": {
+							"prior target": ["search target:0"]
+						}
+					}
+				}
+			}
+		}
+	},
+	"mk_default_f_fatal":{
+		"conversations": {
+			"start": {
+				"text":["client:0 is devastated, they found the body of search_target:0"],
+				"answers": [
+					["next_id", "todo"],
+					["next_id2", "todo"]
 				]
 			},
 			"next_id": {
@@ -336,71 +359,245 @@
 			},
 			"next_id2": {
 				"text":["TODO"],
-				"answers": [
-					["persuasion", "insight"]
-				]
+				"answers": []
 			}
 		},
+		"decide_cooldown": [3,6],
 		"checks":{
-			"persuasion": {
-				"pass": 18,
+			"default":{
 				"success":{
 					"gen": {
 						"next_id": null,
-						"exp": [20,18,15,13,10],
-						"text": ["TODO"],
-						"relationships": [
-							{
-								"cats_from": ["client:0", "search_target:0"],
-								"cats_to": ["patrol"],
-								"mutual": true,
-								"values": ["platonic", "trust"],
-								"amount": 15
-							},
-							{
-								"cats_from": ["client:0", "search_target:0"],
-								"cats_to": ["clan"],
-								"mutual": true,
-								"values": ["platonic"],
-								"amount": 5
-							}
-						],
-						"exp": [20,18,15,13,10]
+						"text": ["client:0 moved on of that tragic event."]
 					}
 				},
 				"fail": {
 					"gen": {
 						"next_id": null,
-						"exp": [20,18,15,13,10],
-						"text": "TODO"
-					},
-					"1": {
+						"text": ["client:0 moved on of that tragic event."]
+					}
+				}},
+			"insight": {
+				"pass": 18,
+				"success":{
+					"gen": {
 						"next_id": null,
-						"text": "TODO",
-						"outsider_rep": -1,
-						"exp": [20,18,15,13,10],
-						"relationships": [
-							{
-								"cats_from": ["client:0", "search_target:0"],
-								"cats_to": ["patrol"],
-								"mutual": false,
-								"values": ["platonic", "trust"],
-								"amount": -15
-							},
-							{
-								"cats_from": ["client:0", "search_target:0"],
-								"cats_to": ["patrol"],
-								"mutual": false,
-								"values": ["dislike"],
-								"amount": 15
-							}
+						"text": ["TODO"]
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": null,
+						"text": ["TODO"]
+					}
+				}
+			}
+		}
+	},
+	"mk_patrol_failed_finding":{
+		"conversations": {
+			"start": {
+				"text":[
+					"c:0, don't know what to tell client:0 anymore. {PRONOUN/client:0/subject/CAP} didn't managed to find the kid. client:0 teared up, c:0 could see the panic in {PRONOUN/client:0/poss} eyes, while client:0 {VERB/client:0/ask/asks} if they could try it again.",
+					"c:0 and c:1, exchanged looks and understood each other. They looked to the parent and shook their heads. c:0 explained, that they didn't found the kid. They could see the panic in {PRONOUN/client:0/poss} eyes, while client:0 {VERB/client:0/ask/asks} if they could try it again."
+				],
+				"answers": [
+					["next_id", "It will be hard and have more risk but is a kid! Of course you will help."],
+					["next_id2", "The risk is too high, you won't search."],
+					["next_id3", "Hiss at the cat, how could {PRONOUN/client:0/subject} ask this!"]
+				]
+			},
+			"next_id": {
+				"text":["c:0 nods and the search is started once again."],
+				"answers": [
+					["investigation", "survival"]
+				]
+			},
+			"next_id2": {
+				"text":["c:0 {VERB/p_0:0/shake/shakes} {PRONOUN/c:0/poss} head. Sadly the patrol can not help any further."],
+				"answers": []
+			},
+			"next_id3": {
+				"text":["c:0 hisses at the client:0. {PRONOUN/c:0/subject/CAP} already helped as good as {PRONOUN/c:0/subject} could!"],
+				"answers": [
+					["intimidation"]
+				]
+			}
+		},
+		"decide_cooldown": [1,1],
+		"checks":{
+			"default":{
+				"pass": 18,
+				"success":{
+					"gen": {
+						"next_id": null,
+						"text": [
+							"client:0 managed to find the kid {PRONOUN/client:0/self}."
+						],
+						"roles": {
+							"prior target": ["search target:0"]
+						}
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "mk_default_f_fatal",
+						"dead_cats": ["search_target:0"],
+						"text": ["client:0 didn't managed to find the kid {PRONOUN/client:0/self}."]
+					}
+				}
+			},
+			"investigation":{
+				"pass": 18,
+				"success":{
+					"gen": {
+						"next_id": "mk_patrol_success_finding",
+						"text": [
+							"The Starclan guided their paths. Even it is gotten dark, the kid was found! c:0 is happy to bring client:0 good news! search_target:0 shivered and is happy to see another face."
+						],
+						"outsider_rep": 2,
+						"roles": {
+							"prior target": ["search target:0"]
+						}
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "mk_second_fail",
+						"text": [
+							"The search was not successful. It got already dark and it was hard to see anything."
+						],
+						"injury": [{
+							"cats": ["r_c"],
+							"injuries": ["battle_injury"],
+							"scars": ["CHEEK"]
+						}]
+					}
+				}
+			},
+			"survival":{"duplicate":"investigation"},
+			"intimidation":{
+				"pass": 8,
+				"success":{
+					"gen": {
+						"next_id": null,
+						"text": [
+							"client:0 was already scared and in panic. The hissing of c:0 scared {PRONOUN/client:0/object} away."
+						],
+						"outsider_rep": -2
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "nhr_real_start",
+						"text": [
+							"client:0 was scared but the hissing didn't scared {PRONOUN/client:0/subject} away. Instead {PRONOUN/client:0/subject} stood {PRONOUN/client:0/object} ground. After a quick leap with {PRONOUN/client:0/object} sharp claws, client:0 ran away."
+						],
+						"outsider_rep": -2,
+						"injury": [{
+							"cats": ["r_c"],
+							"injuries": ["battle_injury"],
+							"scars": ["CHEEK"]
+						}],
+						"roles": {
+							"enemy": ["client:0"]
+						}
+					}
+				}
+			}
+		}
+	},
+	"mk_patrol_success_finding":{
+		"conversations": {
+			"start": {
+				"text":["The patrol met with client:0 and as {PRONOUN/client:0/subject} saw the small silhouette of prior_target:0, {PRONOUN/client:0/object} face brighten up. While client:0's toung cleand the fur of prior_target:0, the patrol explained everything."],
+				"answers": [
+					["next_id", "Wait for a response."],
+					["next_id1", "Ask for something in return."],
+					["next_id2", "Turn around and leave them alone."]
+				]
+			},
+			"next_id":{
+				"text": ["After a client:0, calmed a bit down, {PRONOUN/client:0/subject} looked at the patrol and thanked them with {PRONOUN/client:0/object} full heart. It must be creat to be in such a caring group!"],
+				"answers": [
+					["next_id_1", "Tell them a little e about c_n."],
+					["next_id_2", "Tell them a little about c_n and ask {PRONOUN/client:0/object} to join."]
+				]
+			},
+			"next_id1": {
+				"text": ["c:0 {VERB/c:0/explain/explains} how hard it was and dropt with respect, that something in return would be highly appreciated. client:0 nodded, of course! What would the patrol want to have?"],
+				"answers": [
+					["next_id1_1", "Ask for prey"],
+					["next_id1_2", "Aks for herbs"] 
+				]
+			},
+			"next_id_1":{
+				"text": ["client:0 nods while c:0 explains. "],
+				"answers": []
+			},
+			"next_id2":{
+				"text": ["c:0 {VERB/c:0/smile/smiles} at them and knows {PRONOUN/c:0/subject} did something good today."],
+				"answers": []
+			}
+		},
+		"checks":{
+			"default":{
+				"success":{
+					"gen": {
+						"next_id": "todo",
+						"text": [
+							"Conagrats the roll was successfull!"
+						]
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": "todo",
+						"text": [
+							"roll was not successfull, the story ends!"
 						]
 					}
 				}
 			},
 			"insight":{
-				"duplicate": "persuasion"
+				"duplicate": "default"
 			}
 		}
+	},
+	"mk_second_fail":{
+		"conversations": {
+			"start": {
+				"text":["todo"],
+				"answers": [
+					["insight"]
+				]
+			}
+		},
+		"start_cooldown": [1,3],
+		"decide_cooldown": [1,1],
+		"checks":{
+            "default":{
+				"success":{
+					"gen": {
+						"next_id": "todo",
+						"text": [
+							"conagrats the roll was successfull!"
+						]
+					}
+				},
+				"fail": {
+					"gen": {
+						"next_id": null,
+						"text": [
+							"roll was not successfull, the story ends!"
+						]
+					}
+				}
+            },
+			"insight":{
+				"duplicate": "default"
+			}
+		
+    	}
 	}
 }

@@ -1,15 +1,12 @@
 import os
 import ujson
 import logging
-import random
 
 from copy import deepcopy
-from random import choice
 from typing import List, Dict
 from random import randint
 
 from scripts.cat.cats import Cat
-from scripts.cat.history import History
 from scripts.cat_relations.relationship import Relationship
 from scripts.dnd.dnd_event import DnDEvent
 from scripts.dnd.dnd_types import DnDEventRole, transform_roles_dict_to_json, create_cat_dict
@@ -103,7 +100,7 @@ class DnDStory:
 
     def continue_story(self, cat_dict):
         self.current_event = None
-        if self.current_event_id in  DnDStory.EVENTS_DICT:
+        if self.current_event_id in DnDStory.EVENTS_DICT:
             self.current_event = deepcopy(DnDStory.EVENTS_DICT[self.current_event_id])
             
         if not self.current_event:
@@ -121,7 +118,7 @@ class DnDStory:
                     n_c
                 )
                 self.new_cats.append(n_c[0]) 
-        
+
         self.update_roles()
 
         current_conversation = self.current_event.conversations[self.current_conversation_id]
@@ -189,8 +186,8 @@ class DnDStory:
             roll_check = self.current_event.checks[skill_to_roll]
             was_success, critical_success, rolled_number, outcome = roll_check.roll_skill(cat_to_roll)
             if outcome:
-                outcome_small_text = outcome.execute_outcome(self.current_event, roll_check.pass_number)
-                cat_dict = create_cat_dict(Cat, self.current_event.wandering_cats, self.new_cats)
+                outcome_small_text = outcome.execute_outcome(self.current_event, roll_check.pass_number, was_success)
+                cat_dict = create_cat_dict(Cat, self.current_event.wandering_cats, self.new_cats, self.current_event.random_cat)
                 if outcome.next_id and outcome.next_id != "end":
                     self.current_event_id = outcome.next_id
                     self.current_conversation_id = "start"

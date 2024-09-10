@@ -35,6 +35,7 @@ class DnDEvent:
         self.roles = roles if roles else {}
         self.checks = checks if checks else {}
         self.wandering_cats = []
+        self.random_cat = None
 
         self.current_conversation = None
         self.set_current_conversation()
