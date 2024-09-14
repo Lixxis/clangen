@@ -181,9 +181,11 @@ class DnDStory:
                 if cat.ID not in self.roles[DnDEventRole.PARTICIPANT.value]:
                     self.roles[DnDEventRole.PARTICIPANT.value].append(cat.ID)
 
-    def handle_outcome(self, skill_to_roll, cat_to_roll):
+    def handle_outcome(self, skill_to_roll, cat_to_roll, pass_number = None):
         if skill_to_roll in self.current_event.checks.keys():
             roll_check = self.current_event.checks[skill_to_roll]
+            if pass_number:
+                roll_check.pass_number = pass_number
             was_success, critical_success, rolled_number, outcome = roll_check.roll_skill(cat_to_roll)
             if outcome:
                 outcome_small_text = outcome.execute_outcome(self.current_event, roll_check.pass_number, was_success)

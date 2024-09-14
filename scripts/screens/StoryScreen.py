@@ -101,7 +101,7 @@ class StoryScreen(Screens):
                 self.clear_wandering_cat_buttons()
             elif self.make_roll and event.ui_element in self.skill_buttons.values():
                 for skill in self.current_conversation.answers[0]:
-                    print("skill_roll: ", skill)
+                    skill = skill.split(":")[0]
                     if event.ui_element == self.skill_buttons[skill]:
                         self.skill_to_roll = skill
                         self.skill_buttons[skill].select()
@@ -164,7 +164,7 @@ class StoryScreen(Screens):
         self.side_panel.disable()
 
         self.story_text = pygame_gui.elements.UITextBox("",
-                                       scale(pygame.Rect((770, 345), (550, 300))),
+                                       scale(pygame.Rect((750, 345), (570, 300))),
                                        object_id="#text_box_30_horizleft_pad_10_10_spacing_95",
                                        manager=MANAGER)
         self.story_text.hide()
@@ -256,6 +256,7 @@ class StoryScreen(Screens):
         self.done_button.kill()
         self.side_panel.kill()
         self.wandering_cats = []
+        self.skill_info = {}
         self.make_roll = False
         game.clan.current_story_id = None
 
@@ -328,7 +329,6 @@ class StoryScreen(Screens):
         if answer_id not in self.current_event.conversations:
             print(f"ERROR DnD: answer {answer_id} was given, which is not defined in the event {self.current_event.event_id}!")
             return
-        print("conversation: ", self.current_conversation.id)
 
         self.clear_answer_buttons()
         current_story = game.clan.stories[str(game.clan.current_story_id)]
@@ -354,7 +354,10 @@ class StoryScreen(Screens):
         else:
             current_story.roles[DnDEventRole.PARTICIPANT.value] = cat_ids
         cat_dict = create_cat_dict(Cat, self.wandering_cats, current_story.new_cats)
-        outcome_text = current_story.handle_outcome(self.skill_to_roll, self.cat_to_roll)
+        pass_number = None
+        if self.skill_to_roll in self.skill_info:
+            pass_number = self.skill_info[self.skill_to_roll]["pass_number"]
+        outcome_text = current_story.handle_outcome(self.skill_to_roll, self.cat_to_roll, pass_number)
         text = process_text(outcome_text, cat_dict)
         if "c_n" in text:
             text = text.replace("c_n", game.clan.name + "clan")
@@ -375,8 +378,6 @@ class StoryScreen(Screens):
         for skill in self.skill_buttons.keys():
             self.skill_buttons[skill].kill()
         self.skill_buttons = {}
-        for skill in self.skill_info.keys():
-            self.skill_info[skill].kill()
         self.skill_info = {}
 
         button_pos_x = 500
@@ -384,6 +385,14 @@ class StoryScreen(Screens):
         step_increase = 72
 
         for skill in self.current_conversation.answers[0]:
+            if ":" in skill:
+                pass_number = skill.split(":")[1]
+                skill = skill.split(":")[0]
+                if skill not in self.skill_info:
+                    self.skill_info[skill] = {}
+                    self.skill_info[skill]["pass_number"] = int(pass_number)
+                else:
+                    self.skill_info[skill]["pass_number"] = int(pass_number)
             is_selected = ""
             if skill == self.skill_to_roll:
                 is_selected = "_selected"
@@ -572,9 +581,8 @@ class StoryScreen(Screens):
             story_button_pos_y += stepsize
 
     def create_answer_buttons(self, pronoun_dict):
-        stepsize = 100
         answer_button_pos_y = 600
-        answer_button_pos_x = 380
+        answer_button_pos_x = 400
 
         answers = self.current_conversation.answers
 
@@ -596,21 +604,28 @@ class StoryScreen(Screens):
             self.update_cat_images_buttons(self.wandering_cats, pos_y = 750, pos_x = 350, end_list_pos = 1300)
             return
 
+
+        button_height = 44
         for answer in answers:
             answer_id = answer[0]
             answer_text = answer[1]
             answer_text = process_text(answer_text, pronoun_dict)
+            stepsize = button_height + (button_height/2)
+            button_y_fix = (stepsize - button_height)/2
+            if len(answer_text) >= 58:
+                stepsize += button_height
+                button_y_fix += button_height/2
             if "c_n" in answer_text:
                 answer_text = answer_text.replace("c_n", game.clan.name + "clan")
             object_id = "#dnd_prof_free"
             self.answer_titles[answer_id] = pygame_gui.elements.UITextBox(
                 answer_text,
-                scale(pygame.Rect((answer_button_pos_x + 46, answer_button_pos_y - 30), (900, 125))),
+                scale(pygame.Rect((answer_button_pos_x + button_height + 2, answer_button_pos_y), (900, stepsize))),
                 object_id="#text_box_30_horizleft",
                 manager=MANAGER,
             )
             self.answer_buttons[answer_id] = UIImageButton(
-                scale(pygame.Rect((answer_button_pos_x, answer_button_pos_y), (44, 44))), "", 
+                scale(pygame.Rect((answer_button_pos_x , answer_button_pos_y + button_y_fix), (44, button_height))), "", 
                 object_id=object_id,
                 manager=MANAGER,
                 )
@@ -653,8 +668,6 @@ class StoryScreen(Screens):
         if "selected_name" in self.elements:
             self.elements["selected_name"].kill()
 
-        for skill in self.skill_info.keys():
-            self.skill_info[skill].kill()
         if "skill_info" in self.elements:
             self.elements['skill_info'].kill()
 

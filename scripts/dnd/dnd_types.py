@@ -157,10 +157,8 @@ def gather_cat_objects(
     :return: list of cat objects
     """
     out_set = set()
-    print("type: ", abbr_list)
 
     for abbr in abbr_list:
-        print("abbr; ", abbr)
         if ":" in abbr:
             cat_info = abbr.split(":")
             cat_role_location = cat_info[0]

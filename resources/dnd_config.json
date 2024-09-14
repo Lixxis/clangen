@@ -62,7 +62,7 @@
 	},
 	"general_story_chance": 50,
 	"conditional_story_chance": 10,
-	"default_pass_number": 10,
+	"default_pass_number": 12,
 	"default_exp_factors_success": [2, 1.5, 1, 0.75, 0.5],
 	"default_exp_factors_fail": [1.2, 1, 0.8, 0.6, 0.4],
 	"app_exp_debuff": 0.7,

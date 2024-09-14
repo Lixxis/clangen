@@ -1,5 +1,6 @@
 from typing import Dict, Optional
 from random import randint
+from copy import deepcopy
 
 from scripts.cat.cats import Cat
 from scripts.dnd.dnd_types import DnDSkillType
@@ -65,14 +66,30 @@ class DnDCheck:
                 skill = skill[0]
             else:
                 skill = None
+
+            all_info_outcome = None
             success_outcome = {}
             if _d.get("success"):
                 for outcome_key, outcome_value in _d.get("success").items():
-                    success_outcome[outcome_key] = DnDEventOutcome.generate_from_info([outcome_value])[0]
+                    if outcome_key == "all":
+                        all_info_outcome = DnDEventOutcome.generate_from_info([outcome_value])[0]
+                        continue
+                    current_outcome = DnDEventOutcome.generate_from_info([outcome_value])[0]
+                    if all_info_outcome:
+                        current_outcome = DnDCheck.fill_with_default_values(all_info_outcome, current_outcome)
+                    success_outcome[outcome_key] = current_outcome
+
             fail_outcome = {}
             if _d.get("fail"):
                 for outcome_key, outcome_value in _d.get("fail").items():
-                    fail_outcome[outcome_key] = DnDEventOutcome.generate_from_info([outcome_value])[0]
+                    if outcome_key == "all":
+                        all_info_outcome = DnDEventOutcome.generate_from_info([outcome_value])[0]
+                        continue
+                    current_outcome = DnDEventOutcome.generate_from_info([outcome_value])[0]
+                    if all_info_outcome:
+                        current_outcome =  DnDCheck.fill_with_default_values(all_info_outcome, current_outcome)
+                    fail_outcome[outcome_key] = current_outcome
+
             check_dict[key] = DnDCheck(
                 skill_type = skill,
                 pass_number = _d.get("pass"),
@@ -81,3 +98,37 @@ class DnDCheck:
                 duplicate=_d.get("duplicate")
             )
         return check_dict
+
+    @staticmethod
+    def fill_with_default_values(default_outcome: 'DnDCheck', to_fill_outcome: 'DnDCheck'):
+        if default_outcome.text and not to_fill_outcome.text:
+            to_fill_outcome.text = deepcopy(default_outcome.text)
+        if default_outcome.exp and not to_fill_outcome.exp:
+            to_fill_outcome.exp = deepcopy(default_outcome.exp)
+        if default_outcome.dead_cats and not to_fill_outcome.dead_cats:
+            to_fill_outcome.dead_cats = deepcopy(default_outcome.dead_cats)
+        if default_outcome.lost_cats and not to_fill_outcome.lost_cats:
+            to_fill_outcome.lost_cats = deepcopy(default_outcome.lost_cats)
+        if default_outcome.injury and not to_fill_outcome.injury:
+            to_fill_outcome.injury = deepcopy(default_outcome.injury)
+        if default_outcome.new_cat and not to_fill_outcome.new_cat:
+            to_fill_outcome.new_cat = deepcopy(default_outcome.new_cat)
+        if default_outcome.herbs and not to_fill_outcome.herbs:
+            to_fill_outcome.herbs = deepcopy(default_outcome.herbs)
+        if default_outcome.prey and not to_fill_outcome.prey:
+            to_fill_outcome.prey = deepcopy(default_outcome.prey)
+        if default_outcome.outsider_rep and not to_fill_outcome.outsider_rep:
+            to_fill_outcome.outsider_rep = deepcopy(default_outcome.outsider_rep)
+        if default_outcome.other_clan_rep and not to_fill_outcome.other_clan_rep:
+            to_fill_outcome.other_clan_rep = deepcopy(default_outcome.other_clan_rep)
+        if default_outcome.relationship_effects and not to_fill_outcome.relationship_effects:
+            to_fill_outcome.relationship_constraints = deepcopy(default_outcome.relationship_constraints)
+        if default_outcome.outcome_art and not to_fill_outcome.outcome_art:
+            to_fill_outcome.outcome_art_clean = deepcopy(default_outcome.outcome_art_clean)
+        if default_outcome.next_id and not to_fill_outcome.next_id:
+            to_fill_outcome.next_id = deepcopy(default_outcome.next_id)
+        if default_outcome.roles and not to_fill_outcome.roles:
+            to_fill_outcome.roles = deepcopy(default_outcome.roles)
+        if default_outcome.joining_cats and not to_fill_outcome.joining_cats:
+            to_fill_outcome.joining_cats = deepcopy(default_outcome.joining_cats)
+        return to_fill_outcome

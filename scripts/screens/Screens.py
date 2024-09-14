@@ -298,6 +298,7 @@ class Screens():
         """This shows all menu buttons, and makes them interact-able. """
         # Check if the setting for moons and seasons UI is on so stats button can be moved
         self.update_mns()
+        self.menu_buttons["world_screen"].disable()
         for name, button in self.menu_buttons.items():
             if name == 'dens':
                 if game.clan.clan_settings["moons and seasons"] and game.switches['cur_screen'] == 'events screen':

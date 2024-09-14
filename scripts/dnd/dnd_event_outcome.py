@@ -63,10 +63,10 @@ class DnDEventOutcome:
         self.lost_cats = lost_cats if lost_cats is not None else []
         self.injury = injury if injury is not None else []
         self.history_reg_death = history_reg_death if history_reg_death is not None else \
-                                 "m_c died on an adventure."
+                                 "died on an adventure."
         self.history_leader_death = history_leader_death if history_leader_death is not None else \
                                     "died on an adventure."
-        self.history_scar = history_scar if history_scar is not None else "m_c was scarred on an adventure."
+        self.history_scar = history_scar if history_scar is not None else "was scarred on an adventure."
         self.new_cat = new_cat if new_cat is not None else []
         self.herbs = herbs if herbs is not None else []
         self.prey = prey if prey is not None else []
@@ -142,13 +142,15 @@ class DnDEventOutcome:
 
         if self.exp == game.dnd_config["default_exp_factors_success"]:
             if was_success:
-                self.exp = [pass_number * factor for factor in game.dnd_config["default_exp_factors_success"]]
+                self.exp = [round(pass_number * factor) for factor in game.dnd_config["default_exp_factors_success"]]
             else:
-                self.exp = [pass_number * factor for factor in game.dnd_config["default_exp_factors_fail"]]
+                self.exp = [round(pass_number * factor) for factor in game.dnd_config["default_exp_factors_fail"]]
 
+        print("possible exp: ", self.exp)
         patrol_exp = self.exp[len(event.wandering_cats)-1]
         gained_exp = (patrol_exp + max_boost) * gm_modifier
-        app_exp = gained_exp * game.dnd_config["app_exp_debuff"]
+        app_exp = round(gained_exp * game.dnd_config["app_exp_debuff"])
+        print("gained_exp, warrior: ", gained_exp, " app: ", app_exp)
 
         for cat in event.wandering_cats:
             if cat.status in ["apprentice", "medicine cat apprentice"]:
@@ -371,8 +373,8 @@ class DnDEventOutcome:
             
             
             change_relationship_values(
-                [i.ID for i in cats_to_ob],
                 cats_from_ob,
+                cats_to_ob,
                 romantic_love,
                 platonic_like,
                 dislike,
@@ -385,8 +387,8 @@ class DnDEventOutcome:
             
             if block.get("mutual"):
                 change_relationship_values(
-                    [i.ID for i in cats_from_ob],
                     cats_to_ob,
+                    cats_from_ob,
                     romantic_love,
                     platonic_like,
                     dislike,
