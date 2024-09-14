@@ -169,7 +169,7 @@ def gather_cat_objects(
             else:
                 cat_role_location = cat_role_location.replace("_", " ")
                 old_fitting_role = [role for role in DnDEventRole if role.value == cat_role_location]
-                if len(old_fitting_role) > 0:
+                if len(old_fitting_role) > 0 and str(game.clan.current_story_id) in game.clan.stories:
                     story = game.clan.stories[str(game.clan.current_story_id)]
                     if old_fitting_role[0].value in story.roles.keys():
                         cat_id = story.roles[old_fitting_role[0].value][cat_index]

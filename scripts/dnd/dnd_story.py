@@ -196,9 +196,11 @@ class DnDStory:
                     next_event = DnDStory.EVENTS_DICT[outcome.next_id]
                     self.update_countdown("start", next_event.start_cooldown)
                     self.update_countdown("decide", next_event.decide_cooldown)
-                else:
+                elif skill_to_roll != "default":
                     # this is a bit ugly but this will stop the story
                     del game.clan.stories[self.story_id]
+                else:
+                    self.current_event_id = "end"
 
                 # update roles
                 if outcome.roles:
@@ -224,8 +226,9 @@ class DnDStory:
         """
         Handles to continue the story on a random bases.
         """
+        cat_dict = create_cat_dict(Cat, [])
+        self.continue_story(cat_dict)
         continue_text = self.handle_outcome("default", None)
-        self.update_roles()
         print("DnD - random_event_continue (WIP)")
 
     def get_participant_names(self):
