@@ -260,7 +260,8 @@ class Clan:
         
         game.clan.stories = {"NPC": []}
         for number in range(game.dnd_config["max_story_amount"]):
-            del game.clan.stories[str(number)]
+            if str(number) in game.clan.stories:
+            	del game.clan.stories[str(number)]
 
         game.save_cats()
         number_other_clans = randint(3, 5)
