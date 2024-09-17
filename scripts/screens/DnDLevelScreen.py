@@ -20,7 +20,6 @@ from .Screens import Screens
 def get_leveled_cat():
     "Returns if a cat had a level up or not."
     leveled_cat = []
-    print(game.clan.xp.keys())
     for cat_id, cat in Cat.all_cats.items():
         if cat.dead or cat.outside:
             continue
