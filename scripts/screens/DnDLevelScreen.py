@@ -20,13 +20,16 @@ from .Screens import Screens
 def get_leveled_cat():
     "Returns if a cat had a level up or not."
     leveled_cat = []
+    print(game.clan.xp.keys())
     for cat_id, cat in Cat.all_cats.items():
         if cat.dead or cat.outside:
             continue
         if cat_id in game.clan.xp and cat.experience_level != game.clan.xp[cat_id]:
             leveled_cat.append(cat)
         if not cat.faded and cat_id not in game.clan.xp:
-            game.clan.xp[cat_id] = cat.experience_level
+            print("NEW CAT!", cat.name)
+            game.clan.xp[cat_id] = "level 0"
+            leveled_cat.append(cat)
     return leveled_cat
 
 def update_levels(leveled_cats):
@@ -616,6 +619,8 @@ class DnDLevelScreen(Screens):
                     self.focus_cat_object.dnd_skills.update_class_proficiency(self.focus_cat_object.dnd_class, self.focus_cat_object.experience_level)
                 update_levels([self.focus_cat_object])
                 self.focus_cat_object = None
+                self.update_skill = 0
+                self.update_stat = 0
                 self.clear_cat_infos()
                 self.reset_skill()
                 self.update_leveling_cats()

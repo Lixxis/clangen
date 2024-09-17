@@ -73,7 +73,7 @@ class Events:
         Handles the moon skipping of the whole Clan.
         """
         game.clan.level_reminder = False
-        game.clan.levelable_cats = len(get_leveled_cat())
+        game.clan.moonstart_levelable_cats = len(get_leveled_cat())
         game.cur_events_list = []
         game.herb_events_list = []
         game.freshkill_events_list = []
@@ -473,6 +473,10 @@ class Events:
                 # this handles ceremonies for cats coming into the clan
                 if invited_cats:
                     self.handle_lost_cats_return(invited_cats)
+					# DnD - doesn't mather what was tried, if success the look of the cat is known
+                    for cat_id in invited_cats:
+                        if cat_id in game.clan.dnd_unknown_cats:
+                            del game.clan.dnd_unknown_cats[cat_id]
 
             # give new thought to cats
             if "new_thought" in cat_dict:

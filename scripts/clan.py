@@ -261,7 +261,7 @@ class Clan:
         game.clan.stories = {"NPC": []}
         for number in range(game.dnd_config["max_story_amount"]):
             if str(number) in game.clan.stories:
-            	del game.clan.stories[str(number)]
+                del game.clan.stories[str(number)]
 
         game.save_cats()
         number_other_clans = randint(3, 5)
@@ -920,7 +920,7 @@ class Clan:
         self.load_disaster(game.clan)
         # dnd part
         game.clan.level_reminder = False
-        game.clan.levelable_cats = 0
+        game.clan.moonstart_levelable_cats = 0
         self.load_xp(game.clan)
         self.load_stories(game.clan)
         self.load_dnd_unknown_cats(game.clan)

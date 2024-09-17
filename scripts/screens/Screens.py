@@ -344,6 +344,7 @@ class Screens:
         """This shows all menu buttons, and makes them interact-able."""
         # Check if the setting for moons and seasons UI is on so stats button can be moved
         self.update_mns()
+        # DnD - todo: comment out to test story
         self.menu_buttons["world_screen"].disable()
         for name, button in self.menu_buttons.items():
             if name == "dens":
@@ -393,6 +394,8 @@ class Screens:
         """This sets all menu buttons as interact-able, except buttons listed in disabled_buttons."""
         for button in self.menu_buttons.values():
             button.enable()
+        # DnD - todo: comment out to test story
+        self.menu_buttons["world_screen"].disable()
 
         for button_id in disabled_buttons:
             if button_id in self.menu_buttons:

@@ -1,3 +1,7 @@
+import os
+import ujson
+import logging
+
 from scripts.cat.skills import SkillPath
 from scripts.dnd.dnd_stats import Stats
 from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType, ClassType
@@ -165,11 +169,32 @@ class DnDSkills:
         ClassType.SKILLED_WARRIOR :	[DnDSkillType.ACROBATICS, DnDSkillType.ATHLETICS, DnDSkillType.INTIMIDATION],
         ClassType.WISDOM : 			[DnDSkillType.ACROBATICS, DnDSkillType.RELIGION, DnDSkillType.INSIGHT],
         ClassType.PROTECTOR : 		[DnDSkillType.ATHLETICS, DnDSkillType.RELIGION, DnDSkillType.HISTORY],
-        ClassType.BLOOD_CHOSEN : 	[DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.SLEIGHT_OF_PAW],
         ClassType.KNOWLEDGE : 		[DnDSkillType.ARCANA, DnDSkillType.PERCEPTION, DnDSkillType.HISTORY],
         ClassType.SWORN : 			[DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.PERSUASION],
         ClassType.SHADOW : 			[DnDSkillType.STEALTH, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.INVESTIGATION],
+        ClassType.BLOOD_CHOSEN : 	[DnDSkillType.ARCANA, DnDSkillType.HISTORY, DnDSkillType.SLEIGHT_OF_PAW],
     }
+
+    new_class_prof_dict = {}
+    base_path = os.path.join(
+        "resources",
+        "dnd_config.json"
+    )
+    #with open(base_path, 'r') as read_file:
+    #    file_content = ujson.load(read_file)
+    #    for string_class, skill_list in file_content.items():
+    #        key_class = [c for c in ClassType if c.value == string_class]
+    #        if key_class:
+    #            new_class_prof_dict[key_class[0]] = []
+    #            for value in skill_list:
+    #                value_skill = [dnd_class for dnd_class in DnDSkillType if dnd_class.value == value]
+    #                new_class_prof_dict[key_class[0]].extend(value_skill)
+    #        else:
+    #            logging.warning(f"DnD - {string_class} class was not found.")
+#
+    #print(new_class_prof_dict)
+    del base_path
+
 
     class_prof_description = {
         ClassType.BRUTE :

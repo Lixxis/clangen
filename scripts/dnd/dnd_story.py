@@ -108,16 +108,17 @@ class DnDStory:
             return
 
         # first create new cats if needed
-        self.new_cats = []
-        if self.current_event.new_cats:
-            new_cats = deepcopy(self.current_event.new_cats)
-            self.current_event.new_cats = []
-            for i, attribute_list in enumerate(new_cats):
-                n_c = create_new_cat_block(Cat, Relationship, self.current_event, cat_dict, i, attribute_list)
-                self.current_event.new_cats.append(
-                    n_c
-                )
-                self.new_cats.append(n_c[0]) 
+        # TODO: while running in the background, stop creating new cats
+        #self.new_cats = []
+        #if self.current_event.new_cats:
+        #    new_cats = deepcopy(self.current_event.new_cats)
+        #    self.current_event.new_cats = []
+        #    for i, attribute_list in enumerate(new_cats):
+        #        n_c = create_new_cat_block(Cat, Relationship, self.current_event, cat_dict, i, attribute_list)
+        #        self.current_event.new_cats.append(
+        #            n_c
+        #        )
+        #        self.new_cats.append(n_c[0]) 
 
         self.update_roles()
 
@@ -182,7 +183,7 @@ class DnDStory:
                     self.roles[DnDEventRole.PARTICIPANT.value].append(cat.ID)
 
     def handle_outcome(self, skill_to_roll, cat_to_roll, pass_number = None):
-        if skill_to_roll in self.current_event.checks.keys():
+        if self.current_event and skill_to_roll in self.current_event.checks.keys():
             roll_check = self.current_event.checks[skill_to_roll]
             if pass_number:
                 roll_check.pass_number = pass_number

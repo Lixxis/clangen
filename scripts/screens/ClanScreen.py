@@ -223,9 +223,9 @@ class ClanScreen(Screens):
 
         self.update_buttons_and_text()
         leveled_cats = get_leveled_cat()
-        if (leveled_cats and not game.clan.level_reminder) or game.clan.levelable_cats < len(leveled_cats):
+        if (leveled_cats and not game.clan.level_reminder) or game.clan.moonstart_levelable_cats < len(leveled_cats):
             game.clan.level_reminder = True
-            game.clan.levelable_cats = len(leveled_cats)
+            game.clan.moonstart_levelable_cats = len(leveled_cats)
             DnDLevelsReminder()
 
     def exit_screen(self):
