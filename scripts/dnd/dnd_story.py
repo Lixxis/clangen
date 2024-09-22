@@ -145,7 +145,11 @@ class DnDStory:
 
                 cat_id = None
                 if cat_role_location == "n_c":
-                    cat_id = self.current_event.new_cats[cat_index][0].ID
+                    if self.current_event.new_cats:
+                        cat_id = self.current_event.new_cats[cat_index][0].ID
+                    else:
+                        event_id = self.current_event.event_id
+                        logging.error(f"DnD Error! n_c abbreviation was used in the event {event_id} where no new cat was created.")
                 else:
                     old_fitting_role = [role for role in DnDEventRole if role.value == cat_role_location]
                     if len(old_fitting_role) > 0:

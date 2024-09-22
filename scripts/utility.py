@@ -2383,7 +2383,7 @@ def update_sprite(cat):
         return
 
     # apply
-    if cat.ID in game.clan.dnd_unknown_cats.keys() and "look" in game.clan.dnd_unknown_cats[cat.ID]:
+    if game.clan and cat.ID in game.clan.dnd_unknown_cats.keys() and "look" in game.clan.dnd_unknown_cats[cat.ID]:
         cat.sprite = image_cache.load_image(f"sprites/unknown.png").convert_alpha()
     else:
         cat.sprite = generate_sprite(cat)
