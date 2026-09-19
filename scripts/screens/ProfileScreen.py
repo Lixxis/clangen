@@ -144,6 +144,11 @@ class ProfileScreen(Screens):
         self.the_cat = None
         self.checkboxes = {}
         self.profile_elements = {}
+        self.dnd_tab_button = None
+        self.dnd_stats_background = None
+        self.dnd_skill_background = None
+        self.dnd_stats_text_box = None
+        self.dnd_skill_text_box = None
 
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
@@ -208,6 +213,8 @@ class ProfileScreen(Screens):
                 self.profile_elements["favourite_button"].set_tooltip(
                     "Remove favorite" if self.the_cat.favourite else "Mark as favorite"
                 )
+            elif event.ui_element == self.dnd_tab_button:
+                self.toggle_dnd_tab()
             else:
                 self.handle_tab_events(event)
         elif event.type == pygame.KEYDOWN and game_setting_get("keybinds"):
@@ -411,6 +418,14 @@ class ProfileScreen(Screens):
                 self.conditions_page -= 1
                 self.display_conditions_page()
 
+        elif self.open_tab == "dnd":
+            if event.ui_element == self.right_conditions_arrow:
+                self.conditions_page += 1
+                self.display_conditions_page()
+            if event.ui_element == self.left_conditions_arrow:
+                self.conditions_page -= 1
+                self.display_conditions_page()
+
     def screen_switches(self):
         super().screen_switches()
         self.the_cat = Cat.all_cats.get(switch_get_value(Switch.cat))
@@ -490,15 +505,13 @@ class ProfileScreen(Screens):
             manager=MANAGER,
         )
 
-        self.placeholder_tab_3 = UISurfaceImageButton(
+        self.dnd_tab_button = UISurfaceImageButton(
             ui_scale(pygame.Rect((400, 622), (176, 30))),
-            "",
+            "screens.profile.tab_dnd",
             get_button_dict(ButtonStyles.PROFILE_MIDDLE, (176, 30)),
             object_id="@buttonstyles_profile_middle",
-            starting_height=1,
             manager=MANAGER,
         )
-        self.placeholder_tab_3.disable()
 
         self.placeholder_tab_4 = UISurfaceImageButton(
             ui_scale(pygame.Rect((576, 622), (176, 30))),
@@ -542,7 +555,7 @@ class ProfileScreen(Screens):
         self.dangerous_tab_button.kill()
         self.backstory_tab_button.kill()
         self.conditions_tab_button.kill()
-        self.placeholder_tab_3.kill()
+        self.dnd_tab_button.kill()
         self.placeholder_tab_4.kill()
         self.inspect_button.kill()
         self.close_current_tab()
@@ -850,6 +863,10 @@ class ProfileScreen(Screens):
             output += i18n.t(
                 "general.mate_label", count=len(mate_names), mates=mate_block
             )
+
+        # DnD lineage
+        lineage = the_cat.dnd_lineage.lineage_type.value
+        output += f"\nlineage: {lineage}"
 
         if not the_cat.dead:
             # NEWLINE ----------
@@ -2432,6 +2449,32 @@ class ProfileScreen(Screens):
         elif self.open_tab == "conditions":
             self.display_conditions_page()
 
+        # DND - stuff Tab
+        elif self.open_tab == "dnd":
+            if self.dnd_stats_text_box:
+                self.dnd_stats_text_box.kill()
+            if self.dnd_skill_text_box:
+                self.dnd_skill_text_box.kill()
+            
+            # DND - stats
+            dnd_stat_string = "<b>Basic stats:</b> (lineage buff is bold) <br>" 
+            dnd_stat_string += self.the_cat.dnd_stats.get_display_text(True)
+            self.dnd_stats_text_box = UITextBoxTweaked(
+                dnd_stat_string, ui_scale(pygame.Rect((100, 473), (278, 149))),
+                object_id="#text_box_26_horizleft_pad_10_14",
+                line_spacing=1, manager=MANAGER
+            )
+
+            # DND - skills
+            dnd_skill_string = "<b>Skills:</b> (proficiency is bold) <br>"
+            dnd_skill_string += self.the_cat.dnd_skills.get_display_text(True)
+            self.dnd_skill_text_box = UITextBoxTweaked(
+                dnd_skill_string, ui_scale(pygame.Rect((426, 473), (278, 149))),
+                object_id="#text_box_26_horizleft_pad_10_14",
+                line_spacing=1, manager=MANAGER
+            )
+
+
     def close_current_tab(self):
         """Closes current tab."""
         if self.open_tab is None:
@@ -2490,7 +2533,55 @@ class ProfileScreen(Screens):
                 data.kill()
             self.condition_data = {}
 
+        elif self.open_tab == "dnd":
+            self.dnd_stats_background.kill()
+            self.dnd_skill_background.kill()
+            self.dnd_stats_text_box.kill()
+            self.dnd_skill_text_box.kill()
+
         self.open_tab = None
+
+
+    # DND - stuff
+    def toggle_dnd_tab(self):
+        """Opens the tab with the dnd information."""
+        previous_open_tab = self.open_tab
+
+        # This closes the current tab, so only one can be open at a time
+        self.close_current_tab()
+
+        if previous_open_tab == "dnd":
+            pass
+        else:
+            self.open_tab = "dnd"
+            rect = ui_scale(pygame.Rect((0, 0), (300, 157)))
+            rect.bottomleft = ui_scale_offset((89, 0))
+            self.dnd_stats_background = pygame_gui.elements.UIImage(
+                rect,
+                get_box(
+                    BoxStyles.ROUNDED_BOX, (300, 157), sides=(True, True, False, True)
+                ),
+                anchors={
+                    "bottom": "bottom",
+                    "bottom_target": self.conditions_tab_button,
+                },
+            )
+            rect.bottomleft = ui_scale_offset((415, 0))
+            self.dnd_skill_background = pygame_gui.elements.UIImage(
+                rect,
+                get_box(
+                    BoxStyles.ROUNDED_BOX, (300, 157), sides=(True, True, False, True)
+                ),
+                anchors={
+                    "bottom": "bottom",
+                    "bottom_target": self.conditions_tab_button,
+                },
+            )
+
+            self.dnd_stats_background.disable()
+            self.dnd_skill_background.disable()
+            self.update_disabled_buttons_and_text()
+
 
     # ---------------------------------------------------------------------------- #
     #                               cat platforms                                  #

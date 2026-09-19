@@ -8,6 +8,7 @@ import bisect
 import itertools
 import os.path
 import sys
+from collections import Counter
 from random import choice, randint, sample, random, randrange
 from typing import Dict, List, Any, Union, Callable, Optional, TYPE_CHECKING
 
@@ -65,6 +66,11 @@ from scripts.clan_package.get_clan_cats import find_alive_cats_with_rank
 
 import scripts.game_structure.screen_settings
 
+from scripts.dnd.dnd_stats import Stats
+from scripts.dnd.dnd_skills import DnDSkills
+from scripts.dnd.dnd_lineages import Lineage
+from scripts.dnd.dnd_types import LinageType
+
 if TYPE_CHECKING:
     import pygame
 
@@ -105,13 +111,27 @@ class Cat:
     # EX levels and ranges.
     # Ranges are inclusive to both bounds
     experience_levels_range = {
-        "untrained": (0, 0),
-        "trainee": (1, 50),
-        "prepared": (51, 110),
-        "competent": (110, 170),
-        "proficient": (171, 240),
-        "expert": (241, 320),
-        "master": (321, 321),
+        "level 0": (0, 0),
+        "level 1": (1, 50),
+        "level 2": (51, 100),
+        "level 3": (101, 150),
+        "level 4": (151, 200),
+        "level 5": (201, 250),
+        "level 6": (251, 300),
+        "level 7": (301, 350),
+        "level 8": (351, 400),
+        "level 9": (401, 450),
+        "level 10": (451, 500),
+        "level 11": (501, 550),
+        "level 12": (551, 600),
+        "level 13": (601, 650),
+        "level 14": (651, 700),
+        "level 15": (701, 750),
+        "level 16": (751, 800),
+        "level 17": (801, 850),
+        "level 18": (851, 900),
+        "level 19": (901, 950),
+        "level 20": (951, 1000),
     }
 
     all_cats: Dict[str, Cat] = {}  # ID: object
@@ -368,6 +388,56 @@ class Cat:
         if self.ID is not None and self.ID != "0":
             Cat.insert_cat(self)
 
+
+        # DND - STUFF
+        possible_lineages = []
+        if parent1:
+            parent_cat = Cat.fetch_cat(parent1)
+            if parent_cat:
+                possible_lineages.extend([parent_cat.dnd_lineage.lineage_type.value] * 2)
+                grand_parents = parent_cat.get_parents()
+                for grand_parent in grand_parents:
+                    grand_parent_cat = Cat.fetch_cat(grand_parent)
+                    if grand_parent_cat: 
+                        possible_lineages.append(grand_parent_cat.dnd_lineage.lineage_type.value)
+        
+        if parent2 and parent1:
+            parent_cat = Cat.fetch_cat(parent2)
+            if parent_cat:
+                possible_lineages.extend([parent_cat.dnd_lineage.lineage_type.value] * 2)
+                grand_parents = parent_cat.get_parents()
+                for grand_parent in grand_parents:
+                    grand_parent_cat = Cat.fetch_cat(grand_parent)
+                    if grand_parent_cat:
+                        possible_lineages.append(grand_parent_cat.dnd_lineage.lineage_type.value)
+        elif parent1: # single parent
+            max_amount = 0
+            lineage_distribution = game.dnd_config["lineage_distribution"]
+            possible_lineages = []
+            for lineage in LinageType:
+                if lineage.value in lineage_distribution:
+                    if lineage_distribution[lineage.value] > max_amount:
+                        max_amount = lineage_distribution[lineage.value]
+                    possible_lineages.extend([lineage.value] * lineage_distribution[lineage.value])
+            parent_cat = Cat.fetch_cat(parent1)
+            if parent_cat:
+                possible_lineages.extend([parent_cat.dnd_lineage.lineage_type.value] * int(max_amount * 1.5))
+
+        if len(possible_lineages) > 0:
+            possible_lineages = Counter(possible_lineages)
+        else:
+            possible_lineages = None
+        self.dnd_lineage = Lineage(possible_lineages)
+
+        self.dnd_stats = Stats()
+        self.dnd_skills = DnDSkills()
+        p1_cat = Cat.fetch_cat(parent1)
+        p2_cat = Cat.fetch_cat(parent2)
+        self.dnd_stats.inheritance(p1_cat, p2_cat)
+        self.dnd_stats.update_stats_for_lineage(self.dnd_lineage.lineage_type)
+        self.dnd_skills.update_skills(self.dnd_stats)
+
+
     def init_faded(self, ID, status, prefix, suffix, moons, **kwargs):
         """Perform faded-specific initialization
 
@@ -472,18 +542,18 @@ class Cat:
                 m -= 1
         elif self.age in (CatAge.YOUNG_ADULT, CatAge.ADULT):
             self.experience = randint(
-                Cat.experience_levels_range["prepared"][0],
-                Cat.experience_levels_range["proficient"][1],
+                Cat.experience_levels_range["level 2"][0],
+                Cat.experience_levels_range["level 6"][1],
             )
         elif self.age == CatAge.SENIOR_ADULT:
             self.experience = randint(
-                Cat.experience_levels_range["competent"][0],
-                Cat.experience_levels_range["expert"][1],
+                Cat.experience_levels_range["level 4"][0],
+                Cat.experience_levels_range["level 8"][1],
             )
         elif self.age == CatAge.SENIOR:
             self.experience = randint(
-                Cat.experience_levels_range["competent"][0],
-                Cat.experience_levels_range["master"][1],
+                Cat.experience_levels_range["level 6"][0],
+                Cat.experience_levels_range["level 10"][1],
             )
         else:
             self.experience = 0
@@ -2859,18 +2929,18 @@ class Cat:
         output = ""
 
         # Determine the chance of failure.
-        if mediator.experience_level == "untrained":
+        if mediator.experience_level in ["level 0", "level 1", "level 2", "level 3"]:
             chance = 15
-        elif mediator.experience_level == "trainee":
+        elif mediator.experience_level in ["level 4", "level 5", "level 6", "level 7"]:
             # Negative bonus for very low.
             chance = 20
-        elif mediator.experience_level == "prepared":
+        elif mediator.experience_level in ["level 8", "level 9", "level 10", "level 11"]:
             chance = 35
-        elif mediator.experience_level == "proficient":
+        elif mediator.experience_level in ["level 12", "level 13", "level 14", "level 15"]:
             chance = 55
-        elif mediator.experience_level == "expert":
+        elif mediator.experience_level in ["level 16", "level 17", "level 18", "level 19"]:
             chance = 70
-        elif mediator.experience_level == "master":
+        elif mediator.experience_level in ["level 20"]:
             chance = 100
         else:
             chance = 40
@@ -2915,11 +2985,11 @@ class Cat:
                 elif game.clan and game.clan.game_mode == "cruel season":
                     gm_modifier = 6
 
-                if mediator.experience_level == "proficient":
+                if mediator.experience_level in ["level 4", "level 5", "level 6", "level 7", "level 8"]:
                     lvl_modifier = 1.25
-                elif mediator.experience_level == "expert":
+                elif mediator.experience_level in ["level 9", "level 10", "level 11", "level 12", "level 13", "level 14"]:
                     lvl_modifier = 1.75
-                elif mediator.experience_level == "master":
+                elif mediator.experience_level in ["level 15", "level 16", "level 17", "level 18", "level 19", "level 20"]:
                     lvl_modifier = 2
                 else:
                     lvl_modifier = 1
@@ -3214,7 +3284,7 @@ class Cat:
 
     @experience.setter
     def experience(self, exp: int):
-        exp = min(exp, self.experience_levels_range["master"][1])
+        exp = min(exp, self.experience_levels_range["level 10"][1])
         self._experience = int(exp)
 
         for x in self.experience_levels_range:
@@ -3413,6 +3483,9 @@ class Cat:
                 "opacity": self.pelt.opacity,
                 "prevent_fading": self.prevent_fading,
                 "favourite": self.favourite,
+                "dnd_lineage": self.dnd_lineage.lineage_type.value,
+                "dnd_stats": self.dnd_stats.get_stat_dict(),
+                "dnd_proficiency": self.dnd_skills.get_proficiency_list()
             }
 
     def determine_next_and_previous_cats(

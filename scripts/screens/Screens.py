@@ -346,6 +346,12 @@ class Screens:
             == Screens.menu_buttons["dens"].child_button_dicts["screens.core.clearing"]
         ):
             self.change_screen(GameScreen.MEDIATION)
+        # OPEN LEVELING
+        elif (
+            event.ui_element
+            == Screens.menu_buttons["dens"].child_button_dicts["screens.core.leveling"]
+        ):
+            self.change_screen(GameScreen.LEVELING)
         # GO TO CAMP
         elif event.ui_element in (
             Screens.menu_buttons["back_to_camp"],

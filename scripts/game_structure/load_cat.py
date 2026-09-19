@@ -24,6 +24,11 @@ from ..cat.skills import CatSkills
 from ..cat.status import StatusDict
 from ..housekeeping.datadir import get_save_dir
 
+# DND - STUFF
+from scripts.dnd.dnd_stats import Stats
+from scripts.dnd.dnd_lineages import Lineage
+from scripts.dnd.dnd_skills import DnDSkills
+
 logger = logging.getLogger(__name__)
 
 
@@ -214,6 +219,30 @@ def json_load():
                 new_cat.personality = Personality(
                     trait=cat["trait"], kit_trait=new_cat.age in ["newborn", "kitten"]
                 )
+
+            if "dnd_lineage" in cat:
+                new_cat.dnd_lineage = Lineage({cat["dnd_lineage"]: 100})
+            else:
+                new_cat.dnd_lineage = Lineage()
+
+            # DND - STUFF
+            if "dnd_stats" in cat:
+                new_cat.dnd_stats = Stats(
+                    cat["dnd_stats"]["str"],
+                    cat["dnd_stats"]["dex"],
+                    cat["dnd_stats"]["con"],
+                    cat["dnd_stats"]["int"],
+                    cat["dnd_stats"]["wis"],
+                    cat["dnd_stats"]["cha"]
+                )
+            else:
+                new_cat.dnd_stats = Stats()
+
+            new_cat.dnd_stats.update_stats_for_lineage(lineage=new_cat.dnd_lineage.lineage_type)
+            new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
+            if "dnd_proficiency" in cat:
+                new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
+
 
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = (

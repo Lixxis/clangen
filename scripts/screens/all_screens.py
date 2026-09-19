@@ -1,5 +1,7 @@
 import warnings
 
+from scripts.dnd.LevelingScreen import LevelingScreen
+
 from .AllegiancesScreen import AllegiancesScreen
 from .CeremonyScreen import CeremonyScreen
 from .ChangeGenderScreen import ChangeGenderScreen
@@ -81,6 +83,7 @@ def rebuild_all_screens():
         GameScreen.MEDIATION: MediationScreen,
         GameScreen.CHANGE_GENDER: ChangeGenderScreen,
         GameScreen.EVENT_EDIT: EventEditScreen,
+        GameScreen.LEVELING: LevelingScreen,
     }
 
     for enum, classobj in enum_to_class.items():

@@ -18,6 +18,7 @@
         "elders_den": "elders' den",
         "nursery": "nursery",
         "clearing": "clearing",
+        "leveling": "DnD leveling",
         "apprentices_den": "apprentices' den",
         "dev_watermark": "Dev Build: %{ver}"
     }

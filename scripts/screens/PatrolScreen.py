@@ -27,6 +27,7 @@ from ..ui.generate_button import get_button_dict, ButtonStyles
 from ..ui.icon import Icon
 from ..ui.windows.rel_change_details import RelChangeDetailWindow
 
+from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
 
 class PatrolScreen(Screens):
     current_patrol = []
@@ -288,6 +289,13 @@ class PatrolScreen(Screens):
         if event.ui_element == self.elements["patrol_again"]:
             self.in_progress_data = None
             self.open_choose_cats_screen()
+
+            # DND - STUFF
+            #leveled_cats = get_leveled_cat()
+            #if leveled_cats:
+            #    for cat in leveled_cats:
+            #        DnDCatLevels(cat)
+            #    update_levels(leveled_cats)
         elif event.ui_element == self.elements["clan_return"]:
             self.in_progress_data = None
             self.change_screen(GameScreen.CAMP)
@@ -310,6 +318,13 @@ class PatrolScreen(Screens):
         else:
             self.in_progress_data = None
             self.open_choose_cats_screen()
+
+        # DND - STUFF
+        #leveled_cats = get_leveled_cat()
+        #if leveled_cats:
+        #    for cat in leveled_cats:
+        #        DnDCatLevels(cat)
+        #    update_levels(leveled_cats)
 
     def display_change_save(self) -> Dict:
         if self.start_patrol_thread is not None and self.start_patrol_thread.is_alive():

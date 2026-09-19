@@ -167,5 +167,8 @@ with open("resources/prey_config.toml", "r", encoding="utf-8") as read_file:
 with open("resources/placements.json", "r", encoding="utf-8") as read_file:
     LAYOUTS = ujson.loads(read_file.read())
 
+with open("resources/dnd_config.json", "r") as read_file:
+    DND_CONFIG = ujson.loads(read_file.read())
+
 CUSTOM_CURSOR = Cursor((9, 0), image.load("resources/images/cursor.png"))
 DEFAULT_CURSOR = Cursor(SYSTEM_CURSOR_ARROW)
