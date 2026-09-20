@@ -69,7 +69,7 @@ import scripts.game_structure.screen_settings
 from scripts.dnd.dnd_stats import Stats
 from scripts.dnd.dnd_skills import DnDSkills
 from scripts.dnd.dnd_lineages import Lineage
-from scripts.dnd.dnd_types import LinageType
+from scripts.dnd.dnd_types import LinageType, ClassType
 
 if TYPE_CHECKING:
     import pygame
@@ -434,8 +434,9 @@ class Cat:
         p1_cat = Cat.fetch_cat(parent1)
         p2_cat = Cat.fetch_cat(parent2)
         self.dnd_stats.inheritance(p1_cat, p2_cat)
-        self.dnd_stats.update_stats_for_lineage(self.dnd_lineage.lineage_type)
+        self.dnd_stats.update_stats(self.dnd_lineage.lineage_type)
         self.dnd_skills.update_skills(self.dnd_stats)
+        self.dnd_class = None
 
 
     def init_faded(self, ID, status, prefix, suffix, moons, **kwargs):

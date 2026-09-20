@@ -238,7 +238,7 @@ def json_load():
             else:
                 new_cat.dnd_stats = Stats()
 
-            new_cat.dnd_stats.update_stats_for_lineage(lineage=new_cat.dnd_lineage.lineage_type)
+            new_cat.dnd_stats.update_stats(lineage=new_cat.dnd_lineage.lineage_type)
             new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
             if "dnd_proficiency" in cat:
                 new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])

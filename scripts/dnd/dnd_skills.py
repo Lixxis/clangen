@@ -1,3 +1,5 @@
+import i18n
+
 from scripts.cat.skills import SkillPath
 from scripts.dnd.dnd_stats import Stats
 from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType
@@ -193,12 +195,12 @@ class DnDSkills:
                 dnd_skill_string += "<b>"
             elif skill in skills_to_bold:
                 dnd_skill_string += "<b>"
-            dnd_skill_string += f"{skill.value} (" + mod_str + str(modifier) + ") "
+            dnd_skill_string += i18n.t(f"dnd.skills.{skill.value}") + " (" + mod_str + str(modifier) + ") "
 
             if with_base:
                 for base, value_list in self.skill_based.items():
                     if skill in value_list:
-                        dnd_skill_string += f" - <i>{base.value} based </i><br>"
+                        dnd_skill_string += f" - <i>" + i18n.t(f"dnd.stats.{base.value}") + " based </i><br>"
             else:
                 dnd_skill_string += "<br>"
 

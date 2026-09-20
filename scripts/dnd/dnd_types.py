@@ -39,7 +39,7 @@ class DnDSkillType(Enum):
 
 class ClassType(Enum):
     BRUTE = "Brute"
-    SILVER_TONGUE = "Silver tongue"
+    SILVER_TONGUE = "Silver Tongue"
     CHOSEN = "Chosen of the StarClan"
     BLOOD_OLD = "Blood of the Old"
     SKILLED_WARRIOR = "Skilled Warrior"

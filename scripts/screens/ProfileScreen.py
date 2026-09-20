@@ -865,7 +865,7 @@ class ProfileScreen(Screens):
             )
 
         # DnD lineage
-        lineage = the_cat.dnd_lineage.lineage_type.value
+        lineage = i18n.t(f"dnd.lineage.{the_cat.dnd_lineage.lineage_type.value}")
         output += f"\nlineage: {lineage}"
 
         if not the_cat.dead:

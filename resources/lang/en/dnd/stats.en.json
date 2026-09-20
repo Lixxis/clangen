@@ -1,0 +1,16 @@
+{
+    "en": {
+        "strength": "strength",
+        "dexterity": "dexterity",
+        "constitution": "constitution",
+        "intelligence": "intelligence",
+        "wisdom": "wisdom",
+        "charisma": "charisma",
+        "strength_upper": "STRENGTH",
+        "dexterity_upper": "DEXTERITY",
+        "constitution_upper": "CONSTITUTION",
+        "intelligence_upper": "INTELLIGENCE",
+        "wisdom_upper": "WISDOM",
+        "charisma_upper": "CHARISMA"
+    }
+}

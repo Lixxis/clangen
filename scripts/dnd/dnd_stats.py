@@ -1,5 +1,6 @@
 import copy
 import random
+import i18n
 
 from scripts.dnd.dnd_types import StatType, LinageType
 from scripts.game_structure import constants
@@ -88,7 +89,7 @@ class Stats:
             self.genetic_stats[StatType.CHARISMA] = stat
             array.remove(stat)
 
-    def update_stats_for_lineage(self, lineage = None):
+    def update_stats(self, lineage = None):
         "Adding the lineage buffs to the stats which are used to get outcome and stuff"
         if lineage:
             self.lineage = lineage
@@ -112,40 +113,46 @@ class Stats:
         return_text = ""
         strength = self.stats[StatType.STRENGTH ]
         mod_str = "+" if self.modifier[strength] >= 0 else ""
+        name = i18n.t(f"dnd.stats.strength")
         if StatType.STRENGTH in self.lineage_proficiency[self.lineage] and lineage_bold:
-            return_text += "<b>strength: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")</b><br>"
+            return_text += f"<b>{name}: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")</b><br>"
         else:
-            return_text += "strength: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")<br>"
+            return_text += f"{name}: " + str(strength) + " (" + mod_str + str(self.modifier[strength]) + ")<br>"
         dexterity = self.stats[StatType.DEXTERITY]
         mod_str = "+" if self.modifier[dexterity] >= 0 else ""
+        name = i18n.t(f"dnd.stats.dexterity")
         if StatType.DEXTERITY in self.lineage_proficiency[self.lineage] and lineage_bold:
-            return_text += "<b>dexterity: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")</b><br>"
+            return_text += f"<b>{name}: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")</b><br>"
         else:
-            return_text += "dexterity: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")<br>"
+            return_text += f"{name}: " + str(dexterity) + " (" + mod_str + str(self.modifier[dexterity]) + ")<br>"
         constitution = self.stats[StatType.CONSTITUTION]
+        name = i18n.t(f"dnd.stats.constitution")
         mod_str = "+" if self.modifier[constitution] >= 0 else ""
         if StatType.CONSTITUTION in self.lineage_proficiency[self.lineage] and lineage_bold:
-            return_text += "<b>constitution: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")</b><br>"
+            return_text += f"<b>{name}: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")</b><br>"
         else:
-            return_text += "constitution: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")<br>"
+            return_text += f"{name}: " + str(constitution) + " (" + mod_str + str(self.modifier[constitution]) + ")<br>"
         intelligence = self.stats[StatType.INTELLIGENCE]
+        name = i18n.t(f"dnd.stats.intelligence")
         mod_str = "+" if self.modifier[intelligence] >= 0 else ""
         if StatType.INTELLIGENCE in self.lineage_proficiency[self.lineage] and lineage_bold:
-            return_text += "<b>intelligence: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")</b><br>"
+            return_text += f"<b>{name}: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")</b><br>"
         else:
-            return_text += "intelligence: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")<br>"
+            return_text += f"{name}: " + str(intelligence) + " (" + mod_str + str(self.modifier[intelligence]) + ")<br>"
         wisdom = self.stats[StatType.WISDOM]
+        name = i18n.t(f"dnd.stats.wisdom")
         mod_str = "+" if self.modifier[wisdom] >= 0 else ""
         if StatType.WISDOM in self.lineage_proficiency[self.lineage] and lineage_bold:
-            return_text += "<b>wisdom: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")</b><br>"
+            return_text += f"<b>{name}: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")</b><br>"
         else:
-            return_text += "wisdom: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")<br>"
+            return_text += f"{name}: " + str(wisdom) + " (" + mod_str + str(self.modifier[wisdom]) + ")<br>"
         charisma = self.stats[StatType.CHARISMA]
+        name = i18n.t(f"dnd.stats.charisma")
         mod_str = "+" if self.modifier[charisma] >= 0 else ""
         if StatType.CHARISMA in self.lineage_proficiency[self.lineage] and lineage_bold:
-            return_text += "<b>charisma: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")</b><br>"
+            return_text += f"<b>{name}: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")</b><br>"
         else:
-            return_text += "charisma: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")<br>"
+            return_text += f"{name}: " + str(charisma) + " (" + mod_str + str(self.modifier[charisma]) + ")<br>"
         return return_text
 
     def inheritance(self, parent1 = None, parent2 = None):
