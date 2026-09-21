@@ -229,12 +229,13 @@ class PatrolOutcome:
 
         return outcome_list
 
-    def execute_outcome(self, patrol: "Patrol") -> Tuple[str, str, list, Optional[str]]:
+    def execute_outcome(self, patrol: "Patrol", cat_to_roll) -> Tuple[str, str, list, Optional[str]]:
         """
         Executes the outcome. Returns a tuple with the final outcome text, the results text, and any outcome art
         :returns: Outcome text, results text, list of created rel logs (might be empty), outcome art (might be None)
         """
         rel_results = {}
+        patrol.cat_to_roll = cat_to_roll
 
         # This must be done before text processing so that the new cat's pronouns are generated first
         results = [self._handle_new_cats(patrol)]
@@ -297,7 +298,7 @@ class PatrolOutcome:
 
         print("PATROL END -----------------------------------------------------")
 
-        return processed_text, " ".join(results), rel_results, self.get_outcome_art()
+        return (processed_text, " ".join(results), rel_results, self.get_outcome_art())
 
     def _handle_future_event(self, patrol):
         """

@@ -13,6 +13,7 @@ from scripts.cat import pronouns
 from scripts.cat.cats import Cat
 from scripts.cat_relations.enums import RelType
 from scripts.cat.enums import CatAge, CatRank, CatCompatibility
+from scripts.cat.skills import HiddenSkillEnum, SkillPath
 from scripts.clan import Clan
 from scripts.clan_package.settings import get_clan_setting
 from scripts.events_module.event_filters import (
@@ -40,6 +41,8 @@ from scripts.events_module.text_adjust import (
     adjust_list_text,
     event_text_adjust,
 )
+
+from scripts.dnd.dnd_skills import DnDSkillType, DnDSkills
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +96,19 @@ class Patrol:
         self.TRAINING_GEN = None
         self.MEDCAT_GEN = None
         self.DISASTER = None
+
+        self.skills_to_roll = []
+        self.default_skills_mapper = {
+            "hunting" : [DnDSkillType.ANIMAL_HANDLING, DnDSkillType.INVESTIGATION, DnDSkillType.STEALTH, DnDSkillType.SURVIVAL],
+            "border": [DnDSkillType.ATHLETICS, DnDSkillType.DECEPTION, DnDSkillType.INTIMIDATION, DnDSkillType.PERSUASION],
+            "training": [DnDSkillType.ACROBATICS, DnDSkillType.HISTORY, DnDSkillType.INSIGHT, DnDSkillType.PERFORMANCE, DnDSkillType.ARCANA],
+            "med": [DnDSkillType.MEDICINE, DnDSkillType.NATURE, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.PERCEPTION, DnDSkillType.RELIGION]
+        }
+
+        self.cat_to_roll = None
+        self.stat_to_roll = None
+        self.chosen_success = None
+        self.chosen_failure = None
 
     def setup_patrol(self, patrol_cats: List[Cat], patrol_type: str) -> str:
         # Add cats
@@ -639,6 +655,8 @@ class Patrol:
         if patrol_type == "general":
             patrol_type = random.choice(["hunting", "border", "training"])
 
+        self.skills_to_roll = self.default_skills_mapper[patrol_type]
+
         app_number_mentor_checks = {}
         for i in range(1, 7):
             app_number_mentor_checks[f"app{i}_mentored"] = (
@@ -888,35 +906,35 @@ class Patrol:
         )
         fail_outcomes = PatrolOutcome.prepare_allowed_outcomes(fail_outcomes, self)
 
-        chosen_success = None
-        chosen_failure = None
+        self.chosen_success = None
+        self.chosen_failure = None
 
         # Choose a success and fail outcome
         chosen_frequency = get_frequency()
         used_frequencies = set()
-        while not chosen_success or not chosen_failure:
-            if not chosen_success:
+        while not self.chosen_success or not self.chosen_failure:
+            if not self.chosen_success:
                 possible_successes = [
                     x for x in success_outcomes if x.frequency == chosen_frequency
                 ]
                 if possible_successes:
-                    chosen_success = choices(
+                    self.chosen_success = choices(
                         possible_successes,
                         weights=[x.weight for x in possible_successes],
                     )[0]
-            if not chosen_failure:
+            if not self.chosen_failure:
                 possible_failures = [
                     x for x in fail_outcomes if x.frequency == chosen_frequency
                 ]
                 if possible_failures:
-                    chosen_failure = choices(
+                    self.chosen_failure = choices(
                         possible_failures, weights=[x.weight for x in possible_failures]
                     )[0]
-            if not chosen_success or not chosen_failure:
+            if not self.chosen_success or not self.chosen_failure:
                 used_frequencies.add(chosen_frequency)
                 chosen_frequency = find_new_frequency(used_frequencies)
 
-        final_event, success = self.calculate_success(chosen_success, chosen_failure)
+        final_event, success = self.calculate_success(self.chosen_success, self.chosen_failure)
 
         print(f"PATROL ID: {self.patrol_event.patrol_id} | SUCCESS: {success}")
         print(
@@ -924,15 +942,15 @@ class Patrol:
         )
         if success:
             print(
-                f"Outcome Frequency: {chosen_success.frequency} | Outcome Weight: {chosen_success.weight}"
+                f"Outcome Frequency: {self.chosen_success.frequency} | Outcome Weight: {self.chosen_success.weight}"
             )
         else:
             print(
-                f"Outcome Frequency: {chosen_failure.frequency} | Outcome Weight: {chosen_failure.weight}"
+                f"Outcome Frequency: {self.chosen_failure.frequency} | Outcome Weight: {self.chosen_failure.weight}"
             )
 
         # Run the chosen outcome
-        return final_event.execute_outcome(self)
+        #return final_event.execute_outcome(self)
 
     def calculate_success(
         self, success_outcome: PatrolOutcome, fail_outcome: PatrolOutcome
@@ -1067,6 +1085,50 @@ class Patrol:
             )
 
         return (success_outcome if success else fail_outcome, success)
+
+    # DND - stuff
+    def roll_outcome(self, cat, skill):
+        needed_number = int(self.patrol_event.chance_of_success / 4)
+        if needed_number < 1:
+            needed_number = 0
+        rolled_number = randint(1,20) # d20 roll
+        print("ROLLED NUMBER: ", rolled_number , "; modifier: ", cat.dnd_skills.skills[skill])
+        modifier = cat.dnd_skills.skills[skill]
+        final_number = rolled_number + modifier # modifier added
+        print("FINISHED ROLLED NUMBER: ", final_number, ", needed number: ", needed_number)
+
+        final_event = self.chosen_success
+        if needed_number > final_number:
+            print("NO success")
+            final_event = self.chosen_failure
+        else:
+            print("SUCCESS!")
+        return final_event.execute_outcome(self, cat) + (rolled_number,) + (modifier,) + (needed_number,)
+
+
+    def find_skills(self):
+        skill_to_replace = []
+        translated_skills = []
+        if self.chosen_success.stat_skill:
+            skill_to_replace = self.chosen_success.stat_skill
+        elif self.chosen_failure.stat_skill:
+            skill_to_replace = self.chosen_failure.stat_skill
+
+        for normal_skill in skill_to_replace:
+            path = normal_skill.split(",")[0]
+            # Try to conter to Skillpath or HiddenSkillEnum
+            try:
+                path = SkillPath[path]
+            except KeyError:
+                try:
+                    path = HiddenSkillEnum[path]
+                except KeyError:
+                    print(f"{path} is not a real skill path")
+                    return False
+            if isinstance(path, SkillPath):
+                translated_skills.append(DnDSkills.skill_mapping[path])
+        if len(translated_skills) > 0:
+            self.skills_to_roll = list(dict.fromkeys(translated_skills))
 
     def update_resources(self, biome_dir, leaf):
         resources = [

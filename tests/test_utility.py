@@ -14,6 +14,7 @@ from scripts.events_module.event_filters import (
     get_personality_compatibility,
 )
 from scripts.clan_package.get_clan_cats import get_alive_clan_queens
+from scripts.screens.PatrolScreen import PatrolScreen
 
 
 class TestPersonalityCompatibility(unittest.TestCase):
@@ -138,7 +139,6 @@ class TestCountRelation(unittest.TestCase):
         self.assertEqual(relation_dict["respect"], 2)
         self.assertEqual(relation_dict["comfort"], 0)
         self.assertEqual(relation_dict["trust"], 0)
-
 
 class TestHighestRomance(unittest.TestCase):
     def test_exclude_mate(self):

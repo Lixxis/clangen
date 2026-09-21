@@ -28,6 +28,7 @@ class ButtonStyles(Enum):
     VERTICAL_TAB = "vertical_tab"
     LADDER_TOP = "ladder_top"
     LADDER_MIDDLE = "ladder_middle"
+    LADDER_MIDDLE_SELECTED = "ladder_middle_selected"
     LADDER_BOTTOM = "ladder_bottom"
     ICON = "icon"
     ICON_TAB_TOP = "icon_tab_top"

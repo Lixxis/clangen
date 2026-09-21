@@ -69,7 +69,27 @@ class PatrolScreen(Screens):
         self.rel_results = {}
         self.start_patrol_thread: Optional[PropagatingThread] = None
         self.proceed_patrol_thread: Optional[PropagatingThread] = None
+        self.rolling_patrol_thread: Optional[PropagatingThread] = None
         self.outcome_art = None
+        self.rolled_number = None
+        self.modifier = None
+        self.needed_number = None
+        self.skill_to_roll = None
+        self.cat_to_roll = None
+        self.skill_buttons = {}
+        self.skill_info = {}
+        self.not_proceed = False
+        self.dnd_patrol_frame = pygame_gui.elements.UIImage(
+            ui_scale(pygame.Rect((65, 140), (723, 523))),
+                pygame.transform.scale(
+                    pygame.image.load(
+                        "resources/images/dnd/patrol_dnd_frame.png"
+                    ).convert_alpha(),
+                    (723, 523)
+                )
+            , manager=MANAGER
+        )
+        self.dnd_patrol_frame.hide()
 
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_DOUBLE_CLICKED:
@@ -81,7 +101,9 @@ class PatrolScreen(Screens):
                 self.handle_choose_cats_events(event)
             elif self.patrol_stage == "patrol_events":
                 self.handle_patrol_events_event(event)
-            elif self.patrol_stage == "patrol_complete":
+            elif self.patrol_stage == "rolling" and not self.not_proceed:
+                self.handle_rolling_event(event)
+            elif self.patrol_stage == "patrol_complete" or self.not_proceed:
                 self.handle_patrol_complete_events(event)
 
             self.menu_button_pressed(event)
@@ -304,6 +326,7 @@ class PatrolScreen(Screens):
 
     def screen_switches(self):
         super().screen_switches()
+        self.not_proceed = False
         self.set_disabled_menu_buttons(["patrols"])
         self.update_heading_text(f"{game.clan.displayname}Clan")
         self.show_mute_buttons()
@@ -375,7 +398,9 @@ class PatrolScreen(Screens):
             self.update_button()
         elif self.patrol_stage == "patrol_events":
             self.open_patrol_event_screen()
-        elif self.patrol_stage == "patrol_complete":
+        elif self.patrol_stage == "rolling" and not self.not_proceed:
+            self.open_patrol_rolling_screen()
+        elif self.patrol_stage == "patrol_complete" or self.not_proceed:
             self.open_patrol_event_screen()
             self.open_patrol_complete_screen()
         else:
@@ -558,6 +583,7 @@ class PatrolScreen(Screens):
         self.results_text = ""
         self.current_patrol = []
         self.current_page = 1
+        self.not_proceed = False
         self.patrol_stage = "choose_cats"
         self.patrol_screen = "patrol_cats"  # List
 
@@ -571,7 +597,6 @@ class PatrolScreen(Screens):
             get_box(BoxStyles.FRAME, (200, 275)),
             manager=MANAGER,
         )
-        self.elements["cat_frame"].disable()
 
         # Frames
         self.elements["able_frame"] = pygame_gui.elements.UIImage(
@@ -893,7 +918,7 @@ class PatrolScreen(Screens):
         pos_y = 488
         for u in range(6):
             if u < len(self.patrol_obj.patrol_cats):
-                self.elements["cat" + str(u)] = pygame_gui.elements.UIImage(
+                self.elements["cat" + str(u)] = UISpriteButton(
                     ui_scale(pygame.Rect((pos_x, pos_y), (50, 50))),
                     self.patrol_obj.patrol_cats[u].sprite,
                     manager=MANAGER,
@@ -934,6 +959,7 @@ class PatrolScreen(Screens):
 
     def run_patrol_proceed(self, user_input):
         """Proceeds the patrol - to be run in the separate thread."""
+        self.not_proceed = False
         if user_input in ["nopro", "notproceed"]:
             (
                 self.display_text,
@@ -941,20 +967,11 @@ class PatrolScreen(Screens):
                 self.rel_results,
                 self.outcome_art,
             ) = self.patrol_obj.proceed_patrol("decline")
+            self.not_proceed = True
         elif user_input in ["antag", "antagonize"]:
-            (
-                self.display_text,
-                self.results_text,
-                self.rel_results,
-                self.outcome_art,
-            ) = self.patrol_obj.proceed_patrol("antag")
+            self.patrol_obj.proceed_patrol("antag")
         else:
-            (
-                self.display_text,
-                self.results_text,
-                self.rel_results,
-                self.outcome_art,
-            ) = self.patrol_obj.proceed_patrol("proceed")
+            self.patrol_obj.proceed_patrol("proceed")
 
     def open_patrol_complete_screen(self):
         """Deals with the next stage of the patrol, including antagonize, proceed, and do not proceed.
@@ -983,6 +1000,15 @@ class PatrolScreen(Screens):
         ):
             self.elements["intro_image"].set_image(self.outcome_art)
 
+
+        self.elements["roll_results"] = pygame_gui.elements.UITextBox(
+            "", ui_scale(pygame.Rect((1100, 1100), (344, 300))),
+            object_id=get_text_box_theme(
+                "#text_box_22_horizcenter_spacing_95"),
+                manager=MANAGER
+        )
+        self.elements["roll_results"].set_text(f"Rolled: {self.rolled_number}\nModifier: {self.modifier}\nFinal: {self.rolled_number+self.modifier}")
+
         self.elements["patrol_results"] = pygame_gui.elements.UITextBox(
             "",
             ui_scale(pygame.Rect((550, 500), (172, 150))),
@@ -1003,6 +1029,8 @@ class PatrolScreen(Screens):
 
         self.elements["patrol_results"].set_text(self.results_text)
 
+        if not self.elements["patrol_text"].visible:
+            self.elements["patrol_text"].show()
         self.elements["patrol_text"].set_text(self.display_text)
 
         self.elements["proceed"].disable()
@@ -1422,6 +1450,12 @@ class PatrolScreen(Screens):
         for ele in self.elements:
             self.elements[ele].kill()
         self.elements = {}
+        for skill in self.skill_buttons.keys():
+            self.skill_buttons[skill].kill()
+        self.skill_buttons = {}
+        for skill in self.skill_info.keys():
+            self.skill_info[skill].kill()
+        self.skill_info = {}
 
     def clear_cat_buttons(self):
         for cat in self.cat_buttons:
@@ -1436,6 +1470,7 @@ class PatrolScreen(Screens):
         self.clear_page()
         self.clear_cat_buttons()
         self.hide_menu_buttons()
+        self.dnd_patrol_frame.hide()
 
     def on_use(self):
         super().on_use()
@@ -1444,7 +1479,10 @@ class PatrolScreen(Screens):
             self.start_patrol_thread, self.open_patrol_event_screen
         )
         self.loading_screen_on_use(
-            self.proceed_patrol_thread, self.open_patrol_complete_screen
+            self.proceed_patrol_thread, self.open_patrol_rolling_screen
+        )
+        self.loading_screen_on_use(
+            self.rolling_patrol_thread, self.open_patrol_complete_screen
         )
 
     @staticmethod
@@ -1454,3 +1492,215 @@ class PatrolScreen(Screens):
         # Removes duplicates.
         patrol_set = list(patrol_list)
         return ", ".join(patrol_set)
+
+
+    # DND - stuff
+    def handle_rolling_event(self, event):
+        if event.ui_element in self.skill_buttons.values():
+            for skill in self.patrol_obj.skills_to_roll:
+                if event.ui_element == self.skill_buttons[skill.value]:
+                    self.skill_to_roll = skill
+                    self.skill_buttons[skill.value].select()
+            self.update_skills_information()
+        if "cat0" in self.elements and event.ui_element == self.elements["cat0"]:
+            self.selected_cat = self.patrol_obj.patrol_cats[0]
+        elif "cat1" in self.elements and event.ui_element == self.elements["cat1"]:
+            self.selected_cat = self.patrol_obj.patrol_cats[1]
+        elif "cat2" in self.elements and event.ui_element == self.elements["cat2"]:
+            self.selected_cat = self.patrol_obj.patrol_cats[2]
+        elif "cat3" in self.elements and event.ui_element == self.elements["cat3"]:
+            self.selected_cat = self.patrol_obj.patrol_cats[3]
+        elif "cat4" in self.elements and event.ui_element == self.elements["cat4"]:
+            self.selected_cat = self.patrol_obj.patrol_cats[4]
+        elif "cat5" in self.elements and event.ui_element == self.elements["cat5"]:
+            self.selected_cat = self.patrol_obj.patrol_cats[5]
+        elif event.ui_element == self.elements["dice"]:
+            self.cat_to_roll = self.selected_cat
+            self.selected_cat = None
+            for skill in self.skill_buttons.keys():
+                self.skill_buttons[skill].kill()
+            self.skill_buttons = {}
+            for skill in self.skill_info.keys():
+                self.skill_info[skill].kill()
+            self.skill_info = {}
+            self.elements["selected_image"].kill()
+            self.elements["selected_name"].kill()
+            self.elements["skill_info"].kill()
+            self.elements["patrol_info"].kill()
+            self.elements["cat_info"].kill()
+            self.elements['intro_image'].show()
+            self.elements["dice"].kill()
+            self.dnd_patrol_frame.hide()
+            self.elements["event_bg"].show()
+            self.elements["info_bg"].show()
+            self.elements["image_frame"].show()
+            self.elements["temporary_text"].kill()
+            self.rolling_patrol_thread = self.loading_screen_start_work(self.run_patrol_rolling, "rolling")
+        if self.selected_cat is not None:
+            # Now, if the selected cat is not None, we rebuild everything with the correct cat info
+            # Selected Cat Image
+            if "selected_image" in self.elements:
+                self.elements["selected_image"].kill()
+            self.elements["selected_image"] = pygame_gui.elements.UIImage(
+                ui_scale(pygame.Rect((82, 147), (150, 150))),
+                pygame.transform.scale(self.selected_cat.sprite,(150, 150)),
+                manager=MANAGER)
+            
+            name = str(self.selected_cat.name)  # get name
+            short_name = shorten_text_to_fit(name, 175, 15)
+            if "selected_name" in self.elements:
+                self.elements['selected_name'].kill()
+            self.elements['selected_name'] = pygame_gui.elements.UITextBox(
+                short_name,
+                ui_scale(pygame.Rect((197, 155), (200, 30))),
+                object_id=get_text_box_theme("#text_box_30_horizcenter"),
+                manager=MANAGER)
+
+            dnd_skill_string = "<b>Skills:</b> (relevant bold) <br>"
+            dnd_skill_string += self.selected_cat.dnd_skills.get_display_text(False, self.patrol_obj.skills_to_roll)
+            if "skill_info" in self.elements:
+                self.elements['skill_info'].kill()
+            self.elements['skill_info'] = pygame_gui.elements.UITextBox(
+                dnd_skill_string,
+                ui_scale(pygame.Rect((238, 200), (150, 400))),
+                object_id="#text_box_22_horizleft",
+                manager=MANAGER)
+
+            dnd_stat_string = "<b>Basic stats:</b> <br>" 
+            dnd_stat_string += self.selected_cat.dnd_stats.get_display_text()
+            if "patrol_info" in self.elements:
+                self.elements["patrol_info"].kill()
+            self.elements['patrol_info'] = pygame_gui.elements.UITextBox(
+                dnd_stat_string,
+                ui_scale(pygame.Rect((105, 475), (240, 190))),
+                object_id="#text_box_22_horizleft",
+                manager=MANAGER)
+
+            dnd_info_string = ""
+            dnd_info_string += self.selected_cat.genderalign + "<br>"
+            dnd_info_string += str(self.selected_cat.moons) + " moons <br>"
+            dnd_info_string += str(self.selected_cat.experience) + " exp. "
+            dnd_info_string += "(" + self.selected_cat.experience_level + ") <br><br>"
+            dnd_info_string += self.selected_cat.dnd_lineage.lineage_type.value + "<br>"
+            if "cat_info" in self.elements:
+                self.elements["cat_info"].kill()
+            self.elements['cat_info'] = pygame_gui.elements.UITextBox(
+                dnd_info_string,
+                ui_scale(pygame.Rect((35, 300), (240, 190))),
+                object_id="#text_box_22_horizcenter",
+                manager=MANAGER)
+
+        if self.skill_to_roll != None and self.selected_cat != None:
+            self.elements["dice"].enable()
+        else:
+            self.elements["dice"].disable()
+
+    def run_patrol_rolling(self):
+        if not self.not_proceed:
+            self.display_text, self.results_text, rel_results, self.outcome_art, self.rolled_number, self.modifier, self.needed_number = self.patrol_obj.roll_outcome(
+                self.cat_to_roll, self.skill_to_roll
+            )
+            self.skill_to_roll = None
+
+    def open_patrol_rolling_screen(self):
+        self.patrol_stage = "rolling"
+        if self.not_proceed:
+            self.patrol_stage = "patrol_complete"
+            self.cat_to_roll = self.selected_cat
+            self.selected_cat = None
+            for skill in self.skill_buttons.keys():
+                self.skill_buttons[skill].kill()
+            self.skill_buttons = {}
+            for skill in self.skill_info.keys():
+                self.skill_info[skill].kill()
+            self.skill_info = {}
+            if "selected_image" in self.elements:
+                self.elements["selected_image"].kill()
+            if "selected_name" in self.elements:
+                self.elements["selected_name"].kill()
+            if "skill_info" in self.elements:
+                self.elements["skill_info"].kill()
+            if "patrol_info" in self.elements:
+                self.elements["patrol_info"].kill()
+            if "cat_info" in self.elements:
+                self.elements["cat_info"].kill()
+            self.elements["event_bg"].show()
+            self.elements["info_bg"].show()
+            self.elements["image_frame"].show()
+            self.elements["intro_image"].show()
+            self.elements["patrol_text"].show()
+            self.dnd_patrol_frame.hide()
+            if "dice" in self.elements:
+                self.elements["dice"].kill()
+            if "temporary_text" in self.elements:
+                self.elements["temporary_text"].kill()
+            self.rolling_patrol_thread = self.loading_screen_start_work(self.run_patrol_rolling, "rolling")
+            return
+
+        self.elements["proceed"].hide()
+        self.elements["not_proceed"].hide()
+        self.elements["antagonize"].hide()
+        self.elements["patrol_info"].kill()
+        if "cat_info" in self.elements:
+            self.elements['cat_info'].kill()
+
+        self.elements["event_bg"].hide()
+        self.elements["info_bg"].hide()
+        self.elements["image_frame"].hide()
+        self.dnd_patrol_frame.show()
+
+        self.elements["dice"] = UIImageButton(
+            ui_scale(pygame.Rect((640, 433), (78, 78))), "",
+            object_id="#dnd_dice",
+            starting_height=3,
+            manager=MANAGER
+        )
+        self.elements["dice"].disable()
+
+        self.elements["intro_image"].hide()
+        self.elements["patrol_text"].hide()
+        display_text = "filler"
+        self.elements["temporary_text"] = pygame_gui.elements.UITextBox(display_text,
+                                       ui_scale(pygame.Rect((385, 172), (245, 250))),
+                                       object_id="#text_box_30_horizleft_pad_10_10_spacing_95",
+                                       manager=MANAGER)
+        self.elements["temporary_text"].set_text(
+            self.display_text + "<br><br>" +
+            "----<br>" +
+            f"<b>Which cat should take the roll?</b><br>" +
+            "Select a cat and the skill which will be used for the role. " +
+            "A cat can be selected from the left bottom. " +
+            "The skill can be selected right next to it."
+        )
+
+        self.update_skills_information()
+
+    def update_skills_information(self):
+        if self.patrol_stage != "rolling":
+            return
+        for skill in self.skill_buttons.keys():
+            self.skill_buttons[skill].kill()
+        self.skill_buttons = {}
+        for skill in self.skill_info.keys():
+            self.skill_info[skill].kill()
+        self.skill_info = {}
+
+        button_pos_x = 640
+        button_pos_y = 175
+        step_increase = 36
+
+        for skill in self.patrol_obj.skills_to_roll:
+            text = i18n.t(f"dnd.skills.{skill.value}")
+            button_dict = get_button_dict(ButtonStyles.LADDER_MIDDLE, (140, 36))
+            button_dict["selected"] = button_dict["hovered"]
+            self.skill_buttons[skill.value] = UISurfaceImageButton(
+                ui_scale(pygame.Rect((button_pos_x, button_pos_y), (140, 36))),
+                text,
+                button_dict,
+                object_id="@buttonstyles_ladder_middle",
+                manager=MANAGER,
+            )
+            if skill == self.skill_to_roll:
+                self.skill_buttons[skill.value].select()
+            button_pos_y += step_increase
+
