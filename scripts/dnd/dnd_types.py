@@ -38,13 +38,15 @@ class DnDSkillType(Enum):
     SURVIVAL = "survival"
 
 class ClassType(Enum):
-    BRUTE = "Brute"
-    SILVER_TONGUE = "Silver Tongue"
-    CHOSEN = "Chosen of the StarClan"
-    BLOOD_OLD = "Blood of the Old"
-    SKILLED_WARRIOR = "Skilled Warrior"
-    WISDOM = "Wisdom of the Paws"
-    PROTECTOR = "Protector of StarClan"
-    BLOOD_CHOSEN = "Blood of the Chosen One"
-    KNOWLEDGE = "Knowledge Seeker"
-    SHADOW = "Shadow Stalker"
+    BRUTE = "Brute" #Babarian
+    SILVER_TONGUE = "Silver" # Bard
+    CHOSEN = "Chosen" #Cleric
+    BLOOD_OLD = "Blood_Old" #Druid
+    SKILLED_WARRIOR = "Skilled" #Fighter
+    WISDOM = "Wisdom" #Monk
+    PROTECTOR = "Protector" #Paladin
+    BLOOD_CHOSEN = "Blood_Chosen" #Sorcerer
+    KNOWLEDGE = "Knowledge" #Wizard
+    SHADOW = "Shadow" #Rouge
+    SWORN = "Sworn" #Warlock
+    EXPLORER = "Explorer" #Ranger

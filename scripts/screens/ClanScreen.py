@@ -23,8 +23,6 @@ from ..cat.enums import CatRank
 from ..ui.elements.save_button import UISaveButton
 from ..ui.generate_button import ButtonStyles, get_button_dict
 
-from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
-
 class ClanScreen(Screens):
     max_sprites_displayed = (
         400  # we don't want 100,000 sprites rendering at once. 400 is enough.
@@ -250,11 +248,7 @@ class ClanScreen(Screens):
 
         self.update_buttons_and_text()
         # DND - STUFF
-        #leveled_cats = get_leveled_cat()
-        #if leveled_cats:
-        #    for cat in leveled_cats:
-        #        DnDCatLevels(cat)
-        #    update_levels(leveled_cats)
+        # TODO: notification level up
 
     def exit_screen(self):
         # removes the cat sprites.

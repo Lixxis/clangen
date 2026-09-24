@@ -1,0 +1,38 @@
+# D&D character generation and progression settings
+# TOML does not support null values, so empty strings are used to represent levels with no bonus.
+min_stat = 8
+max_stat = 25
+max_inheritance = 17
+start_array = [8, 10, 12, 13, 14, 15]
+proficiency_bonus = 1
+choosing_class = 2
+class_proficiency_leveling = [2, 8, 14]
+
+[leveling]
+  "level 0" = ""
+  "level 1" = ""
+  "level 2" = ""
+  "level 3" = "stat:1"
+  "level 4" = "skill:1"
+  "level 5" = ""
+  "level 6" = "stat:1"
+  "level 7" = "skill:1"
+  "level 8" = ""
+  "level 9" = "stat:1"
+  "level 10" = "skill:1"
+  "level 11" = ""
+  "level 12" = "stat:2"
+  "level 13" = "skill:1"
+  "level 14" = ""
+  "level 15" = "stat:1"
+  "level 16" = "skill:2"
+  "level 17" = ""
+  "level 18" = "stat:2"
+  "level 19" = "skill:2"
+  "level 20" = "stat:1"
+
+[lineage_distribution]
+  cat = 40
+  elf = 25
+  dwarf = 15
+  orc = 10

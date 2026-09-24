@@ -2,7 +2,7 @@ import i18n
 
 from scripts.cat.skills import SkillPath
 from scripts.dnd.dnd_stats import Stats
-from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType
+from scripts.dnd.dnd_types import StatType, DnDSkillType, LinageType, ClassType
 from scripts.game_structure import constants
 
 
@@ -159,6 +159,25 @@ class DnDSkills:
         },
     }
 
+    class_proficiency = {
+        ClassType.BRUTE: [DnDSkillType.ATHLETICS, DnDSkillType.INTIMIDATION, DnDSkillType.SURVIVAL],
+        ClassType.SILVER_TONGUE: [DnDSkillType.PERFORMANCE, DnDSkillType.PERCEPTION, DnDSkillType.PERSUASION],
+        ClassType.CHOSEN: [DnDSkillType.RELIGION, DnDSkillType.HISTORY, DnDSkillType.ARCANA],
+        ClassType.BLOOD_OLD: [DnDSkillType.NATURE, DnDSkillType.SURVIVAL, DnDSkillType.MEDICINE],
+        ClassType.SKILLED_WARRIOR: [DnDSkillType.ATHLETICS, DnDSkillType.ACROBATICS ,DnDSkillType.INTIMIDATION],
+        ClassType.WISDOM: [DnDSkillType.ACROBATICS, DnDSkillType.ATHLETICS, DnDSkillType.HISTORY],
+        ClassType.PROTECTOR: [DnDSkillType.ATHLETICS, DnDSkillType.RELIGION, DnDSkillType.INSIGHT],
+        ClassType.BLOOD_CHOSEN: [DnDSkillType.HISTORY, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.DECEPTION],
+        ClassType.KNOWLEDGE: [DnDSkillType.INVESTIGATION, DnDSkillType.ARCANA, DnDSkillType.INSIGHT],
+        ClassType.SHADOW: [DnDSkillType.STEALTH, DnDSkillType.SLEIGHT_OF_PAW, DnDSkillType.DECEPTION],
+        ClassType.SWORN: [DnDSkillType.ARCANA, DnDSkillType.INSIGHT, DnDSkillType.HISTORY],
+        ClassType.EXPLORER: [DnDSkillType.NATURE, DnDSkillType.ANIMAL_HANDLING, DnDSkillType.SURVIVAL],
+    }
+
+    special_class_proficiency = {
+        ClassType.BLOOD_CHOSEN: [DnDSkillType.ARCANA]
+    }
+
     def __init__(self, stats = None):
         self.skills = {
             DnDSkillType.ACROBATICS: 0,
@@ -230,12 +249,25 @@ class DnDSkills:
                 self.proficiency.append(keys[0])
                 self.skills[keys[0]] += 1
 
-    def update_skills(self, cat_stats: Stats):
+    def update_skills(self, cat_stats: Stats, cat_class: ClassType = None, cat_level = "level 0"):
         # set all the skills according to the connected stats
         for stat_type in self.skill_based.keys():
             modifier = cat_stats.modifier[cat_stats.stats[stat_type]]
             for skill_type in self.skill_based[stat_type]:
                 self.skills[skill_type] = modifier
+        if cat_class and cat_level:
+            # set special proficiency which are not depending on level
+            if cat_class in self.special_class_proficiency:
+                for proficiency in self.special_class_proficiency[cat_class]:
+                    self.set_proficiency(proficiency)
+            number = int(cat_level.split(" ")[1])
+            index = 0
+            for nedded_number in constants.DND_CONFIG["class_proficiency_leveling"]:
+                if number >= nedded_number:
+                    prof = self.class_proficiency[cat_class][index]
+                    self.set_proficiency(prof)
+                index += 1
+            
         # add the proficiency bonus
         for proficiency_type in self.proficiency:
             self.skills[proficiency_type] += constants.DND_CONFIG["proficiency_bonus"]

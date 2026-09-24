@@ -24,7 +24,8 @@ from scripts.ui.generate_box import get_box, BoxStyles
 from scripts.ui.generate_button import get_button_dict, ButtonStyles
 from scripts.ui.icon import Icon
 
-from scripts.dnd.dnd_types import StatType
+from scripts.dnd.dnd_types import StatType, ClassType
+from scripts.dnd.dnd_skills import DnDSkills
 
 def get_leveled_cat():
     "Returns if a cat had a level up or not."
@@ -73,6 +74,9 @@ class LevelingScreen(Screens):
         self.current_skills = None
         self.selected_stat = None
         self.choose_class = False
+        self.choosen_class = None
+        self.class_buttons_first = {}
+        self.class_buttons_second = {}
 
     def handle_event(self, event):
         if event.type == pygame_gui.UI_BUTTON_START_PRESS:
@@ -93,6 +97,11 @@ class LevelingScreen(Screens):
                 stat = list(StatType)[self.stat_focus].value
                 self.stat_focus_button.set_text(f"dnd.stats.{stat}")
                 self.update_skill_info()
+                
+            elif event.ui_element == self.last_class or event.ui_element == self.next_class:
+                self.first_class_page = not self.first_class_page
+                self.update_class_selection()
+
             elif event.ui_element == self.last_stat:
                 self.stat_focus -= 1
                 if self.stat_focus < 0:
@@ -114,6 +123,8 @@ class LevelingScreen(Screens):
                 self.current_skills = self.selected_cat.dnd_skills.skill_based[self.selected_stat]
                 self.update_skill_info()
             elif event.ui_element == self.done_button:
+                if self.choose_class:
+                    self.selected_cat.dnd_class = self.choosen_class
                 stats = self.selected_cat.dnd_stats.genetic_stats
                 for stat in StatType:
                     self.selected_cat.dnd_stats.genetic_stats[stat] = stats[stat]
@@ -121,11 +132,12 @@ class LevelingScreen(Screens):
                         self.selected_cat.dnd_stats.genetic_stats[stat] += self.increases[stat]
                 self.selected_cat.dnd_stats.update_stats()
                 self.selected_cat.dnd_skills.proficiency.extend(self.new_proficiency)
-                self.selected_cat.dnd_skills.update_skills(self.selected_cat.dnd_stats)
+                self.selected_cat.dnd_skills.update_skills(self.selected_cat.dnd_stats, self.selected_cat.dnd_class, self.selected_cat.experience_level)
                 game.clan.xp[self.selected_cat.ID] = self.selected_cat.experience_level
                 self.selected_cat = None
                 self.update_selected_cats()
                 self.update_list_cats()
+                self.update_class_selection()
             elif event.ui_element in self.stat_dec_buttons.values():
                 for stat in StatType:
                     if self.stat_dec_buttons[stat] == event.ui_element:
@@ -149,6 +161,29 @@ class LevelingScreen(Screens):
                     self.selected_cat = event.ui_element.return_cat_object()
                     self.update_selected_cats()
 
+            elif event.ui_element in self.class_buttons_first.values():
+                for dnd_class in ClassType:
+                    if dnd_class.value not in self.class_buttons_first:
+                        continue
+                    if event.ui_element == self.class_buttons_first[dnd_class.value]:
+                        if self.choosen_class == dnd_class:
+                            self.choosen_class = None
+                        else:
+                            self.choosen_class = dnd_class
+                self.update_buttons()
+                self.update_class_selection()
+            elif event.ui_element in self.class_buttons_second.values():
+                for dnd_class in ClassType:
+                    if dnd_class.value not in self.class_buttons_second:
+                        continue
+                    if event.ui_element == self.class_buttons_second[dnd_class.value]:
+                        if self.choosen_class == dnd_class:
+                            self.choosen_class = None
+                        else:
+                            self.choosen_class = dnd_class
+                self.update_buttons()
+                self.update_class_selection()
+
     def screen_switches(self):
         super().screen_switches()
         self.show_mute_buttons()
@@ -166,9 +201,14 @@ class LevelingScreen(Screens):
         self.stat_inc_buttons = {}
         self.stat_dec_buttons = {}
 
+        self.choosen_class = None
+        self.class_buttons_first = {}
+        self.class_buttons_second = {}
+
         self.stat_list = [stat for stat in StatType]
         self.current_skills = None
         self.selected_stat = None
+        self.first_class_page = True
 
         self.page = 1
 
@@ -217,6 +257,20 @@ class LevelingScreen(Screens):
             object_id="#dnd_leveling_prev",
             manager=MANAGER,
         )
+
+        self.next_class = UIImageButton(
+            ui_scale(pygame.Rect((250, 320), (22, 34))), "",
+            object_id="#dnd_leveling_next",
+            manager=MANAGER,
+        )
+        self.next_class.hide()
+        
+        self.last_class = UIImageButton(
+            ui_scale( pygame.Rect((28, 320), (22, 34))), "",
+            object_id="#dnd_leveling_prev",
+            manager=MANAGER,
+        )
+        self.last_class.hide()
 
         self.next_page = UISurfaceImageButton(
             ui_scale(pygame.Rect((433, 619), (34, 34))),
@@ -343,14 +397,15 @@ class LevelingScreen(Screens):
         self.selected_cat_elements = {}
         self.new_proficiency = []
         self.increases = {}
+        self.choosen_class = None
 
         self.draw_info_block(self.selected_cat, (50, 80))
 
         if self.selected_cat:
             self.collect_leveling_need()
+            self.update_class_selection()
             self.update_skill_info()
             self.update_stat_info()
-            self.update_class_selection()
         self.update_buttons()
 
     def draw_info_block(self, cat, starting_pos: tuple):
@@ -363,19 +418,17 @@ class LevelingScreen(Screens):
         else:
             other_cat = None
 
-        tag = str(starting_pos)
-
         x = starting_pos[0]
         y = starting_pos[1]
 
-        self.selected_cat_elements["cat_image" + tag] = pygame_gui.elements.UIImage(
+        self.selected_cat_elements["cat_image"] = pygame_gui.elements.UIImage(
             ui_scale(pygame.Rect((x + 50, y + 7), (100, 100))),
             pygame.transform.scale(cat.sprite, ui_scale_dimensions((100, 100))),
         )
 
         name = str(cat.name)
         short_name = shorten_text_to_fit(name, 62, 7)
-        self.selected_cat_elements["name" + tag] = pygame_gui.elements.UILabel(
+        self.selected_cat_elements["name"] = pygame_gui.elements.UILabel(
             ui_scale(pygame.Rect((x, y + 100), (200, 30))),
             short_name,
             object_id="#text_box_30_horizcenter",
@@ -383,13 +436,13 @@ class LevelingScreen(Screens):
 
         # Level information
         current_level = cat.experience_level
-        self.selected_cat_elements["current_level" + tag] = pygame_gui.elements.UITextBox(
+        self.selected_cat_elements["current_level"] = pygame_gui.elements.UITextBox(
             f"<b>Current level: {current_level}</b>",
             ui_scale(pygame.Rect((x + 245 , y ), (200, 30))),
             object_id="#text_box_30_horizcenter",
         )
         saved_level = game.clan.xp[cat.ID]
-        self.selected_cat_elements["saved_level" + tag] = pygame_gui.elements.UITextBox(
+        self.selected_cat_elements["saved_level"] = pygame_gui.elements.UITextBox(
             f"Previous level: {saved_level}",
             ui_scale(pygame.Rect((x + 245 , y + 25), (200, 30))),
             object_id="#text_box_30_horizcenter",
@@ -418,7 +471,7 @@ class LevelingScreen(Screens):
                 "resources/images/nonbi_big.png"
             ).convert_alpha()
 
-        self.selected_cat_elements["gender" + tag] = pygame_gui.elements.UIImage(
+        self.selected_cat_elements["gender"] = pygame_gui.elements.UIImage(
             ui_scale(pygame.Rect((x + 160, y + 12), (25, 25))),
             pygame.transform.scale(gender_icon, ui_scale_dimensions((25, 25))),
         )
@@ -426,7 +479,7 @@ class LevelingScreen(Screens):
         related = False
         # MATE
         if other_cat and len(cat.mate) > 0 and other_cat.ID in cat.mate:
-            self.selected_cat_elements["mate_icon" + tag] = pygame_gui.elements.UIImage(
+            self.selected_cat_elements["mate_icon"] = pygame_gui.elements.UIImage(
                 ui_scale(pygame.Rect((x + 14, y + 14), (22, 20))),
                 pygame.transform.scale(
                     image_cache.load_image(
@@ -442,13 +495,13 @@ class LevelingScreen(Screens):
             col1 += "\n" + trait[:12] + "..."
         else:
             col1 += "\n" + trait
-        self.selected_cat_elements["col1" + tag] = pygame_gui.elements.UITextBox(
+        self.selected_cat_elements["col1"] = pygame_gui.elements.UITextBox(
             col1,
             ui_scale(pygame.Rect((x + 21, y + 126), (90, -1))),
             object_id="#text_box_22_horizleft_spacing_95",
             manager=MANAGER,
         )
-        self.selected_cat_elements["col1" + tag].disable()
+        self.selected_cat_elements["col1"].disable()
 
         mates = False
         lineage = i18n.t(f"dnd.lineage.{cat.dnd_lineage.lineage_type.value}")
@@ -467,100 +520,88 @@ class LevelingScreen(Screens):
             col2 += "\n" + lineage
 
 
-        self.selected_cat_elements["col2" + tag] = pygame_gui.elements.UITextBox(
+        self.selected_cat_elements["col2"] = pygame_gui.elements.UITextBox(
             col2,
             ui_scale(pygame.Rect((x + 110, y + 126), (80, -1))),
             object_id="#text_box_22_horizleft_spacing_95",
             manager=MANAGER,
         )
-        self.selected_cat_elements["col2" + tag].disable()
+        self.selected_cat_elements["col2"].disable()
 
-        # Relation info:
-        if related and other_cat and not mates:
-            relation = ""
-            if cat.is_uncle_aunt(other_cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.niece"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.nephew"
-                else:
-                    relation = "general.siblings_child"
-            elif other_cat.is_uncle_aunt(cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.aunt"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.uncle"
-                else:
-                    relation = "general.parents_sibling"
-            elif other_cat.is_grandparent(cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.grandmother"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.grandfather"
-                else:
-                    relation = "general.grandparent"
-            elif cat.is_grandparent(other_cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.granddaughter"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.grandson"
-                else:
-                    relation = "general.grandchild"
-            elif other_cat.is_parent(cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.mother"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.father"
-                else:
-                    relation = "general.parent"
-            elif cat.is_parent(other_cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.daughter"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.son"
-                else:
-                    relation = "general.child"
-            elif other_cat.is_sibling(cat) or cat.is_sibling(other_cat):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.sister"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.brother"
-                else:
-                    relation = "general.sibling"
+    def update_class_selection(self):
+        for dnd_class in self.class_buttons_first.keys():
+            self.class_buttons_first[dnd_class].kill()
+        del self.class_buttons_first
+        for dnd_class in self.class_buttons_second.keys():
+            self.class_buttons_second[dnd_class].kill()
+        del self.class_buttons_second
+        self.class_buttons_first = {}
+        self.class_buttons_second = {}
+        self.next_class.hide()
+        self.last_class.hide()
 
-                if other_cat.is_littermate(cat) or cat.is_littermate(other_cat):
-                    relation = i18n.t(
-                        "general.sibling_littermate", relation=i18n.t(relation)
-                    )
-            elif not get_clan_setting("first cousin mates") and other_cat.is_cousin(
-                cat
-            ):
-                if other_cat.genderalign in ("female", "trans female"):
-                    relation = "general.cousin_female"
-                elif other_cat.genderalign in ("male", "trans male"):
-                    relation = "general.cousin_male"
-                else:
-                    relation = "general.cousin_nb"
+        if not self.selected_cat:
+            return
 
-            self.selected_cat_elements[
-                "col2_relation" + tag
-            ] = pygame_gui.elements.UITextBox(
-                i18n.t("general.related_text"),
-                ui_scale(pygame.Rect((x + 110, -15), (80, -1))),
-                starting_height=3,
-                object_id="#text_box_22_horizleft_spacing_95",
+
+        prev_element = self.selected_cat_elements["col2"]
+        if self.selected_cat.dnd_class:
+            dnd_class = self.selected_cat.dnd_class
+            class_button = UISurfaceImageButton(
+                ui_scale(pygame.Rect((60, 5), (180, 20))),
+                f"dnd.class.{dnd_class.value}",
+                get_button_dict(ButtonStyles.ROUNDED_RECT, (180, 20)),
+                object_id="@buttonstyles_rounded_rect",
                 manager=MANAGER,
-                anchors={"top_target": self.selected_cat_elements["col2" + tag]},
+                tool_tip_text=f"dnd.class.{dnd_class.value}_description",
+                anchors={
+                    "top_target": prev_element,
+                }
             )
-            self.selected_cat_elements["col2_relation" + tag].set_tooltip(
-                text=i18n.t(relation)
-            )
-            self.selected_cat_elements["col2_relation" + tag].tool_tip_delay = 0
-            self.selected_cat_elements["col2_relation" + tag].disable()
+            class_button.disable()
+            self.class_buttons_first[dnd_class.value] = class_button
+
+        else:
+            count = 0
+            self.next_class.show()
+            self.last_class.show()
+            for dnd_class in ClassType:
+                # this can't be choosen
+                if dnd_class.value == "Blood_Chosen":
+                    continue
+                if count == 6:
+                    prev_element = self.selected_cat_elements["col2"]
+                button_dict = get_button_dict(ButtonStyles.ROUNDED_RECT, (182, 25))
+                button_dict["selected"] = button_dict["hovered"]
+                class_button = UISurfaceImageButton(
+                    ui_scale(pygame.Rect((59, 3), (182, 25))),
+                    f"dnd.class.{dnd_class.value}",
+                    button_dict,
+                    object_id="@buttonstyles_rounded_rect",
+                    manager=MANAGER,
+                    tool_tip_text=f"dnd.class.{dnd_class.value}_description",
+                    anchors={
+                        "top_target": prev_element,
+                    }
+                )
+                if self.choosen_class and self.choosen_class != dnd_class:
+                    class_button.disable()
+                if count < 6:
+                    self.class_buttons_first[dnd_class.value] = class_button
+                    if not self.first_class_page:
+                        class_button.hide()
+                else:
+                    self.class_buttons_second[dnd_class.value] = class_button
+                    if self.first_class_page:
+                        class_button.hide()
+
+                prev_element = class_button
+                count += 1
 
     def update_skill_info(self):
         self.selected_stat = self.stat_list[self.stat_focus]
-        self.current_skills = self.selected_cat.dnd_skills.skill_based[self.selected_stat]
+
+        self.current_skills = DnDSkills.skill_based[self.selected_stat]
         for skill in self.skill_buttons.keys():
             self.skill_buttons[skill].kill()
         self.skill_buttons = {}
@@ -587,8 +628,10 @@ class LevelingScreen(Screens):
         button_pos_y = text_pos_y + 8
         step_increase = 25
 
-        skills = self.selected_cat.dnd_skills.skills
-        proficiency = self.selected_cat.dnd_skills.proficiency
+        skills = DnDSkills().skills
+        proficiency = []
+        if self.selected_cat:
+            proficiency = self.selected_cat.dnd_skills.proficiency
         for skill in skills:
             if skill not in self.current_skills:
                 continue
@@ -602,7 +645,7 @@ class LevelingScreen(Screens):
 
 
             modifier = skills[skill]
-            stat_based_on = [stat for stat in StatType if skill in self.selected_cat.dnd_skills.skill_based[stat]][0]
+            stat_based_on = [stat for stat in StatType if skill in DnDSkills.skill_based[stat]][0]
             if stat_based_on in self.increases:
                 new_stat_number = self.selected_cat.dnd_stats.stats[stat_based_on] + self.increases[stat_based_on]
                 modifier = self.selected_cat.dnd_stats.modifier[new_stat_number]
@@ -723,12 +766,6 @@ class LevelingScreen(Screens):
 
         self.update_buttons()
 
-    def update_class_selection(self):
-        if self.choose_class:
-            print("Choosing class...")
-        if self.selected_cat.dnd_class:
-            print("Class already selected")
-
     def selected_cat_list(self):
         output = []
         if self.selected_cat:
@@ -739,6 +776,8 @@ class LevelingScreen(Screens):
     def update_buttons(self):
         if self.selected_cat:
             if self.update_stat > 0 or self.update_skill > 0:
+                self.done_button.disable()
+            elif self.choose_class and self.choosen_class is None:
                 self.done_button.disable()
             else:
                 self.done_button.enable()
@@ -777,12 +816,13 @@ class LevelingScreen(Screens):
         saved_level_number = int(game.clan.xp[self.selected_cat.ID].split(" ")[1])
         if start_level_number > saved_level_number:
             start_level_number = saved_level_number
+
+        if self.selected_cat.dnd_class == None and constants.DND_CONFIG["choosing_class"] <= end_level_number:
+            self.choose_class = True
         for level in constants.DND_CONFIG["leveling"].keys():
             current_level_number = int(level.split(" ")[1])
             if start_level_number <= current_level_number and constants.DND_CONFIG["leveling"][level]:
                 info = constants.DND_CONFIG["leveling"][level].split(":")
-                if info == constants.DND_CONFIG["choosing_class"]:
-                    self.choose_class = True
                 lvl_type = info[0]
                 amount = info[1]
                 if lvl_type == "stat":
@@ -817,12 +857,16 @@ class LevelingScreen(Screens):
         del self.last_stat
         self.next_stat.kill()
         del self.next_stat
+        self.next_class.kill()
+        del self.next_class
+        self.last_class.kill()
+        del self.last_class
         self.stat_focus_button.kill()
         del self.stat_focus_button
         if self.skill_start_text:
             self.skill_start_text.kill()
             del self.skill_start_text
-        if self. stat_start_text:
+        if self.stat_start_text:
             self.stat_start_text.kill()
             del self.stat_start_text
         for skill in self.skill_buttons.keys():
@@ -831,6 +875,12 @@ class LevelingScreen(Screens):
         for skill in self.skill_info.keys():
             self.skill_info[skill].kill()
         del self.skill_info
+        for dnd_class in self.class_buttons_first.keys():
+            self.class_buttons_first[dnd_class].kill()
+        del self.class_buttons_first
+        for dnd_class in self.class_buttons_second.keys():
+            self.class_buttons_second[dnd_class].kill()
+        del self.class_buttons_second
         for skill in self.skill_modifier.keys():
             self.skill_modifier[skill].kill()
         del self.skill_modifier

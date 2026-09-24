@@ -1,0 +1,28 @@
+{
+    "en": {
+        "Brute": "Brute",
+        "Silver": "Silver Tongue",
+        "Chosen": "Chosen of the StarClan",
+        "Blood_Old": "Blood of the Old Clans",
+        "Skilled": "Skilled Warrior",
+        "Wisdom": "Wisdom of the Paws",
+        "Protector": "Protector of StarClan",
+        "Blood_Chosen": "Blood of the Chosen One",
+        "Knowledge": "Knowledge Seeker",
+        "Shadow": "Shadow Stalker",
+        "Sworn": "Sworn",
+        "Explorer": "Explorer",
+        "Brute_description": "Proficiency in Athletics, Intimidation, and Survival",
+        "Silver_description": "Proficiency in Performance, Perception, and Persuasion",
+        "Chosen_description": "Proficiency in Religion, History, and Arcana",
+        "Blood_Old_description": "Proficiency in Nature, Survival, and Medicine",
+        "Skilled_description": "Proficiency in Athletics, Acrobatics, and Intimidation",
+        "Wisdom_description": "Proficiency in Acrobatics, Athletics, and History",
+        "Protector_description": "Proficiency in Athletics, Religion, and Insight",
+        "Blood_Chosen_description": "Proficiency in Arcana, History, and Sleight of Paw",
+        "Knowledge_description": "Proficiency in Investigation, Arcana, and Insight",
+        "Shadow_description": "Proficiency in Stealth, Sleight of Paw, and Deception",
+        "Sworn_description": "Proficiency in Arcana, Insight, and History",
+        "Explorer_description": "Proficiency in Nature, Animal Handling, and Survival"
+    }
+}

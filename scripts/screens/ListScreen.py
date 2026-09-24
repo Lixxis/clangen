@@ -32,8 +32,6 @@ from scripts.ui.icon import Icon
 from scripts.ui.theme import get_text_box_theme
 from scripts.ui.scale import ui_scale, ui_scale_value
 
-from scripts.dnd.dnd_leveling import DnDCatLevels, get_leveled_cat, update_levels
-
 
 class ListScreen(Screens):
     current_page = 1
@@ -488,11 +486,7 @@ class ListScreen(Screens):
         self.update_cat_list()
 
         # DND - STUFF
-        #leveled_cats = get_leveled_cat()
-        #if leveled_cats:
-        #    for cat in leveled_cats:
-        #        DnDCatLevels(cat)
-        #    update_levels(leveled_cats)
+        # TODO: notification level up
 
 
     def display_change_save(self) -> Dict:
