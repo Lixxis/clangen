@@ -32,6 +32,13 @@ from scripts.ui.icon import Icon
 from scripts.ui.theme import get_text_box_theme
 from scripts.ui.scale import ui_scale, ui_scale_value
 
+from scripts.game_structure.game.switches import (
+    switch_set_value,
+    switch_get_value,
+    Switch,
+)
+
+from scripts.dnd.LevelingScreen import get_leveled_cat, LevelNotificationWindow
 
 class ListScreen(Screens):
     current_page = 1
@@ -486,7 +493,13 @@ class ListScreen(Screens):
         self.update_cat_list()
 
         # DND - STUFF
-        # TODO: notification level up
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            LevelNotificationWindow(
+                switch_get_value(Switch.cur_screen),
+                True,
+                Screens.menu_buttons["main_menu"],
+            )
 
 
     def display_change_save(self) -> Dict:

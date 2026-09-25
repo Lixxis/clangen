@@ -42,6 +42,13 @@ from scripts.ui.scale import (
     ui_scale_value,
 )
 from scripts.clan_package.get_clan_cats import get_living_clan_cat_count
+from scripts.game_structure.game.switches import (
+    switch_set_value,
+    switch_get_value,
+    Switch,
+)
+
+from scripts.dnd.LevelingScreen import get_leveled_cat, LevelNotificationWindow
 
 class EventsScreen(Screens):
     current_display = "all events"
@@ -389,7 +396,13 @@ class EventsScreen(Screens):
         self.show_menu_buttons()
 
         # DND - STUFF
-        # TODO: notification level up
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            LevelNotificationWindow(
+                switch_get_value(Switch.cur_screen),
+                True,
+                Screens.menu_buttons["main_menu"],
+            )
 
     def reset_page_buttons(self, is_page_update=False):
         """

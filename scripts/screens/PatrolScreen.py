@@ -27,6 +27,13 @@ from ..ui.generate_button import get_button_dict, ButtonStyles
 from ..ui.icon import Icon
 from ..ui.windows.rel_change_details import RelChangeDetailWindow
 
+from scripts.game_structure.game.switches import (
+    switch_get_value,
+    Switch,
+)
+
+from scripts.dnd.LevelingScreen import get_leveled_cat, LevelNotificationWindow
+
 class PatrolScreen(Screens):
     current_patrol = []
     patrol_stage = "choose_cats"  # Can be 'choose_cats', 'patrol_events' or 'patrol_complete'. Controls the stage of patrol.
@@ -311,7 +318,13 @@ class PatrolScreen(Screens):
             self.open_choose_cats_screen()
 
             # DND - STUFF
-            # TODO: notification level up
+            leveled_cats = get_leveled_cat()
+            if leveled_cats:
+                LevelNotificationWindow(
+                    switch_get_value(Switch.cur_screen),
+                    True,
+                    Screens.menu_buttons["main_menu"],
+                )
 
         elif event.ui_element == self.elements["clan_return"]:
             self.in_progress_data = None
@@ -338,7 +351,13 @@ class PatrolScreen(Screens):
             self.open_choose_cats_screen()
 
         # DND - STUFF
-        # TODO: notification level up
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            LevelNotificationWindow(
+                switch_get_value(Switch.cur_screen),
+                True,
+                Screens.menu_buttons["main_menu"],
+            )
 
 
     def display_change_save(self) -> Dict:

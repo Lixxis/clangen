@@ -22,6 +22,13 @@ from ..game_structure.game.switches import switch_set_value, Switch
 from ..cat.enums import CatRank
 from ..ui.elements.save_button import UISaveButton
 from ..ui.generate_button import ButtonStyles, get_button_dict
+from scripts.game_structure.game.switches import (
+    switch_set_value,
+    switch_get_value,
+    Switch,
+)
+
+from scripts.dnd.LevelingScreen import get_leveled_cat, LevelNotificationWindow
 
 class ClanScreen(Screens):
     max_sprites_displayed = (
@@ -248,7 +255,14 @@ class ClanScreen(Screens):
 
         self.update_buttons_and_text()
         # DND - STUFF
-        # TODO: notification level up
+        leveled_cats = get_leveled_cat()
+        if leveled_cats:
+            LevelNotificationWindow(
+                switch_get_value(Switch.cur_screen),
+                True,
+                Screens.menu_buttons["main_menu"],
+            )
+
 
     def exit_screen(self):
         # removes the cat sprites.

@@ -962,3 +962,29 @@ class NoLevelingNeeded(GameWindow):
                 self.kill()
 
         return super().process_event(event)
+
+
+
+class LevelNotificationWindow(GameWindow):
+    def __init__(self, last_screen, is_main_menu, mm_btn):
+        super().__init__(
+            ui_scale(pygame.Rect((250, 200), (300, 130))),
+        )
+
+        self.last_screen = last_screen
+        self.isMainMenu = is_main_menu
+        self.mm_btn = mm_btn
+        self.game_over_message = UITextBoxTweaked(
+            "dnd.general.leveling_notification",
+            ui_scale(pygame.Rect((20, 20), (260, -1))),
+            line_spacing=1,
+            object_id="#text_box_30_horizcenter",
+            container=self,
+        )
+
+    def process_event(self, event):
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            if event.ui_element == self.back_button:
+                if self.isMainMenu:
+                    self.mm_btn.enable()
+        return super().process_event(event)
