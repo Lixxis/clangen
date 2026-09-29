@@ -50,3 +50,19 @@ class ClassType(Enum):
     SHADOW = "Shadow" #Rouge
     SWORN = "Sworn" #Warlock
     EXPLORER = "Explorer" #Ranger
+
+    @classmethod
+    def from_value(cls, value):
+        if value is None:
+            return None
+        if isinstance(value, cls):
+            return value
+        if isinstance(value, str):
+            normalized = value.strip()
+            for member in cls:
+                if member.value == normalized:
+                    return member
+                if member.value.lower() == normalized.lower():
+                    return member
+            raise ValueError(f"Unknown ClassType value: {value!r}")
+        raise TypeError(f"Unsupported ClassType value: {value!r}")

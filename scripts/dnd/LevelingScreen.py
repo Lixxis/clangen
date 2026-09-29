@@ -27,16 +27,16 @@ from scripts.ui.icon import Icon
 from scripts.dnd.dnd_types import StatType, ClassType
 from scripts.dnd.dnd_skills import DnDSkills
 
-def get_leveled_cat():
+def get_leveled_cats():
     "Returns if a cat had a level up or not."
     leveled_cat = []
     for cat_id, cat in Cat.all_cats.items():
-        if cat.dead:
+        if cat.dead or not cat.status.group or cat.status.is_other_clancat:
             continue
         if cat_id in game.clan.xp and cat.experience_level != game.clan.xp[cat_id]:
             leveled_cat.append(cat)
         if not cat.faded and cat_id not in game.clan.xp:
-            game.clan.xp[cat_id] = cat.experience_level
+            game.clan.xp[cat_id] = "level 0" #level 0 otherwise no new cat has to be leveld
     return leveled_cat
 
 
@@ -328,7 +328,7 @@ class LevelingScreen(Screens):
     def update_list_cats(self):
         self.all_cats_list = [
             i
-            for i in get_leveled_cat()
+            for i in get_leveled_cats()
             if i.status.alive_in_player_clan
         ]
         self.all_cats = self.chunks(self.all_cats_list, 24)
@@ -540,9 +540,8 @@ class LevelingScreen(Screens):
         self.next_class.hide()
         self.last_class.hide()
 
-        if not self.selected_cat:
+        if not self.selected_cat or not self.choose_class:
             return
-
 
         prev_element = self.selected_cat_elements["col2"]
         if self.selected_cat.dnd_class:
@@ -560,6 +559,17 @@ class LevelingScreen(Screens):
             )
             class_button.disable()
             self.class_buttons_first[dnd_class.value] = class_button
+            description_text = pygame_gui.elements.UITextBox(
+                relative_rect=ui_scale(pygame.Rect((55, 25), (190, -1))),
+                html_text=f"dnd.class.{dnd_class.value}_description",
+                object_id=get_text_box_theme("#text_box_26_horizcenter_vertcenter_spacing_95"),
+                manager=MANAGER,
+                anchors={
+                    "top_target": prev_element,
+                }
+            )
+            self.class_buttons_first[dnd_class.value + "_description"] = description_text
+
 
         else:
             count = 0
@@ -645,16 +655,18 @@ class LevelingScreen(Screens):
 
 
             modifier = skills[skill]
+            if self.selected_cat:
+                modifier = self.selected_cat.dnd_skills.get_rolling_skill(skill)
             stat_based_on = [stat for stat in StatType if skill in DnDSkills.skill_based[stat]][0]
             if stat_based_on in self.increases:
                 new_stat_number = self.selected_cat.dnd_stats.stats[stat_based_on] + self.increases[stat_based_on]
                 modifier = self.selected_cat.dnd_stats.modifier[new_stat_number]
-                modifier += constants.DND_CONFIG["proficiency_bonus"] if skill in self.selected_cat.dnd_skills.proficiency else 0
+                if skill in self.selected_cat.dnd_skills.proficiency:
+                    modifier += constants.DND_CONFIG["proficiency_bonus"]
+
             if skill in self.new_proficiency:
                 modifier += constants.DND_CONFIG["proficiency_bonus"]
-            addition = 23
-            if modifier < 0:
-                addition += 2
+
             self.skill_info[skill.value] = pygame_gui.elements.UITextBox(
                 text,
                 ui_scale(pygame.Rect((text_pos_x + 23, text_pos_y), (140, 40))),
@@ -669,7 +681,7 @@ class LevelingScreen(Screens):
             if modifier >= 0:
                 modifier = "+" + str(modifier)
             else:
-                modifier = str(skills[skill])
+                modifier = str(modifier)
             self.skill_modifier[skill.value] = pygame_gui.elements.UITextBox(
                 modifier,
                 ui_scale(pygame.Rect((text_pos_x, text_pos_y), (140, 40))),
@@ -817,8 +829,8 @@ class LevelingScreen(Screens):
         if start_level_number > saved_level_number:
             start_level_number = saved_level_number
 
-        if self.selected_cat.dnd_class == None and constants.DND_CONFIG["choosing_class"] <= end_level_number:
-            self.choose_class = True
+        current_level_number = int(self.selected_cat.experience_level.split(" ")[1])
+        self.choose_class = self.selected_cat.dnd_class == None and current_level_number > constants.DND_CONFIG["choosing_class"]
         for level in constants.DND_CONFIG["leveling"].keys():
             current_level_number = int(level.split(" ")[1])
             if start_level_number <= current_level_number and constants.DND_CONFIG["leveling"][level]:
@@ -829,6 +841,8 @@ class LevelingScreen(Screens):
                     self.update_stat += int(amount)
                 if lvl_type == "skill":
                     self.update_skill += int(amount)
+            if not self.choose_class and int(level.split(" ")[1]) == constants.DND_CONFIG["choosing_class"]:
+                self.choose_class = True
             if current_level_number == end_level_number:
                 break
 

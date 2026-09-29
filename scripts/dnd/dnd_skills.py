@@ -229,15 +229,19 @@ class DnDSkills:
                 dnd_skill_string += "</b>"
         return dnd_skill_string
 
+    def get_rolling_skill(self, skill_type: DnDSkillType):
+        if skill_type in self.proficiency:
+            return self.skills[skill_type] + constants.DND_CONFIG["proficiency_bonus"]
+        else:
+            return self.skills[skill_type]
+
     def set_proficiency(self, skill_type: DnDSkillType):
         if skill_type not in self.proficiency:
             self.proficiency.append(skill_type)
-            self.skills[skill_type] += 1
 
     def remove_proficiency(self, skill_type: DnDSkillType):
         if skill_type in self.proficiency:
             self.proficiency.remove(skill_type)
-            self.skills[skill_type] -= 1
 
     def get_proficiency_list(self):
         return [skill.value for skill in self.proficiency]
@@ -246,8 +250,7 @@ class DnDSkills:
         for skill_value in list:
             keys = [key for key in DnDSkillType if key.value == skill_value]
             if keys:
-                self.proficiency.append(keys[0])
-                self.skills[keys[0]] += 1
+                self.proficiency.extend(keys)
 
     def update_skills(self, cat_stats: Stats, cat_class: ClassType = None, cat_level = "level 0"):
         # set all the skills according to the connected stats
@@ -255,11 +258,14 @@ class DnDSkills:
             modifier = cat_stats.modifier[cat_stats.stats[stat_type]]
             for skill_type in self.skill_based[stat_type]:
                 self.skills[skill_type] = modifier
+
+        # class proficiencies
         if cat_class and cat_level:
             # set special proficiency which are not depending on level
             if cat_class in self.special_class_proficiency:
                 for proficiency in self.special_class_proficiency[cat_class]:
                     self.set_proficiency(proficiency)
+            # set the proficiency depending on level
             number = int(cat_level.split(" ")[1])
             index = 0
             for nedded_number in constants.DND_CONFIG["class_proficiency_leveling"]:
@@ -267,7 +273,4 @@ class DnDSkills:
                     prof = self.class_proficiency[cat_class][index]
                     self.set_proficiency(prof)
                 index += 1
-            
-        # add the proficiency bonus
-        for proficiency_type in self.proficiency:
-            self.skills[proficiency_type] += constants.DND_CONFIG["proficiency_bonus"]
+

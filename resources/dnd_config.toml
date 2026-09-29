@@ -8,6 +8,9 @@ proficiency_bonus = 1
 choosing_class = 2
 class_proficiency_leveling = [2, 8, 14]
 
+# 1/chance the cat inherit the class from parents / grandparents or without parents will be generated with it
+blood_chosen_chance = 10
+
 [leveling]
   "level 0" = ""
   "level 1" = ""

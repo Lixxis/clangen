@@ -28,6 +28,7 @@ from ..housekeeping.datadir import get_save_dir
 from scripts.dnd.dnd_stats import Stats
 from scripts.dnd.dnd_lineages import Lineage
 from scripts.dnd.dnd_skills import DnDSkills
+from scripts.dnd.dnd_types import ClassType
 
 logger = logging.getLogger(__name__)
 
@@ -220,12 +221,17 @@ def json_load():
                     trait=cat["trait"], kit_trait=new_cat.age in ["newborn", "kitten"]
                 )
 
+            # DND - STUFF
             if "dnd_lineage" in cat:
                 new_cat.dnd_lineage = Lineage({cat["dnd_lineage"]: 100})
             else:
                 new_cat.dnd_lineage = Lineage()
 
-            # DND - STUFF
+            if "dnd_class" in cat and cat["dnd_class"]:
+                new_cat.dnd_class = ClassType.from_value(cat["dnd_class"])
+            else:
+                new_cat.dnd_class = None
+
             if "dnd_stats" in cat:
                 new_cat.dnd_stats = Stats(
                     cat["dnd_stats"]["str"],
@@ -242,7 +248,7 @@ def json_load():
             new_cat.dnd_skills = DnDSkills(new_cat.dnd_stats)
             if "dnd_proficiency" in cat:
                 new_cat.dnd_skills.load_proficiency_list(cat["dnd_proficiency"])
-
+            new_cat.dnd_skills.update_skills(new_cat.dnd_stats, new_cat.dnd_class, new_cat.experience_level)
 
             new_cat.mentor = cat["mentor"]
             new_cat.former_mentor = (

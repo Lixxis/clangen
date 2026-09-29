@@ -435,8 +435,31 @@ class Cat:
         p2_cat = Cat.fetch_cat(parent2)
         self.dnd_stats.inheritance(p1_cat, p2_cat)
         self.dnd_stats.update_stats(self.dnd_lineage.lineage_type)
-        self.dnd_skills.update_skills(self.dnd_stats)
+
+        get_blood_chosen = randint(0, constants.DND_CONFIG["blood_chosen_chance"])
+        use_blood_chosen = False
+        if (p1_cat and p1_cat.dnd_class == ClassType.BLOOD_CHOSEN) or (p2_cat and p2_cat.dnd_class == ClassType.BLOOD_CHOSEN):
+            use_blood_chosen = True
+        elif p1_cat or p2_cat:
+            parent_ids = []
+            if p1_cat:
+                parent_ids.extend(p1_cat.get_parents())
+            if p2_cat:
+                parent_ids.extend(p2_cat.get_parents())
+            for p_id in parent_ids:
+                if use_blood_chosen:
+                    break
+                p_cat = Cat.fetch_cat(p_id)
+                if p_cat and p_cat.dnd_class == ClassType.BLOOD_CHOSEN:
+                    use_blood_chosen = True
+        else:
+            use_blood_chosen = True
+
         self.dnd_class = None
+        if use_blood_chosen and get_blood_chosen == 0:
+            self.dnd_class = ClassType.BLOOD_CHOSEN
+
+        self.dnd_skills.update_skills(self.dnd_stats)
 
 
     def init_faded(self, ID, status, prefix, suffix, moons, **kwargs):
@@ -3376,7 +3399,7 @@ class Cat:
                     i18n.t(f"general.{self.status.rank.lower()}", count=1),
                     i18n.t(f"cat.personality.{self.personality.trait}"),
                     self.skills.skill_string(short=True),
-                    i18n.t(f"cat.skills.{self.experience_level}")
+                    self.experience_level
                     + (
                         f" ({str(self.experience)})\n"
                         if get_clan_setting("showxp")
@@ -3486,7 +3509,8 @@ class Cat:
                 "favourite": self.favourite,
                 "dnd_lineage": self.dnd_lineage.lineage_type.value,
                 "dnd_stats": self.dnd_stats.get_stat_dict(),
-                "dnd_proficiency": self.dnd_skills.get_proficiency_list()
+                "dnd_proficiency": self.dnd_skills.get_proficiency_list(),
+                "dnd_class": self.dnd_class.value if self.dnd_class else None
             }
 
     def determine_next_and_previous_cats(

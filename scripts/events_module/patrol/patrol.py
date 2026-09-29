@@ -1092,8 +1092,8 @@ class Patrol:
         if needed_number < 1:
             needed_number = 0
         rolled_number = randint(1,20) # d20 roll
-        print("ROLLED NUMBER: ", rolled_number , "; modifier: ", cat.dnd_skills.skills[skill])
-        modifier = cat.dnd_skills.skills[skill]
+        print("ROLLED NUMBER: ", rolled_number , "; modifier: ", cat.dnd_skills.get_rolling_skill(skill))
+        modifier = cat.dnd_skills.get_rolling_skill(skill)
         final_number = rolled_number + modifier # modifier added
         print("FINISHED ROLLED NUMBER: ", final_number, ", needed number: ", needed_number)
 

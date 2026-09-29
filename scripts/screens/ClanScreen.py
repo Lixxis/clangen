@@ -28,7 +28,7 @@ from scripts.game_structure.game.switches import (
     Switch,
 )
 
-from scripts.dnd.LevelingScreen import get_leveled_cat, LevelNotificationWindow
+from scripts.dnd.LevelingScreen import get_leveled_cats, LevelNotificationWindow
 
 class ClanScreen(Screens):
     max_sprites_displayed = (
@@ -255,7 +255,7 @@ class ClanScreen(Screens):
 
         self.update_buttons_and_text()
         # DND - STUFF
-        leveled_cats = get_leveled_cat()
+        leveled_cats = get_leveled_cats()
         if leveled_cats:
             LevelNotificationWindow(
                 switch_get_value(Switch.cur_screen),
