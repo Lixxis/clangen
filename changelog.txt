@@ -1,3 +1,17 @@
+<strong>DnD ClanGen v0.2.0</strong>
+- Experience levels are changed to fit the level 1 to 20 of DnD
+- Added DnD stats, skills, lineages, and classes for cats
+- Stats for cats without parents are initiated with the standard-array system
+- Stats for cats with parents inherit random 2 Stats per parent
+- Lineages give bonuses on certain Stats
+- Kits inherit the Lineages from parents or grandparents
+- Classes can be selected when level up and give proficiencies on Skills
+- Exception of the rule is the class "Blood of the Chosen One", which can only be inherited (or generated with new cats) and give an additional Skill proficiency
+- Skills are used to see if a patrol succeeded or not
+- Cats can level up, choose a class, and improve their Stats and Skills
+- A notification informs if a cat leveled up
+
+
 <strong>v0.13.3</strong>
 - Fixes various typos
 - Small UI adjustment in the Leader's Den to prevent text overlaps
