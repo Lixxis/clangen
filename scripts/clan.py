@@ -120,7 +120,7 @@ class Clan:
         self.pregnancy_data = {}
         self.inheritance = {}
         self.custom_pronouns = {}
-        self.xp = {}
+        self.dnd_xp = {}
 
         switch_set_value(Switch.biome, biome)
         switch_set_value(Switch.camp_bg, camp_bg)
@@ -1199,34 +1199,32 @@ class Clan:
         if not game.clan.name:
             return
 
-        file_path = get_save_dir() + f"/{game.clan.name}/xp.json"
+        file_path = get_save_dir() + f"/{game.clan.name}/dnd_xp.json"
         try:
             if os.path.exists(file_path):
                 with open(file_path, 'r', encoding='utf-8') as read_file:  # pylint: disable=redefined-outer-name
-                    clan.xp = ujson.load(read_file)
+                    clan.dnd_xp = ujson.load(read_file)
                     for cat_id, cat in Cat.all_cats.items():
-                        if cat.faded and cat_id in clan.xp.keys():
-                            del clan.xp[cat_id]
-                        elif not cat.faded and cat_id not in clan.xp.keys():
-                            clan.xp[cat_id] = cat.experience_level
+                        if cat.faded and cat_id in clan.dnd_xp.keys():
+                            del clan.dnd_xp[cat_id]
+                        elif not cat.faded and cat_id not in clan.dnd_xp.keys():
+                            clan.dnd_xp[cat_id] = cat.experience_level
             else:
-                clan.xp = {}
+                clan.dnd_xp = {}
                 for cat_id, cat in Cat.all_cats.items():
                     if not cat.faded:
-                        clan.xp[cat_id] = "level 0"
+                        clan.dnd_xp[cat_id] = "level 0"
         except:
-            clan.xp = {}
+            clan.dnd_xp = {}
             for cat_id, cat in Cat.all_cats.items():
                 if not cat.faded:
-                    clan.xp[cat_id] = "level 0"
+                    clan.dnd_xp[cat_id] = "level 0"
 
     def save_xp(self, clan):
         """
         Save the xp levels which are used to define if a level-up screen should show or not.
         """
-        if clan.game_mode == "classic" or not clan.xp:
-            return
-        game.safe_save(f"{get_save_dir()}/{game.clan.name}/xp.json", clan.xp)
+        game.safe_save(f"{get_save_dir()}/{game.clan.name}/dnd_xp.json", clan.dnd_xp)
 
     ## Properties
 

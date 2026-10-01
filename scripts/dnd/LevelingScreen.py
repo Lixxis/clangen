@@ -33,10 +33,10 @@ def get_leveled_cats():
     for cat_id, cat in Cat.all_cats.items():
         if cat.dead or not cat.status.group or cat.status.is_other_clancat:
             continue
-        if cat_id in game.clan.xp and cat.experience_level != game.clan.xp[cat_id]:
+        if cat_id in game.clan.dnd_xp and cat.experience_level != game.clan.dnd_xp[cat_id]:
             leveled_cat.append(cat)
-        if not cat.faded and cat_id not in game.clan.xp:
-            game.clan.xp[cat_id] = "level 0" #level 0 otherwise no new cat has to be leveld
+        if not cat.faded and cat_id not in game.clan.dnd_xp:
+            game.clan.dnd_xp[cat_id] = "level 0" #level 0 otherwise no new cat has to be leveld
     return leveled_cat
 
 
@@ -133,7 +133,7 @@ class LevelingScreen(Screens):
                 self.selected_cat.dnd_stats.update_stats()
                 self.selected_cat.dnd_skills.proficiency.extend(self.new_proficiency)
                 self.selected_cat.dnd_skills.update_skills(self.selected_cat.dnd_stats, self.selected_cat.dnd_class, self.selected_cat.experience_level)
-                game.clan.xp[self.selected_cat.ID] = self.selected_cat.experience_level
+                game.clan.dnd_xp[self.selected_cat.ID] = self.selected_cat.experience_level
                 self.selected_cat = None
                 self.update_selected_cats()
                 self.update_list_cats()
@@ -441,7 +441,7 @@ class LevelingScreen(Screens):
             ui_scale(pygame.Rect((x + 245 , y ), (200, 30))),
             object_id="#text_box_30_horizcenter",
         )
-        saved_level = game.clan.xp[cat.ID]
+        saved_level = game.clan.dnd_xp[cat.ID]
         self.selected_cat_elements["saved_level"] = pygame_gui.elements.UITextBox(
             f"Previous level: {saved_level}",
             ui_scale(pygame.Rect((x + 245 , y + 25), (200, 30))),
@@ -540,7 +540,7 @@ class LevelingScreen(Screens):
         self.next_class.hide()
         self.last_class.hide()
 
-        if not self.selected_cat or not self.choose_class:
+        if not self.selected_cat or self.selected_cat.dnd_class == None and not self.choose_class:
             return
 
         prev_element = self.selected_cat_elements["col2"]
@@ -825,7 +825,7 @@ class LevelingScreen(Screens):
 
         end_level_number = int(self.selected_cat.experience_level.split(" ")[1])
         start_level_number = end_level_number
-        saved_level_number = int(game.clan.xp[self.selected_cat.ID].split(" ")[1])
+        saved_level_number = int(game.clan.dnd_xp[self.selected_cat.ID].split(" ")[1])
         if start_level_number > saved_level_number:
             start_level_number = saved_level_number
 
@@ -845,6 +845,8 @@ class LevelingScreen(Screens):
                 self.choose_class = True
             if current_level_number == end_level_number:
                 break
+        if self.selected_cat.dnd_class != None and self.choose_class:
+            self.choose_class = False
 
     def exit_screen(self):
         self.selected_cat = None

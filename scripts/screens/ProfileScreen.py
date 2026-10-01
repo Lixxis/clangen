@@ -868,6 +868,11 @@ class ProfileScreen(Screens):
         lineage = i18n.t(f"dnd.lineage.{the_cat.dnd_lineage.lineage_type.value}")
         output += f"\nlineage: {lineage}"
 
+        # DnD class
+        if the_cat.dnd_class:
+            dnd_class = i18n.t(f"dnd.class.{the_cat.dnd_class.value}")
+            output += f"\nclass: {dnd_class}"
+
         if not the_cat.dead:
             # NEWLINE ----------
             output += "\n"
